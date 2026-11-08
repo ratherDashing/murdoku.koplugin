@@ -98,6 +98,9 @@ function Board:init()
     -- Edge labels read "R1".."Rn" down the side and "C1".."Cn" across the top.
     local lsz = math.floor(math.min(self.width, self.height) * 0.032)
     lsz = math.max(lsz, Screen:scaleBySize(11))
+    -- keep "C16" inside its column on big boards
+    local approx = math.min(self.width / (p.w + 0.6), self.height / (p.h + 0.4))
+    lsz = math.min(lsz, math.floor(approx * 0.36))
     self.f_label = face("NotoSans-Regular.ttf", lsz)
     local lh = self.f_label.ftsize:getHeightAndAscender()
     self.label_h = math.floor(lh * 1.15)
@@ -200,14 +203,44 @@ function Board:cellRect(r, c)
            self.dimen.y + self.label_h + (r - 1) * self.cell
 end
 
--- Object on a square. Tier 1: a text label (white on dark for obstacles,
--- an outlined tag for things you can stand on).
-function Board:paintObject(bb, id, obj, blocked, cx, cy, cs, busy)
+-- Object on a square: an icon filling most of it (white on the dark fill for
+-- obstacles, black on light for things you can stand on). Falls back to the
+-- object's name if there is no icon.
+local lfs = require("libs/libkoreader-lfs")
+local ICON_DIR = (debug.getinfo(1, "S").source:match("^@(.*)/[^/]*$") or ".") .. "/icons/"
+
+function Board:icon(id, white, size)
+    self.icons = self.icons or {}
+    local key = id .. (white and "w" or "b") .. size
+    local w = self.icons[key]
+    if w == nil then
+        local fn = ICON_DIR .. (white and "w/" or "") .. id .. ".svg"
+        if lfs.attributes(fn, "mode") == "file" then
+            local ImageWidget = require("ui/widget/imagewidget")
+            w = ImageWidget:new{ file = fn, width = size, height = size, alpha = true, is_icon = true }
+        else
+            w = false
+        end
+        self.icons[key] = w
+    end
+    return w
+end
+
+function Board:paintObject(bb, id, obj, blocked, cx, cy, cs, marked)
     local pad = math.max(2, math.floor(cs * 0.08))
+    local size = math.floor(cs * (blocked and 0.72 or 0.62))
+    local img = self:icon(id, blocked, size)
+    if img then
+        local ix = math.floor(cx + (cs - size) / 2)
+        local iy = math.floor(cy + (cs - size) / 2 + (blocked and 0 or cs * 0.06))
+        img:paintTo(bb, ix, iy)
+        if marked then bb:lightenRect(ix, iy, size, size, 0.65) end
+        return
+    end
     local f, label = self:objectLabel(obj.name, cs - 2 * pad)
     if blocked then
         drawCentered(bb, f, label, cx + cs / 2, cy + cs / 2, C.COLOR_WHITE)
-    elseif not busy then
+    elseif not marked then
         local fh = self.f_object.ftsize:getHeightAndAscender()
         local bh = math.floor(fh + pad)
         local by = math.floor(cy + cs - pad - bh)

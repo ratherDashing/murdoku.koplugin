@@ -259,7 +259,19 @@ function Puzzle.parse(data, id)
         if sc then sc = math.max(1, math.min(W, sc)) end
 
         local name = trim(flat["char_name_" .. i])
+        -- looks (murdoku.com cases only), used for the portrait
+        local char
+        if flat["char_hair_" .. i] ~= nil then
+            char = {
+                hair = int(flat["char_hair_" .. i]) or 0,
+                haircolor = int(flat["char_haircolor_" .. i]) or 0,
+                facial = int(flat["char_facial_" .. i]) or 0,
+                accessory = int(flat["char_accessory_" .. i]) or 0,
+                hat = int(flat["char_hat_" .. i]) or 0,
+            }
+        end
         table.insert(p.suspects, {
+            char = char,
             index = i + 1,
             letter = string.char(64 + i + 1), -- A, B, C...
             name = name,

@@ -39,6 +39,7 @@ local Puzzle = require("murdoku_puzzle")
 local Store = require("murdoku_store")
 local Widgets = require("murdoku_board")
 local Html = require("murdoku_html")
+local Cards = require("murdoku_cards")
 local Screen = Device.screen
 
 
@@ -147,27 +148,26 @@ function Game:buildLayout()
 
     local content
     if not self.landscape then
-        -- Portrait: board on top, suspects / clue / buttons underneath.
+        -- Portrait: board on top, suspect cards and the toolbar underneath.
         local w = sw - 2 * margin
         self.button_table = makeToolbar(w)
-        self.suspect_bar = Widgets.SuspectBar:new{ puzzle = p, game = self, width = w }
-        self.clue_height = math.floor(line_h * 3 + Size.padding.default)
-        self:makeClueBox(w)
-        local board_h = body_h - self.button_table:getSize().h - self.suspect_bar.dimen.h
-            - self.clue_height - 3 * margin
-        self.board = Widgets.Board:new{ puzzle = p, game = self, width = w, height = board_h }
+        local tb_h = self.button_table:getSize().h
+        local board_max = math.floor((body_h - tb_h) * 0.6)
+        self.board = Widgets.Board:new{ puzzle = p, game = self, width = w, height = board_max }
+        local board_h = self.board.dimen.h
+        local panel_h = body_h - tb_h - board_h - 3 * margin
+        self.panel = Cards.SuspectPanel:new{ puzzle = p, game = self, width = w, height = panel_h }
         content = VerticalGroup:new{
             align = "center",
             VerticalSpan:new{ width = margin },
             CenterContainer:new{ dimen = Geom:new{ w = sw, h = board_h }, self.board },
-            self.suspect_bar,
             VerticalSpan:new{ width = margin },
-            self.clue_box,
+            self.panel,
             VerticalSpan:new{ width = margin },
             self.button_table,
         }
     else
-        -- Landscape: board on the left, a control panel on the right.
+        -- Landscape: board on the left; cards and the toolbar on the right.
         local panel_min = math.max(math.floor(sw * 0.32), Screen:scaleBySize(240))
         local board_h = body_h - margin
         self.board = Widgets.Board:new{
@@ -177,10 +177,8 @@ function Game:buildLayout()
         }
         local panel_w = sw - self.board.dimen.w - 3 * margin
         self.button_table = makeToolbar(panel_w)
-        self.suspect_bar = Widgets.SuspectBar:new{ puzzle = p, game = self, width = panel_w }
-        self.clue_height = body_h - self.button_table:getSize().h - self.suspect_bar.dimen.h - 3 * margin
-        self.clue_height = math.max(self.clue_height, math.floor(line_h * 2))
-        self:makeClueBox(panel_w)
+        local panel_h = body_h - self.button_table:getSize().h - 2 * margin
+        self.panel = Cards.SuspectPanel:new{ puzzle = p, game = self, width = panel_w, height = panel_h }
         content = HorizontalGroup:new{
             align = "top",
             HorizontalSpan:new{ width = margin },
@@ -192,9 +190,7 @@ function Game:buildLayout()
             VerticalGroup:new{
                 align = "left",
                 VerticalSpan:new{ width = margin },
-                self.suspect_bar,
-                VerticalSpan:new{ width = margin },
-                self.clue_box,
+                self.panel,
                 VerticalSpan:new{ width = margin },
                 self.button_table,
             },
@@ -215,19 +211,6 @@ function Game:buildLayout()
             content,
         },
     }
-end
-
-function Game:makeClueBox(width)
-    self.clue_box = InputContainer:new{
-        dimen = Geom:new{ w = width, h = self.clue_height },
-    }
-    self.clue_box.ges_events = {
-        Tap = { GestureRange:new{ ges = "tap", range = function() return self.clue_box.dimen end } },
-    }
-    self.clue_box.onTap = function()
-        self:showAllClues()
-        return true
-    end
 end
 
 -- Re-layout if the screen was rotated while we were open.
@@ -284,40 +267,30 @@ function Game:setTool(tool)
     self:refresh()
 end
 
-function Game:updateClue()
+-- Text for the strip above the suspect cards.
+function Game:statusText()
     local p = self.puzzle
-    local text
     if self.state.solved then
         local m = p.murderer and p.suspects[p.murderer]
-        text = "Case closed" .. (m and (": " .. m.name .. " is the murderer!") or "!")
-            .. "  (tap here for all clues)"
-    elseif self.selected then
-        local s = p.suspects[self.selected]
-        text = string.format("%s: %s", s.name, s.clue)
+        return "Case closed" .. (m and (": " .. m.name .. " is the murderer!") or "!")
+            .. " Tap here for all clues."
     elseif self.tool == "mark" then
-        text = "X mode: tap squares to cross them out. Tap the X button again to stop."
+        return "X mode: tap squares to cross them out. Tap the X button again to stop."
     elseif self.tool == "erase" then
-        text = "Eraser: tap squares to clear them. Tap the eraser button again to stop."
+        return "Eraser: tap squares to clear them. Tap the eraser button again to stop."
     elseif p.general_clues and #p.general_clues > 0 then
-        text = "General clue" .. (#p.general_clues > 1 and "s" or "") .. ": "
-            .. table.concat(p.general_clues, " ") .. "  (tap here for all clues)"
-    else
-        text = "Tap a suspect, then tap squares to note where they might be. Hold a square to place them. Tap here for all clues."
+        return "General: " .. table.concat(p.general_clues, " ")
+    elseif self.selected then
+        return p.suspects[self.selected].name .. ": tap a square for a note, hold it to place."
     end
-    self.clue_box[1] = FrameContainer:new{
-        width = self.clue_box.dimen.w,
-        height = self.clue_height,
-        padding = Size.padding.small,
-        bordersize = Size.border.thin,
-        color = Blitbuffer.COLOR_DARK_GRAY,
-        TextBoxWidget:new{
-            text = text,
-            face = self.clue_face,
-            width = self.clue_box.dimen.w - 2 * Size.padding.small - 2 * Size.border.thin,
-            height = self.clue_height - 2 * Size.padding.small - 2 * Size.border.thin,
-            height_overflow_show_ellipsis = true,
-        },
-    }
+    return "Pick a suspect: tap a square for a note, hold it to place them."
+end
+
+function Game:updateClue()
+    if self.panel then
+        self.panel:showSuspect(self.selected)
+        self.panel:build()
+    end
 end
 
 function Game:refresh()
@@ -400,13 +373,7 @@ function Game:onSuspectTap(i)
 end
 
 function Game:onSuspectHold(i)
-    local s = self.puzzle.suspects[i]
-    local pos = self.state.placed[i]
-    local where = pos and string.format("\n\nPlaced at R%d C%d.", pos[1], pos[2]) or ""
-    UIManager:show(InfoMessage:new{
-        text = string.format("%s%s\n\n%s%s", s.name,
-            s.is_victim and " (the victim)" or (s.female and " (woman)" or " (man)"), s.clue, where),
-    })
+    Cards.showSuspectPopup(self.puzzle, i, self.state.placed)
 end
 
 function Game:select(i)
@@ -504,13 +471,10 @@ function Game:onCellHold(r, c)
 end
 
 function Game:showCellCard(r, c)
-    local p = self.puzzle
-    local text = Puzzle.describe(p, r, c)
+    local x, y = self.board:cellRect(r, c)
     local who = self:occupantAt(r, c)
-    if who then
-        text = text .. "\n\nPlaced here: " .. p.suspects[who].name
-    end
-    UIManager:show(InfoMessage:new{ text = text })
+    Cards.showCellCard(self.puzzle, r, c, { x = x, y = y, w = self.board.cell, h = self.board.cell },
+        who and self.puzzle.suspects[who])
 end
 
 -- Tier-3 hook: cells the selected suspect's clue refers to.
