@@ -47,6 +47,8 @@ Rules
 • "Beside" means directly left, right, above or below AND in the same area.
 • North/south/east/west mean anywhere above/below/right/left, in any area.
 • Areas are outlined with thick walls and shaded in different greys.
+• Some cases also have general clues that apply to everyone. They are shown in the clue box when no suspect is selected, and at the top of "All clues".
+• Big objects (cars, beds, buses…) cover more than one square. Standing on any of its squares counts as being on it.
 
 Controls
 • Tap a suspect at the bottom to select them and read their clue.
@@ -315,6 +317,9 @@ function Game:updateClue()
     elseif self.selected then
         local s = p.suspects[self.selected]
         text = string.format("%s · %s: %s", s.letter, s.name, s.clue)
+    elseif p.general_clues and #p.general_clues > 0 then
+        text = "General clue" .. (#p.general_clues > 1 and "s" or "") .. ": "
+            .. table.concat(p.general_clues, " ") .. "  (tap here for all clues)"
     elseif self.mode == "mark" then
         text = "Mark mode: tap squares to cross them out. Tap a suspect to read their clue."
     else
@@ -570,6 +575,11 @@ end
 function Game:showAllClues()
     local p = self.puzzle
     local lines = {}
+    if p.general_clues and #p.general_clues > 0 then
+        local g = {}
+        for _, t in ipairs(p.general_clues) do table.insert(g, "• " .. t) end
+        table.insert(lines, "General clues (apply to everyone)\n" .. table.concat(g, "\n"))
+    end
     for i, s in ipairs(p.suspects) do
         local pos = self.state.placed[i]
         table.insert(lines, string.format("%s · %s%s%s\n%s", s.letter, s.name,

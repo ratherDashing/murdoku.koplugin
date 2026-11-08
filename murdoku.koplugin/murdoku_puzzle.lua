@@ -70,6 +70,36 @@ function Puzzle.isVoid(id)
     return id == 8 or id == 33
 end
 
+-- Multi-cell objects are stored only at their anchor cell; the site draws
+-- them over the neighbouring empty cells too.
+local RIGHT1 = { [6] = true, [119] = true, [21] = true, [22] = true, [90] = true } -- bed, car, carriage
+local RIGHT2 = { [56] = true }               -- bus: two more cells to the right
+local DOWN1 = { [7] = true, [120] = true }   -- vertical bed: the cell below
+local BIG2X2 = { [54] = true }               -- elephant
+Puzzle.FOOTPRINT = { right1 = RIGHT1, right2 = RIGHT2, down1 = DOWN1, big2x2 = BIG2X2 }
+
+--- Expand multi-cell objects in a 1-based objs[r][c] grid (in place).
+-- Only empty cells are filled; additions are computed from the original grid.
+function Puzzle.expandFootprints(objs, H, W)
+    local add = {}
+    local function push(r, c, g)
+        if r <= H and c <= W then table.insert(add, { r, c, g }) end
+    end
+    for r = 1, H do
+        for c = 1, W do
+            local g = objs[r][c]
+            if RIGHT1[g] then push(r, c + 1, g) end
+            if RIGHT2[g] then push(r, c + 1, g); push(r, c + 2, g) end
+            if DOWN1[g] then push(r + 1, c, g) end
+            if BIG2X2[g] then push(r, c + 1, g); push(r + 1, c, g); push(r + 1, c + 1, g) end
+        end
+    end
+    for _, a in ipairs(add) do
+        if objs[a[1]][a[2]] == 0 then objs[a[1]][a[2]] = a[3] end
+    end
+    return objs
+end
+
 --- Parse decoded JSON into a puzzle.
 -- @treturn table|nil puzzle
 -- @treturn string|nil error message
@@ -116,11 +146,21 @@ function Puzzle.parse(data, id)
         end
     end
 
+    -- Raw object ids first, so multi-cell objects can be expanded before use.
+    local objs = {}
+    for r = 1, H do
+        objs[r] = {}
+        for c = 1, W do
+            objs[r][c] = int(flat[key("room_objects", r - 1, c - 1)]) or 0
+        end
+    end
+    Puzzle.expandFootprints(objs, H, W)
+
     for r = 1, H do
         p.cells[r] = {}
         for c = 1, W do
             local room = int(flat[key("room_code", r - 1, c - 1)]) or 0
-            local obj = int(flat[key("room_objects", r - 1, c - 1)]) or 0
+            local obj = objs[r][c]
             local carpet = int(flat[key("carpet_objects", r - 1, c - 1)]) or 0
             local area = subroom_of[room] or room
             p.cells[r][c] = {
@@ -139,6 +179,33 @@ function Puzzle.parse(data, id)
     for code, room in pairs(p.rooms) do
         local name = trim(flat["room_name_" .. code])
         room.name = name ~= "" and name or ("Area " .. code)
+    end
+    local rx, ry, cs = num(P.grid_rx), num(P.grid_ry), num(P.cellsize)
+    if not v2 and rx and ry and cs and cs > 0 then
+        -- v1: the site draws each room_name_k as free text at (xpos, ypos); the
+        -- label's position, not k, says which area it names.
+        local bypos, used = {}, {}
+        for k = 0, 199 do
+            local name = trim(flat["room_name_" .. k])
+            local x, y = num(flat["room_name_xpos_" .. k]), num(flat["room_name_ypos_" .. k])
+            if name ~= "" and x and y then
+                local r, c = math.floor((y - ry) / cs) + 1, math.floor((x - rx) / cs) + 1
+                if r >= 1 and r <= H and c >= 1 and c <= W then
+                    local a = p.cells[r][c].area
+                    if not bypos[a] then
+                        bypos[a] = name
+                        used[name] = true
+                    end
+                end
+            end
+        end
+        for code, room in pairs(p.rooms) do
+            if bypos[code] then
+                room.name = bypos[code]
+            elseif used[room.name] then
+                room.name = "Area " .. code
+            end
+        end
     end
 
     -- Windows/doors live on cell edges (rare).
@@ -170,7 +237,6 @@ function Puzzle.parse(data, id)
     if total and total > 0 and total < count then count = total end
     if count < 3 then return nil, "not enough suspects" end
 
-    local rx, ry, cs = num(P.grid_rx), num(P.grid_ry), num(P.cellsize)
     for i = 0, count - 1 do
         local quote = trim(flat["char_quote_en_" .. i])
         local sub = trim(flat["char_subquote_en_" .. i])
@@ -222,6 +288,20 @@ function Puzzle.parse(data, id)
         end
     end
     p.hints = hints
+
+    -- General clues apply to everyone. The site uses clue_custom_text<N> and
+    -- (v2) general_clue_<N>, often with the same text in both.
+    local general, seen = {}, {}
+    for n = 0, 20 do
+        for _, field in ipairs({ "clue_custom_text" .. n, "general_clue_" .. n }) do
+            local t = trim(tostring(flat[field] or ""):gsub("<[^>]+>", ""):gsub("%s+", " "))
+            if t ~= "" and not seen[t] then
+                seen[t] = true
+                table.insert(general, t)
+            end
+        end
+    end
+    p.general_clues = general
 
     p.has_solution = true
     for _, s in ipairs(p.suspects) do
