@@ -1,3 +1,5 @@
 *.json
+!murdoku.koplugin/cases/*.json
 *.zip
 .DS_Store
+__pycache__/
