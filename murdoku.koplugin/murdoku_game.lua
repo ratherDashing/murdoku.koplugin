@@ -46,6 +46,8 @@ Rules
 • Nobody can stand on obstacles (tables, trees, plants…). These are shown as dark grey blocks. Chairs, beds and carpets are fine.
 • "Beside" means directly left, right, above or below AND in the same area.
 • North/south/east/west mean anywhere above/below/right/left, in any area.
+• "Alone" means nobody else in the same area; "with X" means X is in the same area.
+• "In a corner of her area" means walls (or the edge) on two sides of her square that meet.
 • Areas are outlined with thick walls and shaded in different greys.
 • Some cases also have general clues that apply to everyone. They are shown in the clue box when no suspect is selected, and at the top of "All clues".
 • Big objects (cars, beds, buses…) cover more than one square. Standing on any of its squares counts as being on it.

@@ -18,6 +18,20 @@ local Store = {}
 
 local root = DataStorage:getDataDir() .. "/murdoku"
 local puzzle_dir = root .. "/puzzles"
+local random_dir = root .. "/random"
+-- Our own cases ship with the plugin, in its cases/ folder.
+local plugin_dir = (debug.getinfo(1, "S").source:match("^@(.*/)[^/]*$") or "./")
+local cases_dir = plugin_dir .. "cases"
+
+Store.SOURCE_SITE, Store.SOURCE_ORIGINAL, Store.SOURCE_RANDOM = "site", "original", "random"
+
+--- Where a case comes from, by id.
+function Store.sourceOf(id)
+    if type(id) ~= "string" then return Store.SOURCE_SITE end
+    if id:match("^orig%-") then return Store.SOURCE_ORIGINAL end
+    if id:match("^random%-") then return Store.SOURCE_RANDOM end
+    return Store.SOURCE_SITE
+end
 
 local function ensureDirs()
     util.makePath(puzzle_dir)
@@ -125,6 +139,7 @@ local function normaliseCatalog(raw, show_retired)
             local diff = guessDifficulty(e)
             table.insert(out, {
                 id = e.id,
+                source = Store.SOURCE_SITE,
                 title = e.title_en_ or e.id,
                 difficulty = diff,
                 difficulty_rank = DIFFICULTY_ORDER[diff] or 9,
@@ -168,11 +183,87 @@ local function safeId(id)
 end
 
 function Store.puzzlePath(id)
+    local src = Store.sourceOf(id)
+    if src == Store.SOURCE_ORIGINAL then return cases_dir .. "/" .. safeId(id) .. ".json" end
+    if src == Store.SOURCE_RANDOM then return random_dir .. "/" .. safeId(id) .. ".json" end
     return puzzle_dir .. "/" .. safeId(id) .. ".json"
 end
 
 function Store.isDownloaded(id)
     return lfs.attributes(Store.puzzlePath(id), "mode") == "file"
+end
+
+--- The bundled "Originals" (offline, from cases/index.json).
+function Store.originals()
+    local raw = decodeJSON(readFile(cases_dir .. "/index.json") or "")
+    local out = {}
+    if type(raw) ~= "table" or type(raw.cases) ~= "table" then return out end
+    local now = os.time()
+    for _, e in ipairs(raw.cases) do
+        local release = parseISO(e.releaseAt) or 0
+        if type(e.id) == "string" and release <= now then
+            table.insert(out, {
+                id = e.id,
+                source = Store.SOURCE_ORIGINAL,
+                title = e.title or e.id,
+                difficulty = DIFFICULTY_LABEL[e.difficulty] and e.difficulty or nil,
+                difficulty_rank = DIFFICULTY_ORDER[e.difficulty] or 9,
+                size = e.gridSize,
+                theme = e.theme,
+                release = release,
+            })
+        end
+    end
+    return out
+end
+
+--- Saved random cases (generated on this device).
+function Store.randomCases()
+    local out = {}
+    if lfs.attributes(random_dir, "mode") ~= "directory" then return out end
+    for f in lfs.dir(random_dir) do
+        local id = f:match("^(random%-.+)%.json$")
+        if id then
+            local path = random_dir .. "/" .. f
+            local data = decodeJSON(readFile(path) or "")
+            if type(data) == "table" then
+                local C = data.CHARACTERS or {}
+                local P = data.PROPERTIES or {}
+                local meta = data.META or {}
+                local w, h = tonumber(P.grid_w), tonumber(P.grid_h)
+                table.insert(out, {
+                    id = id,
+                    source = Store.SOURCE_RANDOM,
+                    title = C.title_en_ or id,
+                    difficulty = DIFFICULTY_LABEL[meta.grade] and meta.grade or nil,
+                    difficulty_rank = DIFFICULTY_ORDER[meta.grade] or 9,
+                    size = w and h and (w .. "x" .. h) or nil,
+                    release = tonumber(meta.created) or lfs.attributes(path, "modification") or 0,
+                })
+            end
+        end
+    end
+    return out
+end
+
+--- Save a generated case (decoded table). Returns the path or nil, err.
+function Store.saveRandom(id, data)
+    util.makePath(random_dir)
+    local ok, text = pcall(function()
+        local okr, rapidjson = pcall(require, "rapidjson")
+        if okr and rapidjson then return rapidjson.encode(data) end
+        return require("json").encode(data)
+    end)
+    if not ok or not text then return nil, "could not encode case" end
+    if not writeFile(Store.puzzlePath(id), text) then return nil, "could not write case" end
+    return Store.puzzlePath(id)
+end
+
+function Store.deleteRandom(id)
+    if Store.sourceOf(id) ~= Store.SOURCE_RANDOM then return false end
+    os.remove(Store.puzzlePath(id))
+    Store.clearState(id)
+    return true
 end
 
 --- Returns decoded puzzle JSON from cache, or nil.
@@ -193,7 +284,7 @@ function Store.fetchPuzzle(id)
     return data
 end
 
---- List ids of downloaded puzzles (for offline use when there's no catalogue).
+--- List ids of downloaded murdoku.com puzzles (for offline use when there's no catalogue).
 function Store.downloadedIds()
     local ids = {}
     if lfs.attributes(puzzle_dir, "mode") ~= "directory" then return ids end

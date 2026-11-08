@@ -34,12 +34,15 @@ Murdoku is created by Manuel Garand.
 Play online, get the books and find more cases at:
 https://murdoku.com
 
-The free cases shown here are downloaded straight from murdoku.com onto your device. No puzzles are included with or redistributed by this plugin. All puzzles, names and clues are © their creators. Murdoku™ is a trademark of Digivoid Studios Inc.
+The free cases shown here are downloaded straight from murdoku.com onto your device. No murdoku.com puzzles are included with or redistributed by this plugin. All murdoku.com puzzles, names and clues are © their creators. Murdoku™ is a trademark of Digivoid Studios Inc.
+
+"Originals" (marked ◆) are cases written for this plugin by its own generator and ship with it. "Random" cases (marked ⚄) are generated on your device. Neither comes from murdoku.com.
 
 If you enjoy the cases, please support the creator by buying the Murdoku books.
 
 List symbols:
 ★ latest case   ✓ solved   … in progress   ◌ solution revealed   ⇩ not downloaded yet
+◆ Original (bundled)   ⚄ Random (made on this device; hold to delete)
 ]])
 local Puzzle = require("murdoku_puzzle")
 
@@ -100,6 +103,14 @@ local SORTS = {
     { id = "name", label = _("Name") },
     { id = "size", label = _("Size") },
 }
+local SOURCE_FILTERS = {
+    { id = "all", label = _("All") },
+    { id = "site", label = _("murdoku.com") },
+    { id = "original", label = _("Originals") },
+    { id = "random", label = _("Random") },
+}
+local SOURCE_MARK = { original = "◆ ", random = "⚄ " }
+local SOURCE_TAG = { original = _("Original"), random = _("Random") }
 local STATUS_FILTERS = {
     { id = "all", label = _("All") },
     { id = "unsolved", label = _("Unsolved") },
@@ -140,19 +151,32 @@ function Murdoku:filterState()
     return {
         difficulty = Store.getOption("filter_difficulty", "all"),
         status = Store.getOption("filter_status", "all"),
+        source = Store.getOption("filter_source", "all"),
         sort = Store.getOption("sort", "newest"),
     }
 end
 
+--- murdoku.com catalogue + bundled Originals + saved Random cases.
+function Murdoku:allEntries()
+    local list = {}
+    for __, e in ipairs(self.catalog or {}) do table.insert(list, e) end
+    for __, e in ipairs(Store.originals()) do table.insert(list, e) end
+    for __, e in ipairs(Store.randomCases()) do table.insert(list, e) end
+    return list
+end
+
 --- Subtitle like the website's "42 puzzles · 0 completed".
 function Murdoku:subtitle()
-    local list = self.catalog or {}
+    local list = self:allEntries()
     local solved = 0
     for __, e in ipairs(list) do
         if statusFor(e.id) == "solved" then solved = solved + 1 end
     end
     local f = self:filterState()
     local parts = { string.format(_("%d cases · %d solved"), #list, solved) }
+    if f.source ~= "all" then
+        for __, sf in ipairs(SOURCE_FILTERS) do if sf.id == f.source then table.insert(parts, sf.label) end end
+    end
     if f.difficulty ~= "all" then table.insert(parts, Store.DIFFICULTY_LABEL[f.difficulty]) end
     if f.status ~= "all" then
         for __, sf in ipairs(STATUS_FILTERS) do if sf.id == f.status then table.insert(parts, sf.label) end end
@@ -167,38 +191,43 @@ function Murdoku:buildItems()
     local items = {}
     local show_retired = Store.getOption("show_retired", false)
     local f = self:filterState()
-    local list = self.catalog or {}
+    local list = self:allEntries()
     local seen = {}
     -- The site publishes a new case every week or so; flag the newest one.
     local latest
     for __, e in ipairs(list) do
         seen[e.id] = true
-        if not e.retired and (not latest or e.release > latest.release) then latest = e end
+        if e.source == Store.SOURCE_SITE and not e.retired and (not latest or e.release > latest.release) then latest = e end
     end
     for __, e in ipairs(sortList(list, f.sort)) do
         local status = statusFor(e.id)
         local keep = (f.difficulty == "all" or e.difficulty == f.difficulty)
+            and (f.source == "all" or e.source == f.source)
             and (f.status == "all"
                 or (f.status == "solved" and status == "solved")
                 or (f.status == "unsolved" and status ~= "solved" and status ~= "revealed"))
         if keep then
         local mark = status == "solved" and "✓ " or (status == "revealed" and "◌ " or (status == "started" and "… " or ""))
         local right = {}
+        if SOURCE_TAG[e.source] then table.insert(right, SOURCE_TAG[e.source]) end
         if e.difficulty then table.insert(right, Store.DIFFICULTY_LABEL[e.difficulty]) end
         if e.size then table.insert(right, (e.size:gsub("x", "×"))) end
-        if not Store.isDownloaded(e.id) then table.insert(right, "⇩") end
+        if e.source == Store.SOURCE_SITE and not Store.isDownloaded(e.id) then table.insert(right, "⇩") end
         if e.retired then table.insert(right, "retired") end
         local is_latest = e == latest
         table.insert(items, {
-            text = mark .. (is_latest and "★ " or "") .. e.title .. (is_latest and "  (latest)" or ""),
+            text = mark .. (SOURCE_MARK[e.source] or "") .. (is_latest and "★ " or "") .. e.title
+                .. (is_latest and "  (latest)" or ""),
             mandatory = table.concat(right, " · "),
             callback = function() self:openCase(e) end,
+            hold_callback = e.source == Store.SOURCE_RANDOM and function() self:confirmDeleteRandom(e) end or nil,
         })
         end
     end
     -- downloaded puzzles no longer in the catalogue are still playable
     for __, id in ipairs(Store.downloadedIds()) do
-        if not seen[id] and (show_retired or not self.catalog) and f.difficulty == "all" then
+        if not seen[id] and (show_retired or not self.catalog) and f.difficulty == "all"
+                and (f.source == "all" or f.source == "site") then
             local status = statusFor(id)
             table.insert(items, {
                 text = (status == "solved" and "✓ " or "") .. id:gsub("^puzzle%-", ""):gsub("%-", " "),
@@ -213,6 +242,7 @@ function Murdoku:buildItems()
             callback = function()
                 Store.setOption("filter_difficulty", "all")
                 Store.setOption("filter_status", "all")
+                Store.setOption("filter_source", "all")
                 self:updateMenu()
             end,
         })
@@ -246,6 +276,10 @@ function Murdoku:openCaseList()
     -- Keep the list open behind a case (Menu closes itself on select by default).
     self.menu.onMenuSelect = function(_menu, item)
         if item.callback then item.callback() end
+        return true
+    end
+    self.menu.onMenuHold = function(_menu, item)
+        if item.hold_callback then item.hold_callback() end
         return true
     end
     UIManager:show(self.menu)
@@ -306,6 +340,10 @@ function Murdoku:showListMenu()
         local row = i <= 2 and 1 or 2
         table.insert(diff_rows[row], choice(Store.DIFFICULTY_LABEL[d], f.difficulty == d, "filter_difficulty", d))
     end
+    local source_row = {}
+    for __, sf in ipairs(SOURCE_FILTERS) do
+        table.insert(source_row, choice(sf.label, f.source == sf.id, "filter_source", sf.id))
+    end
     local status_row = {}
     for __, sf in ipairs(STATUS_FILTERS) do
         table.insert(status_row, choice(sf.label, f.status == sf.id, "filter_status", sf.id))
@@ -315,6 +353,12 @@ function Murdoku:showListMenu()
         table.insert(sort_rows[i <= 3 and 1 or 2], choice(so.label, f.sort == so.id, "sort", so.id))
     end
     local buttons = {
+        { { text = _("New random case…"), callback = function()
+            UIManager:close(dialog)
+            self:showRandomDialog()
+        end } },
+        { { text = _("Source"), enabled = false } },
+        source_row,
         { { text = _("Difficulty"), enabled = false } },
         diff_rows[1], diff_rows[2],
         { { text = _("Show"), enabled = false } },
@@ -389,10 +433,170 @@ function Murdoku:downloadAll()
     end)
 end
 
+-- Random cases ---------------------------------------------------------------
+
+-- What the on-device generator offers. Desktop LuaJIT timings (tests/test_generator.lua):
+-- very easy/easy/medium take well under a second up to 7x7 and about 1-4 s on
+-- average at 8x8/9x9; hard takes about 1.5 s at 5x5/6x6 but 5-16 s (up to ~50 s)
+-- at 7x7-9x9. A Kindle is roughly 8-15x slower, so hard is limited to 6x6 here;
+-- bigger hard cases are in the bundled Originals.
+local RANDOM_DIFFICULTIES = { "very-easy", "easy", "medium", "hard" }
+local RANDOM_SIZES = { 5, 6, 7, 8, 9 }
+local RANDOM_MAX_SIZE = { hard = 6 }
+local RANDOM_TRIES = 3
+-- seconds (wall clock) per attempt before starting over with a new seed
+local function tryBudget(size) return size <= 7 and 40 or 90 end
+
+function Murdoku:showRandomDialog()
+    local dialog
+    local diff = Store.getOption("random_difficulty", "easy")
+    local size = Store.getOption("random_size", 7)
+    if size > (RANDOM_MAX_SIZE[diff] or 9) then size = RANDOM_MAX_SIZE[diff] end
+    local function pick(option, value)
+        return function()
+            UIManager:close(dialog)
+            Store.setOption(option, value)
+            self:showRandomDialog()
+        end
+    end
+    local diff_row, size_row = {}, {}
+    for __, d in ipairs(RANDOM_DIFFICULTIES) do
+        table.insert(diff_row, { text = (d == diff and "● " or "") .. Store.DIFFICULTY_LABEL[d],
+            callback = pick("random_difficulty", d) })
+    end
+    for __, n in ipairs(RANDOM_SIZES) do
+        table.insert(size_row, { text = (n == size and "● " or "") .. n .. "×" .. n,
+            enabled = n <= (RANDOM_MAX_SIZE[diff] or 9),
+            callback = pick("random_size", n) })
+    end
+    dialog = ButtonDialog:new{
+        title = _("New random case") .. "\n" .. _("Made on this device by the plugin's own generator. Bigger boards can take a minute or two. Hard is limited to 6×6 (bigger hard cases are in the Originals)."),
+        buttons = {
+            { { text = _("Difficulty"), enabled = false } },
+            diff_row,
+            { { text = _("Size"), enabled = false } },
+            size_row,
+            { { text = _("Cancel"), callback = function() UIManager:close(dialog) end },
+              { text = _("Generate"), callback = function()
+                    UIManager:close(dialog)
+                    self:generateRandom(diff, size)
+                end } },
+        },
+    }
+    UIManager:show(dialog)
+end
+
+--- Generate a case in time slices so the UI stays responsive; tap the message to cancel.
+function Murdoku:generateRandom(diff, size)
+    local Gen = require("murdoku_gen")
+    local cancelled, msg, co, slice_start = false, nil, nil, 0
+    local tries = 0
+    local seed
+    local label = string.format("%d×%d %s", size, size, Store.DIFFICULTY_LABEL[diff]:lower())
+
+    local function showMsg()
+        local m = InfoMessage:new{
+            text = string.format(_("Making a new %s case…%s\n\nTap to cancel."), label,
+                tries > 1 and string.format(_("\n(attempt %d of %d)"), tries, RANDOM_TRIES) or ""),
+            dismiss_callback = function() if msg then cancelled = true end end,
+        }
+        msg = m
+        UIManager:show(m)
+    end
+    local function closeMsg()
+        local m = msg
+        msg = nil
+        if m then UIManager:close(m) end
+    end
+    local function newTry()
+        tries = tries + 1
+        seed = (os.time() % 100000000) * 10 + tries
+        local deadline = os.time() + tryBudget(size)
+        co = coroutine.create(function()
+            return Gen.generate{
+                size = size, difficulty = diff, seed = seed,
+                clock = os.time, deadline = deadline,
+                yield = function()
+                    if os.clock() - slice_start > 0.15 then coroutine.yield() end
+                end,
+            }
+        end)
+    end
+    local function finish(data, res)
+        closeMsg()
+        local id = "random-" .. seed
+        local title = (data.CHARACTERS.title_en_ or _("Random case")) .. " · " .. os.date("%b %d %H:%M")
+        data.CHARACTERS.title_en_ = title
+        data.META = data.META or {}
+        data.META.id = id
+        data.META.created = os.time()
+        local ok, err = Store.saveRandom(id, data)
+        if not ok then
+            UIManager:show(InfoMessage:new{ text = _("Couldn't save the new case.") .. "\n" .. tostring(err) })
+            return
+        end
+        logger.info("Murdoku: generated", id, res.grade, "trials", res.logic.trials, "attempts", res.attempts)
+        self:updateMenu()
+        self:startGame({ id = id, title = title, difficulty = res.grade, source = Store.SOURCE_RANDOM,
+            size = size .. "x" .. size }, data)
+    end
+    local step
+    step = function()
+        if cancelled then
+            co = nil
+            UIManager:show(InfoMessage:new{ text = _("Cancelled."), timeout = 1 })
+            return
+        end
+        slice_start = os.clock()
+        local ok, data, res = coroutine.resume(co)
+        if not ok then
+            closeMsg()
+            logger.err("Murdoku: generator failed:", data)
+            UIManager:show(InfoMessage:new{ text = _("Sorry, the generator failed:") .. "\n" .. tostring(data) })
+            return
+        end
+        if coroutine.status(co) ~= "dead" then
+            UIManager:scheduleIn(0.05, step)
+            return
+        end
+        if data then return finish(data, res) end
+        if tries < RANDOM_TRIES then
+            closeMsg()
+            newTry()
+            showMsg()
+            UIManager:scheduleIn(0.05, step)
+        else
+            closeMsg()
+            UIManager:show(InfoMessage:new{
+                text = _("No case found in time. Try again, or pick a smaller size or an easier difficulty."),
+            })
+        end
+    end
+    newTry()
+    showMsg()
+    UIManager:scheduleIn(0.3, step)
+end
+
+function Murdoku:confirmDeleteRandom(entry)
+    local ConfirmBox = require("ui/widget/confirmbox")
+    UIManager:show(ConfirmBox:new{
+        text = string.format(_("Delete the random case \"%s\" and its progress?"), entry.title),
+        ok_text = _("Delete"),
+        ok_callback = function()
+            Store.deleteRandom(entry.id)
+            self:updateMenu()
+        end,
+    })
+end
+
 function Murdoku:openCase(entry)
     local data = Store.loadCachedPuzzle(entry.id)
     if data then
         return self:startGame(entry, data)
+    end
+    if Store.sourceOf(entry.id) ~= Store.SOURCE_SITE then
+        UIManager:show(InfoMessage:new{ text = _("This case file is missing.") })
+        return
     end
     NetworkMgr:runWhenOnline(function()
         local fetched, err = withMessage(_("Downloading case…"), function()

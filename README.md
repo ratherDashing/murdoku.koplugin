@@ -10,9 +10,11 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 > Murdoku is created by Manuel Garand. Play online and buy the books at
 > **https://murdoku.com**. Murdoku™ is a trademark of Digivoid Studios Inc.
 >
-> **No puzzles are included in this repository.** The plugin downloads the free
-> cases from murdoku.com straight onto your own device, the same files the
-> website's player loads. All puzzles, names and clues are © their creators.
+> **No murdoku.com puzzles are included in this repository.** The plugin downloads
+> the free cases from murdoku.com straight onto your own device, the same files the
+> website's player loads. All murdoku.com puzzles, names and clues are © their creators.
+> The "Originals" pack and "Random" cases are made by this project's own generator
+> (`tools/generator/`); they are not murdoku.com cases and are not derived from them.
 
 | Portrait | Landscape | Case list |
 |---|---|---|
@@ -21,8 +23,18 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 ## Features
 
 - Every free case on murdoku.com, including each new release (the newest is starred ★).
+- **Originals** (◆): a pack of 30 cases made for this plugin (6 very easy, 9 easy, 9 medium,
+  6 hard; 5×5 to 9×9; lighthouses, manors, museums, ski lodges…). They ship with the plugin,
+  so they work offline with no download.
+- **New random case** (⚄, in the case list's ☰ menu): pick a difficulty (very easy, easy,
+  medium, or hard up to 6×6) and a size (5×5 to 9×9) and the plugin makes a fresh case on your device. Every
+  case has exactly one solution, reachable by logic alone, with step-by-step hints. Random
+  cases stay in the list until you delete them (hold the case). Bigger hard cases are too
+  slow to make on an e-reader, so they're only in the Originals pack.
+- General clues (rules that apply to everyone) are shown in the clue box and in All clues.
 - **Download all cases** for offline play. Retired cases you've downloaded stay playable.
-- Filter by difficulty (Very easy → Expert) and by solved/unsolved; sort by newest, oldest,
+- Filter by source (murdoku.com / Originals / Random), difficulty (Very easy → Expert) and
+  solved/unsolved; sort by newest, oldest,
   difficulty, name or grid size. The list header shows how many cases you've solved.
 - Finger-friendly controls built for e-ink:
   - Tap a suspect, then tap a square to place them. Tap again to remove.
@@ -63,25 +75,44 @@ The game checks automatically once everyone is placed.
 
 ```
 murdoku.koplugin/
-  main.lua             menu entry, case list, downloads
+  main.lua             menu entry, case list, downloads, random-case dialog
   murdoku_game.lua     game screen, controls, portrait/landscape layout
   murdoku_board.lua    grid & suspect-bar drawing
   murdoku_puzzle.lua   puzzle JSON parser (no KOReader deps)
   murdoku_store.lua    HTTP, caching, saved progress
   murdoku_objects.lua  object table (which items can be stood on)
-tests/test_puzzles.lua  parser check against a folder of puzzle JSON files
+  murdoku_solver.lua   clue atoms, solution counter, logical solver/grader (no KOReader deps)
+  murdoku_clues.lua    clue sentences for a known solution (no KOReader deps)
+  murdoku_gen.lua      on-device generator: layout, clues, hints, export (no KOReader deps)
+  murdoku_themes.lua   themed rooms/names/titles, generated from tools/generator/mgen/themes.py
+  cases/               the bundled Originals (site v2 JSON) and index.json
+tests/test_puzzles.lua    parser check (built-in checks + any folders of puzzle JSON files)
+tests/test_generator.lua  on-device generator check: fixed seeds, uniqueness, timings
+tools/generator/          offline generator (Python): --pack, --check, --bench
+```
+
+The offline generator writes cases in the site's v2 JSON format, so the normal parser
+loads them unchanged. `--check` re-parses each case's clue **text** and confirms it has
+exactly one solution, equal to the stored one:
+
+```sh
+python3 tools/generator/murdoku_gen.py --size 7 --difficulty medium --seed 42 --out /tmp/case.json
+python3 tools/generator/murdoku_gen.py --check murdoku.koplugin/cases/orig-*.json
+python3 tools/generator/murdoku_gen.py --pack --out-dir murdoku.koplugin/cases --playtest-dir /tmp/playtest
+python3 tools/generator/export_lua_themes.py   # after editing mgen/themes.py
 ```
 
 Run the parser test with KOReader's bundled LuaJIT against puzzles you've downloaded:
 
 ```sh
 KO=/path/to/koreader
-LUA_PATH="$KO/common/?.lua;;" LUA_CPATH="$KO/common/?.so;;" $KO/luajit tests/test_puzzles.lua /path/to/puzzle/jsons
+LUA_PATH="$KO/common/?.lua;;" LUA_CPATH="$KO/common/?.so;;" $KO/luajit tests/test_puzzles.lua murdoku.koplugin/cases /path/to/puzzle/jsons
+LUA_PATH="$KO/common/?.lua;;" LUA_CPATH="$KO/common/?.so;;" $KO/luajit tests/test_generator.lua 20
 ```
 
-Downloaded cases are stored in `koreader/murdoku/` on the device.
+Downloaded cases are stored in `koreader/murdoku/` on the device (random cases in `koreader/murdoku/random/`).
 
 ## License
 
-The plugin code is MIT licensed (see `LICENSE`). That license covers only the code
-in this repository, not Murdoku puzzles or trademarks.
+The plugin code and the Originals pack are MIT licensed (see `LICENSE`). That license
+covers only what is in this repository, not murdoku.com puzzles or Murdoku trademarks.
