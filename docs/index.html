@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Murdoku for KOReader</title>
+<meta name="description" content="An unofficial KOReader plugin for playing the free Murdoku logic-mystery cases on your Kindle or Kobo. Finger-friendly, works offline.">
+<meta property="og:title" content="Murdoku for KOReader">
+<meta property="og:description" content="Sudoku-style murder mysteries on your e-reader. Unofficial KOReader plugin.">
+<meta property="og:image" content="img/game.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4f1ea;
+    --paper-2: #ebe6db;
+    --ink: #1c1a17;
+    --ink-soft: #4a463f;
+    --rule: #cfc8b8;
+    --accent: #8c1d18;
+    --accent-ink: #fff;
+    --bezel: #24221f;
+    --bezel-edge: #3a3733;
+    --card: #fbf9f4;
+    --shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 32px rgba(40,30,10,.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #151412;
+      --paper-2: #1d1b18;
+      --ink: #ece7dc;
+      --ink-soft: #b8b1a3;
+      --rule: #3a362f;
+      --accent: #e0584f;
+      --accent-ink: #1a0b0a;
+      --bezel: #0b0a09;
+      --bezel-edge: #2c2a26;
+      --card: #1c1a17;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #151412; --paper-2: #1d1b18; --ink: #ece7dc; --ink-soft: #b8b1a3;
+    --rule: #3a362f; --accent: #e0584f; --accent-ink: #1a0b0a; --bezel: #0b0a09;
+    --bezel-edge: #2c2a26; --card: #1c1a17;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 17px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  a { color: var(--accent); }
+  img { max-width: 100%; height: auto; display: block; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+  /* nav */
+  nav { border-bottom: 1px solid var(--rule); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 16px; }
+  .brand { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 20px; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--accent); }
+  nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; font-size: 15px; }
+  nav ul a { color: var(--ink-soft); text-decoration: none; }
+  nav ul a:hover { color: var(--ink); }
+  @media (max-width: 640px) { nav ul li:not(:last-child) { display: none; } }
+
+  /* hero */
+  .hero { padding: 64px 0 40px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  .eyebrow { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 12px; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: clamp(40px, 6vw, 68px); line-height: 1.02; letter-spacing: -.025em; margin: 18px 0 18px; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede { font-size: 19px; color: var(--ink-soft); max-width: 34em; margin: 0 0 28px; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 16px; text-decoration: none; border: 1.5px solid var(--ink); color: var(--ink); background: transparent; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn:hover { transform: translateY(-1px); }
+  .btn svg { width: 18px; height: 18px; }
+  .fine { margin-top: 18px; font-size: 14px; color: var(--ink-soft); }
+
+  /* device frames */
+  .device {
+    background: var(--bezel);
+    border: 1px solid var(--bezel-edge);
+    border-radius: 28px;
+    padding: 22px 18px 44px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .device::after { /* logo strip on the chin */
+    content: ""; position: absolute; left: 50%; bottom: 18px; width: 54px; height: 4px;
+    transform: translateX(-50%); border-radius: 4px; background: var(--bezel-edge);
+  }
+  .device img { border-radius: 4px; background: #fff; filter: grayscale(1) contrast(1.02); }
+  .device.landscape { padding: 18px 44px 18px 22px; }
+  .device.landscape::after { left: auto; right: 18px; top: 50%; bottom: auto; width: 4px; height: 54px; transform: translateY(-50%); }
+  .hero .device { max-width: 420px; margin-left: auto; transform: rotate(1.2deg); }
+
+  @media (max-width: 860px) {
+    .hero .wrap { grid-template-columns: 1fr; gap: 40px; }
+    .hero .device { margin: 0 auto; max-width: 340px; transform: none; }
+  }
+
+  /* sections */
+  section { padding: 56px 0; }
+  section.alt { background: var(--paper-2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  h2 { font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: clamp(28px, 3.6vw, 40px); letter-spacing: -.02em; line-height: 1.1; margin: 0 0 10px; }
+  .sub { color: var(--ink-soft); margin: 0 0 32px; max-width: 40em; }
+
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .feature { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 22px; }
+  .feature h3 { margin: 10px 0 6px; font-size: 17px; }
+  .feature p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+  .icon { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; background: var(--paper-2); border: 1px solid var(--rule); color: var(--accent); }
+  .icon svg { width: 20px; height: 20px; }
+  @media (max-width: 860px) { .features { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
+
+  /* gallery */
+  .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; align-items: start; }
+  .gallery figure { margin: 0; }
+  .gallery figcaption { margin-top: 14px; font-size: 15px; color: var(--ink-soft); text-align: center; }
+  .gallery figcaption b { color: var(--ink); display: block; font-size: 16px; }
+  .wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; align-items: center; }
+  .wide p { color: var(--ink-soft); }
+  @media (max-width: 860px) {
+    .gallery { grid-template-columns: 1fr 1fr; }
+    .wide { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) { .gallery { grid-template-columns: 1fr; } .gallery .device { max-width: 320px; margin: 0 auto; } }
+
+  /* steps */
+  .steps { counter-reset: step; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; padding: 0; margin: 0; list-style: none; }
+  .steps li { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 22px; position: relative; }
+  .steps li::before { counter-increment: step; content: counter(step); font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: 34px; color: var(--accent); line-height: 1; display: block; margin-bottom: 10px; }
+  .steps h3 { margin: 0 0 6px; font-size: 17px; }
+  .steps p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 6px; padding: 1px 6px; word-break: break-word; }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+
+  /* rules */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .rules ul { margin: 0; padding-left: 20px; }
+  .rules li { margin: 6px 0; }
+  .rules h3 { font-size: 17px; margin: 0 0 8px; }
+  @media (max-width: 760px) { .rules { grid-template-columns: 1fr; } }
+
+  /* footer */
+  .notice { background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 10px; padding: 18px 20px; font-size: 15px; color: var(--ink-soft); }
+  .notice strong { color: var(--ink); }
+  footer { padding: 32px 0 48px; color: var(--ink-soft); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; border-top: 1px solid var(--rule); padding-top: 24px; }
+  .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--ink-soft); border-radius: 8px; padding: 4px 10px; font: inherit; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#">Murdoku <span>for KOReader</span></a>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#screens">Screens</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="https://github.com/ratherDashing/murdoku.koplugin">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Unofficial KOReader plugin</span>
+      <h1>Solve murders on your <em>e-reader.</em></h1>
+      <p class="lede">Play the free Murdoku logic-mystery cases on your Kindle or Kobo. Place every suspect on the crime scene, follow the clues, and find out who was alone with the victim. It's built for touch, so no stylus is needed, and it works offline.</p>
+      <div class="ctas">
+        <a class="btn primary" href="https://github.com/ratherDashing/murdoku.koplugin/releases/latest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download plugin
+        </a>
+        <a class="btn" href="https://github.com/ratherDashing/murdoku.koplugin">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <p class="fine">Free and open source (MIT). Puzzles by Manuel Garand at <a href="https://murdoku.com">murdoku.com</a>.</p>
+    </div>
+    <div class="device"><img src="img/game.png" alt="A Murdoku case in progress on a Kindle: a 9×9 library floor plan with three suspects placed, crossed-out squares, pencil notes and a suspect's clue shown below." width="1264" height="1680"></div>
+  </div>
+</header>
+
+<section id="features" class="alt">
+  <div class="wrap">
+    <h2>Made for e-ink and fingers</h2>
+    <p class="sub">Every control is a tap, hold or swipe, sized for a 6–7" touchscreen and drawn in crisp greys that look sharp on e-ink.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 1 1 4 0v6"/><path d="M13 9a2 2 0 1 1 4 0v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3 13.5a1.9 1.9 0 0 1 3-2.3L9 14"/></svg></div>
+        <h3>No pen needed</h3>
+        <p>Tap a suspect, tap a square. Swipe across a row to cross it out. Hold any square to see what's in it.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div>
+        <h3>Unlimited undo</h3>
+        <p>Every move is saved as you go. Undo all the way back, even after closing the case or restarting the Kindle.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></div>
+        <h3>Plays offline</h3>
+        <p>One tap downloads every free case to your device. The case list and your progress work without Wi-Fi.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18"/><path d="M6 12h12"/><path d="M10 19h4"/></svg></div>
+        <h3>Filter &amp; sort</h3>
+        <p>Browse by difficulty, from Very easy to Expert, hide solved cases, and sort by newest, size or name. The newest case is starred.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 3h8"/></svg></div>
+        <h3>Portrait or landscape</h3>
+        <p>In landscape the board moves left and the clues sit beside it. Grids from 5×5 up to 16×16 fit, including non-square ones.</p>
+      </div>
+      <div class="feature">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.3h6c0-1.1.4-1.8 1-2.3A7 7 0 0 0 12 2Z"/></svg></div>
+        <h3>Hints &amp; checking</h3>
+        <p>Reveal step-by-step hints one at a time, check your board for misplaced suspects, or reveal the solution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="wrap">
+    <h2>See it on a Kindle</h2>
+    <p class="sub">Real screenshots from KOReader at Kindle Paperwhite resolution (1264 × 1680, 300 dpi).</p>
+    <div class="gallery">
+      <figure>
+        <div class="device"><img src="img/case-list.png" alt="Case list showing case names, difficulty, grid size, a star on the latest case and a tick on a solved one." loading="lazy" width="1264" height="1680"></div>
+        <figcaption><b>The case list</b>Difficulty and size at a glance. ✓ solved, … in progress.</figcaption>
+      </figure>
+      <figure>
+        <div class="device"><img src="img/filters.png" alt="Menu with difficulty filters, solved and unsolved filters, sort options and Download all cases." loading="lazy" width="1264" height="1680"></div>
+        <figcaption><b>Filters &amp; offline</b>Filter by difficulty, sort, and download everything.</figcaption>
+      </figure>
+      <figure>
+        <div class="device"><img src="img/check.png" alt="A case after tapping Check: misplaced suspects are framed and marked with an exclamation mark." loading="lazy" width="1264" height="1680"></div>
+        <figcaption><b>Check your work</b>Misplaced suspects get flagged with <b style="display:inline">!</b></figcaption>
+      </figure>
+      <figure>
+        <div class="device"><img src="img/solved.png" alt="A solved case announcing which suspect was alone with the victim and is the murderer, with the solve time." loading="lazy" width="1264" height="1680"></div>
+        <figcaption><b>Case closed</b>Place everyone correctly and the killer is revealed.</figcaption>
+      </figure>
+      <div class="wide">
+        <div class="device landscape"><img src="img/landscape.png" alt="A 16 by 16 office case in landscape: the board on the left, suspect buttons, clue and controls on the right." loading="lazy" width="1680" height="1264"></div>
+        <div>
+          <h3 style="font-family:Fraunces,Georgia,serif;font-size:26px;margin:0 0 8px">Landscape, even at 16×16</h3>
+          <p>Rotate the Kindle from the case menu or with KOReader's own rotation gestures. The layout rebuilds instantly: board on the left, suspects, clue and controls on the right.</p>
+          <p>Wide boards, like an 11×9 dockside, use the whole screen in either orientation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="alt">
+  <div class="wrap">
+    <h2>Install in two minutes</h2>
+    <p class="sub">Works on any device running KOReader with a touchscreen: Kindle, Kobo, PocketBook, Android and more.</p>
+    <ol class="steps">
+      <li>
+        <h3>Download</h3>
+        <p>Grab <code>murdoku.koplugin.zip</code> from the <a href="https://github.com/ratherDashing/murdoku.koplugin/releases/latest">latest release</a> and unzip it.</p>
+      </li>
+      <li>
+        <h3>Copy</h3>
+        <p>Connect your e-reader over USB and copy the <code>murdoku.koplugin</code> folder into <code>koreader/plugins/</code>.</p>
+      </li>
+      <li>
+        <h3>Play</h3>
+        <p>Restart KOReader, then open <b>Tools → Murdoku</b>. Turn on Wi-Fi the first time to fetch the case list.</p>
+      </li>
+    </ol>
+    <p class="fine" style="margin-top:22px">Using <a href="https://github.com/ultimatejimmy/storefront.koplugin">Storefront</a>? Once it appears in their catalog, search for <b>murdoku</b> to install and get updates right on the device.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How to play</h2>
+    <p class="sub">Place every character on the crime scene, then reveal the killer.</p>
+    <div class="rules">
+      <div>
+        <h3>The rules</h3>
+        <ul>
+          <li>Exactly one person in each row and each column.</li>
+          <li>Nobody stands on obstacles like tables, trees or plants (shown as dark blocks). Chairs, beds and carpets are fine.</li>
+          <li>Every suspect's clue is true. "Beside" means directly next to, <i>in the same area</i>.</li>
+          <li>The murderer is the one person who was <b>alone with the victim</b>.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>The controls</h3>
+        <ul>
+          <li><b>Place</b>: tap a suspect, then a square. Tap again to remove.</li>
+          <li><b>Mark</b>: tap to cross out a square, or swipe across a whole line.</li>
+          <li><b>Note</b>: pencil in a suspect's letter as a possibility.</li>
+          <li><b>Hold</b> a square to see its area and object. Hold a suspect to read their clue.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="notice">
+      <strong>Unofficial fan project.</strong> Murdoku for KOReader is not affiliated with, endorsed by, or connected to Murdoku, Manuel Garand, or Digivoid Studios Inc. Murdoku is created by Manuel Garand. Play online and get the books at <a href="https://murdoku.com">murdoku.com</a>. No puzzles are included in or redistributed by this plugin: the free cases are downloaded straight from murdoku.com to your own device. All puzzles, names and clues are © their creators. Murdoku™ is a trademark of Digivoid Studios Inc.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Plugin code © its contributors, MIT licensed.</span>
+    <span><a href="https://github.com/ratherDashing/murdoku.koplugin">Source</a> · <a href="https://github.com/ratherDashing/murdoku.koplugin/issues">Report a bug</a> · <button class="theme-toggle" id="theme" type="button">Toggle theme</button></span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement, key = "mfk-theme";
+    try { var saved = localStorage.getItem(key); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+    document.getElementById("theme").addEventListener("click", function () {
+      var dark = root.getAttribute("data-theme") === "dark" ||
+        (!root.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      var next = dark ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem(key, next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

@@ -14,9 +14,14 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 > cases from murdoku.com straight onto your own device, the same files the
 > website's player loads. All puzzles, names and clues are © their creators.
 
-| Portrait | Landscape | Case list |
-|---|---|---|
-| ![portrait](docs/portrait.png) | ![landscape](docs/landscape.png) | ![case list](docs/case-list.png) |
+<p align="center">
+  <img src="docs/img/game.png" width="30%" alt="A case in progress in portrait">
+  <img src="docs/img/case-list.png" width="30%" alt="The case list">
+  <img src="docs/img/check.png" width="30%" alt="Checking for misplaced suspects">
+</p>
+<p align="center">
+  <img src="docs/img/landscape.png" width="62%" alt="A 16x16 case in landscape">
+</p>
 
 ## Features
 
