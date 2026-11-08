@@ -14,11 +14,15 @@ local Geom = require("ui/geometry")
 local GestureRange = require("ui/gesturerange")
 local InputContainer = require("ui/widget/container/inputcontainer")
 local RenderText = require("ui/rendertext")
+local InfoMessage = require("ui/widget/infomessage")
+local UIManager = require("ui/uimanager")
 local Puzzle = require("murdoku_puzzle")
 local Screen = Device.screen
 
 local C = Blitbuffer
-local AREA_TINTS = { C.COLOR_WHITE, C.COLOR_GRAY_E, C.COLOR_GRAY_D, C.Color8(0xF6) }
+local AREA_TINTS = { C.COLOR_WHITE, C.COLOR_GRAY_E, C.Color8(0xF6), C.COLOR_GRAY_D }
+-- Squares nobody can stand on: dark fill, white icon/label.
+local BLOCKED = C.Color8(0x58)
 
 -- Font:getFace() scales sizes by DPI; we want exact pixel sizes.
 local function face(name, px)
@@ -91,15 +95,20 @@ local Board = InputContainer:extend{
 
 function Board:init()
     local p = self.puzzle
-    self.label_size = math.floor(math.min(self.width, self.height) * 0.045)
-    self.label_size = math.max(self.label_size, Screen:scaleBySize(14))
+    -- Edge labels read "R1".."Rn" down the side and "C1".."Cn" across the top.
+    local lsz = math.floor(math.min(self.width, self.height) * 0.032)
+    lsz = math.max(lsz, Screen:scaleBySize(11))
+    self.f_label = face("NotoSans-Regular.ttf", lsz)
+    local lh = self.f_label.ftsize:getHeightAndAscender()
+    self.label_h = math.floor(lh * 1.15)
+    self.label_w = textWidth(self.f_label, "R" .. p.h) + math.floor(lsz * 0.5)
     local cell = math.floor(math.min(
-        (self.width - self.label_size) / p.w,
-        (self.height - self.label_size) / p.h))
+        (self.width - self.label_w) / p.w,
+        (self.height - self.label_h) / p.h))
     self.cell = cell
     self.grid_w = cell * p.w
     self.grid_h = cell * p.h
-    self.dimen = Geom:new{ x = 0, y = 0, w = self.grid_w + self.label_size, h = self.grid_h + self.label_size }
+    self.dimen = Geom:new{ x = 0, y = 0, w = self.grid_w + self.label_w, h = self.grid_h + self.label_h }
 
     self.thick = math.max(3, math.floor(cell / 14))
     self.thin = 1
@@ -108,7 +117,6 @@ function Board:init()
     self.f_object_small = face("NotoSans-Regular.ttf", math.max(9, cell * 0.15))
     self.f_room = face("NotoSans-Bold.ttf", math.max(9, cell * 0.17))
     self.f_note = face("NotoSans-Bold.ttf", math.max(9, cell * 0.21))
-    self.f_label = face("NotoSans-Regular.ttf", self.label_size * 0.7)
 
     self:computeTints()
     self:computeRoomLabels()
@@ -181,15 +189,40 @@ function Board:objectLabel(name, max_w)
 end
 
 function Board:cellAt(x, y)
-    local gx = x - self.dimen.x - self.label_size
-    local gy = y - self.dimen.y - self.label_size
+    local gx = x - self.dimen.x - self.label_w
+    local gy = y - self.dimen.y - self.label_h
     if gx < 0 or gy < 0 or gx >= self.grid_w or gy >= self.grid_h then return nil end
     return math.floor(gy / self.cell) + 1, math.floor(gx / self.cell) + 1
 end
 
 function Board:cellRect(r, c)
-    return self.dimen.x + self.label_size + (c - 1) * self.cell,
-           self.dimen.y + self.label_size + (r - 1) * self.cell
+    return self.dimen.x + self.label_w + (c - 1) * self.cell,
+           self.dimen.y + self.label_h + (r - 1) * self.cell
+end
+
+-- Object on a square. Tier 1: a text label (white on dark for obstacles,
+-- an outlined tag for things you can stand on).
+function Board:paintObject(bb, id, obj, blocked, cx, cy, cs, busy)
+    local pad = math.max(2, math.floor(cs * 0.08))
+    local f, label = self:objectLabel(obj.name, cs - 2 * pad)
+    if blocked then
+        drawCentered(bb, f, label, cx + cs / 2, cy + cs / 2, C.COLOR_WHITE)
+    elseif not busy then
+        local fh = self.f_object.ftsize:getHeightAndAscender()
+        local bh = math.floor(fh + pad)
+        local by = math.floor(cy + cs - pad - bh)
+        bb:paintBorder(cx + pad, by, cs - 2 * pad, bh, 2, C.COLOR_GRAY_5)
+        drawCentered(bb, f, label, cx + cs / 2, by + bh / 2, C.COLOR_GRAY_2)
+    end
+end
+
+function Board:paintTexture(bb, cell, cx, cy, cs) end
+
+-- Clue highlight: a light frame inside the square.
+function Board:paintHighlight(bb, cx, cy, cs)
+    local t = math.max(3, math.floor(cs / 14))
+    local inset = math.max(2, math.floor(cs * 0.06)) + math.floor(self.thick / 2)
+    bb:paintBorder(cx + inset, cy + inset, cs - 2 * inset, cs - 2 * inset, t, C.COLOR_GRAY_6)
 end
 
 function Board:paintTo(bb, x, y)
@@ -197,27 +230,24 @@ function Board:paintTo(bb, x, y)
     local p, g = self.puzzle, self.game
     local state = g.state
     local cs = self.cell
-    local ox, oy = x + self.label_size, y + self.label_size
+    local ox, oy = x + self.label_w, y + self.label_h
     local opts = g.options
 
     bb:paintRect(x, y, self.dimen.w, self.dimen.h, C.COLOR_WHITE)
 
     -- row / column numbers
     for c = 1, p.w do
-        drawCentered(bb, self.f_label, tostring(c), ox + (c - 0.5) * cs, y + self.label_size / 2, C.COLOR_GRAY_5)
+        drawCentered(bb, self.f_label, "C" .. c, ox + (c - 0.5) * cs, y + self.label_h * 0.45, C.COLOR_GRAY_3)
     end
     for r = 1, p.h do
-        drawCentered(bb, self.f_label, tostring(r), x + self.label_size / 2, oy + (r - 0.5) * cs, C.COLOR_GRAY_5)
+        drawCentered(bb, self.f_label, "R" .. r, x + (self.label_w - self.thick) / 2, oy + (r - 0.5) * cs, C.COLOR_GRAY_3)
     end
 
-    -- which rows/cols are taken (for auto shading)
-    local busy_r, busy_c = {}, {}
     local occupant = {}
     for i, pos in pairs(state.placed) do
-        busy_r[pos[1]] = true
-        busy_c[pos[2]] = true
         occupant[pos[1] .. "," .. pos[2]] = i
     end
+    local hl = g.highlight or {}
     local selected = g.selected
     local conflicts = g.conflicts or {}
     local wrong = g.wrong_cells or {}
@@ -230,38 +260,27 @@ function Board:paintTo(bb, x, y)
             local standable = Puzzle.standable(p, r, c)
             local who = occupant[k]
 
-            -- background
+            -- background: blocked squares are dark, everything standable is light
+            local obj = Puzzle.objectInfo(cell.obj)
+            local blocked = not cell.void and not standable
             if cell.void then
-                bb:paintRect(cx, cy, cs, cs, C.COLOR_GRAY_4)
+                bb:paintRect(cx, cy, cs, cs, C.COLOR_GRAY_2)
+            elseif blocked then
+                bb:paintRect(cx, cy, cs, cs, BLOCKED)
             else
                 bb:paintRect(cx, cy, cs, cs, AREA_TINTS[self.tint[cell.area]] or C.COLOR_WHITE)
+                self:paintTexture(bb, cell, cx, cy, cs)
+                if hl[k] then self:paintHighlight(bb, cx, cy, cs) end
             end
-
-            -- object
-            local obj = Puzzle.objectInfo(cell.obj)
-            if obj and not cell.void then
-                local pad = math.max(2, math.floor(cs * 0.08))
-                if not standable then
-                    -- obstacle: solid grey block
-                    bb:paintRect(cx + pad, cy + pad, cs - 2 * pad, cs - 2 * pad, C.COLOR_GRAY_9)
-                    if not who then
-                        local f, label = self:objectLabel(obj.name, cs - 4 * pad)
-                        drawCentered(bb, f, label, cx + cs / 2, cy + cs / 2, C.COLOR_WHITE)
-                    end
-                elseif not who then
-                    -- standable item (chair, bed...): outlined label
-                    local f, label = self:objectLabel(obj.name, cs - 4 * pad)
-                    local fh = self.f_object.ftsize:getHeightAndAscender()
-                    local bh = math.floor(fh + pad)
-                    local by = math.floor(cy + cs - pad - bh)
-                    bb:paintBorder(cx + pad, by, cs - 2 * pad, bh, 2, C.COLOR_GRAY_5)
-                    drawCentered(bb, f, label, cx + cs / 2, by + bh / 2, C.COLOR_GRAY_2)
-                end
-            end
-            if cell.carpet and not cell.void then
+            if cell.carpet and not cell.void and not blocked then
                 local inset = math.max(3, math.floor(cs * 0.05))
                 local dot = math.max(2, math.floor(cs / 30))
                 dottedRect(bb, cx + inset, cy + inset, cs - 2 * inset, cs - 2 * inset, C.COLOR_GRAY_4, dot, dot * 2)
+            end
+
+            -- object
+            if obj and not cell.void and not (who and not blocked) then
+                self:paintObject(bb, cell.obj, obj, blocked, cx, cy, cs, state.marks[k] and true)
             end
 
             -- player marks
@@ -282,20 +301,11 @@ function Board:paintTo(bb, x, y)
                     bb:paintBorder(cx + 2, cy + 2, cs - 4, cs - 4, math.max(3, self.thick), C.COLOR_BLACK)
                     drawCentered(bb, self.f_note, "!", cx + cs * 0.88, cy + cs * 0.18, C.COLOR_BLACK, true)
                 end
-            elseif not cell.void then
+            elseif not cell.void and not blocked then
                 if state.marks[k] then
                     local sz = math.floor(cs * 0.5)
                     drawCross(bb, math.floor(cx + (cs - sz) / 2), math.floor(cy + (cs - sz) / 2), sz,
                         math.max(2, math.floor(cs / 18)), C.COLOR_BLACK)
-                elseif opts.auto_shade and not state.solved and standable and (busy_r[r] or busy_c[c]) then
-                    -- dot pattern: this square can't hold anyone else
-                    local step = math.max(8, math.floor(cs / 6))
-                    local dot = math.max(2, math.floor(cs / 40))
-                    for j = math.floor(step / 2), cs - dot, step do
-                        for i = math.floor(step / 2), cs - dot, step do
-                            bb:paintRect(cx + i, cy + j, dot, dot, C.COLOR_GRAY_6)
-                        end
-                    end
                 end
                 local notes = state.notes[k]
                 if notes then
@@ -305,8 +315,13 @@ function Board:paintTo(bb, x, y)
                     end
                     if #letters > 0 then
                         local text = table.concat(letters, "")
-                        text = fitText(self.f_note, text, cs - 6)
-                        drawCentered(bb, self.f_note, text, cx + cs / 2, cy + cs * 0.42, C.COLOR_BLACK, true)
+                        text = fitText(self.f_note, text, cs - 6, true)
+                        local w = textWidth(self.f_note, text, true)
+                        local h = self.f_note.ftsize:getHeightAndAscender()
+                        local ny = cy + math.floor(cs * 0.06) + math.floor(self.thick / 2)
+                        if state.marks[k] then ny = cy + cs - h - math.floor(cs * 0.04) end
+                        bb:paintRect(math.floor(cx + (cs - w) / 2) - 2, ny, w + 4, h, C.COLOR_WHITE)
+                        drawLeft(bb, self.f_note, text, math.floor(cx + (cs - w) / 2), ny, C.COLOR_BLACK, true)
                     end
                 end
             end
@@ -400,8 +415,8 @@ end
 function Board:onSwipeBoard(_, ges)
     local r1, c1 = self:cellAt(ges.pos.x, ges.pos.y)
     if not r1 or not ges.end_pos then return true end
-    local ex = math.max(self.dimen.x + self.label_size, math.min(ges.end_pos.x, self.dimen.x + self.label_size + self.grid_w - 1))
-    local ey = math.max(self.dimen.y + self.label_size, math.min(ges.end_pos.y, self.dimen.y + self.label_size + self.grid_h - 1))
+    local ex = math.max(self.dimen.x + self.label_w, math.min(ges.end_pos.x, self.dimen.x + self.label_w + self.grid_w - 1))
+    local ey = math.max(self.dimen.y + self.label_h, math.min(ges.end_pos.y, self.dimen.y + self.label_h + self.grid_h - 1))
     local r2, c2 = self:cellAt(ex, ey)
     if not r2 then return true end
     local cells = {}
@@ -494,7 +509,82 @@ function SuspectBar:onHoldChip(_, ges)
     return true
 end
 
+--------------------------------------------------------------------------------
+-- Toolbar: a row of icon buttons (no text). Active tools are drawn inverted.
+--------------------------------------------------------------------------------
+
+local ImageWidget = require("ui/widget/imagewidget")
+local PLUGIN_DIR = debug.getinfo(1, "S").source:match("^@(.*)/[^/]*$") or "."
+
+local Toolbar = InputContainer:extend{
+    width = nil,
+    height = nil,
+    items = nil, -- { { id=, icon=, callback=, active=function() } }
+}
+
+function Toolbar:init()
+    local n = #self.items
+    self.btn_w = math.floor(self.width / n)
+    self.dimen = Geom:new{ x = 0, y = 0, w = self.width, h = self.height }
+    local isz = math.floor(self.height * 0.56)
+    self.isz = isz
+    for _, it in ipairs(self.items) do
+        it.img = ImageWidget:new{ file = PLUGIN_DIR .. "/toolbar/" .. it.icon .. ".svg",
+            width = isz, height = isz, alpha = true, is_icon = true }
+        it.img_w = ImageWidget:new{ file = PLUGIN_DIR .. "/toolbar/" .. it.icon .. "-w.svg",
+            width = isz, height = isz, alpha = true, is_icon = true }
+    end
+    local range = function() return self.dimen end
+    self.ges_events = {
+        TapTool = { GestureRange:new{ ges = "tap", range = range } },
+        HoldTool = { GestureRange:new{ ges = "hold", range = range } },
+    }
+end
+
+function Toolbar:paintTo(bb, x, y)
+    self.dimen.x, self.dimen.y = x, y
+    bb:paintRect(x, y, self.dimen.w, self.dimen.h, C.COLOR_WHITE)
+    local gap = Screen:scaleBySize(3)
+    for i, it in ipairs(self.items) do
+        local bx = x + (i - 1) * self.btn_w + gap
+        local w, h = self.btn_w - 2 * gap, self.dimen.h - 2 * gap
+        local active = it.active and it.active()
+        local enabled = not it.enabled or it.enabled()
+        if active then
+            bb:paintRect(bx, y + gap, w, h, C.COLOR_BLACK)
+        else
+            bb:paintBorder(bx, y + gap, w, h, 2, enabled and C.COLOR_BLACK or C.COLOR_GRAY_9)
+        end
+        local img = active and it.img_w or it.img
+        img:paintTo(bb, math.floor(bx + (w - self.isz) / 2), math.floor(y + gap + (h - self.isz) / 2))
+        if not enabled then
+            -- grey it out with a light veil
+            bb:lightenRect(bx + 2, y + gap + 2, w - 4, h - 4, 0.6)
+        end
+    end
+end
+
+function Toolbar:itemAt(x)
+    local i = math.floor((x - self.dimen.x) / self.btn_w) + 1
+    return self.items[i]
+end
+
+function Toolbar:onTapTool(_, ges)
+    local it = self:itemAt(ges.pos.x)
+    if it and (not it.enabled or it.enabled()) then it.callback() end
+    return true
+end
+
+function Toolbar:onHoldTool(_, ges)
+    local it = self:itemAt(ges.pos.x)
+    if it and it.label then
+        UIManager:show(InfoMessage:new{ text = it.label, timeout = 2 })
+    end
+    return true
+end
+
 return {
     Board = Board,
     SuspectBar = SuspectBar,
+    Toolbar = Toolbar,
 }

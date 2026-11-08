@@ -324,19 +324,17 @@ end
 function Puzzle.describe(p, r, c)
     local cell = Puzzle.cell(p, r, c)
     if not cell then return "" end
-    local parts = { string.format("Row %d, Column %d", r, c) }
+    local head = string.format("R%d C%d", r, c)
     if cell.void then
-        table.insert(parts, "Not part of the scene")
-        return table.concat(parts, "\n")
+        return head .. "\nNot part of the scene."
     end
-    table.insert(parts, "Area: " .. p.rooms[cell.area].name)
     local o = Puzzle.objectInfo(cell.obj)
-    if o and cell.obj ~= 0 then
-        table.insert(parts, o.name .. (o.occupiable == true and " (can stand/sit here)" or " (nobody can be here)"))
-    end
-    if cell.carpet then table.insert(parts, "Carpet") end
-    if not o and not cell.carpet then table.insert(parts, "Empty floor") end
-    return table.concat(parts, "\n")
+    local what
+    if o and cell.obj ~= 0 then what = o.name end
+    if cell.carpet then what = what and (what .. " on a carpet") or "Carpet" end
+    what = what or "Empty floor"
+    local can = Puzzle.standable(p, r, c) and "You can stand here." or "You can't stand here."
+    return string.format("%s · %s\n%s\n%s", head, p.rooms[cell.area].name, what, can)
 end
 
 --- Check a placement map { [suspect_index] = {r,c} } against the solution.

@@ -1,13 +1,16 @@
 --[[--
 The Murdoku game screen.
 
-Finger-friendly controls (no stylus needed):
-  * Tap a suspect chip to select them.
-  * Place mode: tap a square to put the selected suspect there; tap it again to remove.
-  * Mark mode: tap a square to toggle an X.
-  * Note mode: tap a square to pencil the selected suspect's letter in as a candidate.
-  * Swipe across squares (any mode) to X out a whole line at once.
-  * Hold a square to see what's there; hold a chip to read that suspect's clue.
+Finger-friendly controls (no stylus needed), matching murdoku.com:
+  * Tap a suspect to select them (tap again to deselect).
+  * With a suspect selected: tap a square to toggle a note, hold a square to
+    place them there (their row and column get X marks, and the selection
+    is cleared).
+  * With nobody selected: tap a square to toggle an X; tap a placed person
+    to select them.
+  * Toolbar: X (mark mode), eraser, undo, hint, check, menu.
+  * Swipe across squares to X out a whole line at once.
+  * Hold a square (with nobody selected) or a suspect for details.
 --]]
 
 local Blitbuffer = require("ffi/blitbuffer")
@@ -35,37 +38,9 @@ local VerticalSpan = require("ui/widget/verticalspan")
 local Puzzle = require("murdoku_puzzle")
 local Store = require("murdoku_store")
 local Widgets = require("murdoku_board")
+local Html = require("murdoku_html")
 local Screen = Device.screen
 
-local RULES = [[
-Goal
-Place every character on the crime scene, then reveal the killer. The murderer was alone with the victim (in the same area).
-
-Rules
-• Exactly one person per row and per column.
-• Nobody can stand on obstacles (tables, trees, plants…). These are shown as dark grey blocks. Chairs, beds and carpets are fine.
-• "Beside" means directly left, right, above or below AND in the same area.
-• North/south/east/west mean anywhere above/below/right/left, in any area.
-• "Alone" means nobody else in the same area; "with X" means X is in the same area.
-• "In a corner of her area" means walls (or the edge) on two sides of her square that meet.
-• Areas are outlined with thick walls and shaded in different greys.
-• Some cases also have general clues that apply to everyone. They are shown in the clue box when no suspect is selected, and at the top of "All clues".
-• Big objects (cars, beds, buses…) cover more than one square. Standing on any of its squares counts as being on it.
-
-Controls
-• Tap a suspect at the bottom to select them and read their clue.
-• Place: tap a square to put the selected suspect there. Tap them again to remove them.
-• Mark: tap a square to cross it out (X).
-• Note: tap a square to pencil in the selected suspect's letter as a possibility.
-• Swipe across a row or column of squares to cross them all out.
-• Hold a square to see the area and object in it. Hold a suspect to read their clue.
-• With nothing selected, tapping a square in Place mode crosses it out.
-• Dotted squares are in the same row or column as someone you have already placed.
-
-About
-Murdoku is created by Manuel Garand – play more and get the books at https://murdoku.com
-This plugin is an unofficial fan project and is not affiliated with or endorsed by Murdoku.
-]]
 
 local function deepcopy(t)
     if type(t) ~= "table" then return t end
@@ -94,8 +69,9 @@ function Game:init()
     local p = self.puzzle
     self.dimen = Geom:new{ x = 0, y = 0, w = Screen:getWidth(), h = Screen:getHeight() }
     self.options = {
-        auto_shade = Store.getOption("auto_shade", true),
         room_names = Store.getOption("room_names", true),
+        highlight = Store.getOption("highlight", true),
+        textures = Store.getOption("textures", false),
     }
     local saved = Store.loadState(p.id)
     self.state = {
@@ -116,7 +92,7 @@ function Game:init()
         self.state.notes = notes
     end
     self.state.history = self.state.history or {}
-    self.mode = "place"
+    self.tool = nil      -- nil | "mark" | "erase"
     self.selected = nil
     self.started_at = os.time()
     self:updateConflicts()
@@ -137,11 +113,9 @@ function Game:buildLayout()
     self.title_bar = TitleBar:new{
         width = sw,
         fullscreen = true,
-        title = p.title,
+        title = self:titleText(),
         subtitle = subtitle,
         with_bottom_line = true,
-        left_icon = "appbar.menu",
-        left_icon_tap_callback = function() self:showMenu() end,
         close_callback = function() self:onClose() end,
     }
 
@@ -152,31 +126,30 @@ function Game:buildLayout()
     local line_h = self.clue_face.ftsize:getHeightAndAscender()
     local body_h = sh - self.title_bar:getHeight() - margin
 
-    local function makeButtons(width, rows)
-        local mode_row = {
-            { id = "place", text = self:modeLabel("place"), callback = function() self:setMode("place") end },
-            { id = "mark", text = self:modeLabel("mark"), callback = function() self:setMode("mark") end },
-            { id = "note", text = self:modeLabel("note"), callback = function() self:setMode("note") end },
+    local function makeToolbar(width)
+        local function toolActive(t) return function() return self.tool == t end end
+        return Widgets.Toolbar:new{
+            width = width,
+            height = Screen:scaleBySize(46),
+            items = {
+                { id = "mark", icon = "x", label = "X: each tap crosses a square out (or back in).",
+                  active = toolActive("mark"), callback = function() self:setTool("mark") end },
+                { id = "erase", icon = "eraser", label = "Eraser: each tap clears a square.",
+                  active = toolActive("erase"), callback = function() self:setTool("erase") end },
+                { id = "undo", icon = "undo-2", label = "Undo", callback = function() self:undo() end },
+                { id = "hint", icon = "lightbulb", label = "Hint",
+                  enabled = function() return #p.hints > 0 end, callback = function() self:showHint() end },
+                { id = "check", icon = "check", label = "Check", callback = function() self:check() end },
+                { id = "menu", icon = "menu", label = "Menu", callback = function() self:showMenu() end },
+            },
         }
-        local action_row = {
-            { id = "undo", text = "Undo", callback = function() self:undo() end },
-            { id = "check", text = "Check", callback = function() self:check() end },
-        }
-        local buttons
-        if rows == 2 then
-            buttons = { mode_row, action_row }
-        else
-            buttons = { mode_row }
-            for _, b in ipairs(action_row) do table.insert(buttons[1], b) end
-        end
-        return ButtonTable:new{ width = width, buttons = buttons, zero_sep = true, show_parent = self }
     end
 
     local content
     if not self.landscape then
         -- Portrait: board on top, suspects / clue / buttons underneath.
         local w = sw - 2 * margin
-        self.button_table = makeButtons(w, 1)
+        self.button_table = makeToolbar(w)
         self.suspect_bar = Widgets.SuspectBar:new{ puzzle = p, game = self, width = w }
         self.clue_height = math.floor(line_h * 3 + Size.padding.default)
         self:makeClueBox(w)
@@ -203,7 +176,7 @@ function Game:buildLayout()
             height = board_h,
         }
         local panel_w = sw - self.board.dimen.w - 3 * margin
-        self.button_table = makeButtons(panel_w, 2)
+        self.button_table = makeToolbar(panel_w)
         self.suspect_bar = Widgets.SuspectBar:new{ puzzle = p, game = self, width = panel_w }
         self.clue_height = body_h - self.button_table:getSize().h - self.suspect_bar.dimen.h - 3 * margin
         self.clue_height = math.max(self.clue_height, math.floor(line_h * 2))
@@ -293,18 +266,20 @@ function Game:rotate()
     self:onSetRotationMode(target)
 end
 
-function Game:modeLabel(mode)
-    local names = { place = "Place", mark = "Mark ✕", note = "Note" }
-    if self.mode == mode then return "● " .. names[mode] end
-    return names[mode]
+function Game:titleText()
+    local t = (self.state.elapsed or 0) + (self.runningSpan and self:runningSpan() or 0)
+    return string.format("%s   %s", self.puzzle.title, fmtTime(t))
 end
 
-function Game:setMode(mode)
-    self.mode = mode
-    for _, m in ipairs({ "place", "mark", "note" }) do
-        local b = self.button_table:getButtonById(m)
-        b:setText(self:modeLabel(m), b.width)
-    end
+function Game:updateTitle()
+    if self.title_bar then self.title_bar:setTitle(self:titleText(), true) end
+end
+
+function Game:setTool(tool)
+    if self.tool == tool then tool = nil end
+    self.tool = tool
+    if tool then self.selected = nil end
+    self:updateHighlight()
     self:updateClue()
     self:refresh()
 end
@@ -318,14 +293,16 @@ function Game:updateClue()
             .. "  (tap here for all clues)"
     elseif self.selected then
         local s = p.suspects[self.selected]
-        text = string.format("%s · %s: %s", s.letter, s.name, s.clue)
+        text = string.format("%s: %s", s.name, s.clue)
+    elseif self.tool == "mark" then
+        text = "X mode: tap squares to cross them out. Tap the X button again to stop."
+    elseif self.tool == "erase" then
+        text = "Eraser: tap squares to clear them. Tap the eraser button again to stop."
     elseif p.general_clues and #p.general_clues > 0 then
         text = "General clue" .. (#p.general_clues > 1 and "s" or "") .. ": "
             .. table.concat(p.general_clues, " ") .. "  (tap here for all clues)"
-    elseif self.mode == "mark" then
-        text = "Mark mode: tap squares to cross them out. Tap a suspect to read their clue."
     else
-        text = "Tap a suspect, then tap a square to place them. Hold a square to see what's there. Tap here for all clues."
+        text = "Tap a suspect, then tap squares to note where they might be. Hold a square to place them. Tap here for all clues."
     end
     self.clue_box[1] = FrameContainer:new{
         width = self.clue_box.dimen.w,
@@ -399,7 +376,9 @@ function Game:afterChange()
     self.wrong_cells = nil
     self:updateConflicts()
     self:save()
+    self:updateHighlight()
     self:updateClue()
+    self:updateTitle()
     self:refresh()
     local count = 0
     for _ in pairs(self.state.placed) do count = count + 1 end
@@ -413,8 +392,9 @@ function Game:onSuspectTap(i)
         self.selected = nil
     else
         self.selected = i
-        if self.mode == "mark" then self.mode = "place"; self:setMode("place") end
+        self.tool = nil
     end
+    self:updateHighlight()
     self:updateClue()
     self:refresh()
 end
@@ -422,64 +402,120 @@ end
 function Game:onSuspectHold(i)
     local s = self.puzzle.suspects[i]
     local pos = self.state.placed[i]
-    local where = pos and string.format("\n\nPlaced at row %d, column %d.", pos[1], pos[2]) or ""
+    local where = pos and string.format("\n\nPlaced at R%d C%d.", pos[1], pos[2]) or ""
     UIManager:show(InfoMessage:new{
-        text = string.format("%s · %s%s\n\n%s%s", s.letter, s.name,
+        text = string.format("%s%s\n\n%s%s", s.name,
             s.is_victim and " (the victim)" or (s.female and " (woman)" or " (man)"), s.clue, where),
     })
+end
+
+function Game:select(i)
+    self.selected = i
+    self:updateHighlight()
+    self:updateClue()
+    self:refresh()
+end
+
+-- Clear a square: the person on it, its X and its notes (one undo step).
+function Game:erase(r, c)
+    local k = r .. "," .. c
+    local who = self:occupantAt(r, c)
+    if not who and not self.state.marks[k] and not self.state.notes[k] then return end
+    self:action(function()
+        if who then self:change("placed", who, nil) end
+        self:change("marks", k, nil)
+        self:change("notes", k, nil)
+    end)
+end
+
+function Game:toggleMark(r, c)
+    local k = r .. "," .. c
+    if self:occupantAt(r, c) or not Puzzle.standable(self.puzzle, r, c) then return end
+    self:action(function() self:change("marks", k, not self.state.marks[k] or nil) end)
+end
+
+function Game:toggleNote(i, r, c)
+    local k = r .. "," .. c
+    local notes = deepcopy(self.state.notes[k] or {})
+    notes[i] = not notes[i] or nil
+    if next(notes) == nil then notes = nil end
+    self:action(function() self:change("notes", k, notes) end)
+end
+
+-- Place suspect i on (r, c). The rest of their row and column get real X
+-- marks (undoable along with the placement). The selection is cleared.
+function Game:place(i, r, c)
+    local p = self.puzzle
+    local k = r .. "," .. c
+    local who = self:occupantAt(r, c)
+    self.selected = nil
+    if who == i then
+        -- holding your own square again takes the person back off the board
+        self:action(function() self:change("placed", i, nil) end)
+        return
+    end
+    self:action(function()
+        if who then self:change("placed", who, nil) end
+        self:change("placed", i, { r, c })
+        self:change("marks", k, nil)
+        self:change("notes", k, nil)
+        local function cross(rr, cc)
+            if (rr ~= r or cc ~= c) and Puzzle.standable(p, rr, cc) and not self:occupantAt(rr, cc) then
+                self:change("marks", rr .. "," .. cc, true)
+            end
+        end
+        for cc = 1, p.w do cross(r, cc) end
+        for rr = 1, p.h do cross(rr, c) end
+    end)
 end
 
 function Game:onCellTap(r, c)
     if self.state.solved then return end
     local p = self.puzzle
-    local cell = p.cells[r][c]
-    if cell.void then return end
-    local k = r .. "," .. c
+    if p.cells[r][c].void then return end
     local who = self:occupantAt(r, c)
 
-    if self.mode == "mark" or (self.mode == "place" and not self.selected and not who) then
-        if who or not Puzzle.standable(p, r, c) then return end
-        self:action(function() self:change("marks", k, not self.state.marks[k] or nil) end)
-        return
-    end
+    if self.tool == "erase" then return self:erase(r, c) end
+    if self.tool == "mark" then return self:toggleMark(r, c) end
 
-    if self.mode == "note" then
-        if not self.selected then
-            UIManager:show(InfoMessage:new{ text = "Select a suspect first, then tap squares to note where they might be.", timeout = 3 })
-            return
-        end
-        if who then return end
-        local notes = deepcopy(self.state.notes[k] or {})
-        notes[self.selected] = not notes[self.selected] or nil
-        if next(notes) == nil then notes = nil end
-        self:action(function() self:change("notes", k, notes) end)
-        return
-    end
-
-    -- place mode
     if who then
-        if self.selected == who then
-            self:action(function() self:change("placed", who, nil) end)
-        else
-            -- tapping someone already placed selects them (so you can move them)
-            self.selected = who
-            self:updateClue()
-            self:refresh()
-        end
+        -- tapping someone on the board selects them (hold elsewhere to move)
+        self:select(self.selected ~= who and who or nil)
         return
     end
     if not Puzzle.standable(p, r, c) then
-        local o = Puzzle.objectInfo(cell.obj)
-        UIManager:show(InfoMessage:new{
-            text = string.format("Nobody can be on the %s.", o and o.name:lower() or "obstacle"),
-            timeout = 2,
-        })
+        UIManager:show(InfoMessage:new{ text = "You can't stand here.", timeout = 1 })
         return
     end
-    self:action(function()
-        self:change("placed", self.selected, { r, c })
-        self:change("marks", k, nil)
-    end)
+    if self.selected then
+        self:toggleNote(self.selected, r, c)
+    else
+        self:toggleMark(r, c)
+    end
+end
+
+function Game:onCellHold(r, c)
+    local p = self.puzzle
+    if self.selected and not self.state.solved and not self.tool
+            and Puzzle.standable(p, r, c) then
+        return self:place(self.selected, r, c)
+    end
+    self:showCellCard(r, c)
+end
+
+function Game:showCellCard(r, c)
+    local p = self.puzzle
+    local text = Puzzle.describe(p, r, c)
+    local who = self:occupantAt(r, c)
+    if who then
+        text = text .. "\n\nPlaced here: " .. p.suspects[who].name
+    end
+    UIManager:show(InfoMessage:new{ text = text })
+end
+
+-- Tier-3 hook: cells the selected suspect's clue refers to.
+function Game:updateHighlight()
+    self.highlight = nil
 end
 
 function Game:onCellsSwipe(cells)
@@ -503,17 +539,6 @@ function Game:onCellsSwipe(cells)
     end)
 end
 
-function Game:onCellHold(r, c)
-    local p = self.puzzle
-    local text = Puzzle.describe(p, r, c)
-    local who = self:occupantAt(r, c)
-    if who then
-        local s = p.suspects[who]
-        text = text .. string.format("\n\nPlaced here: %s · %s", s.letter, s.name)
-    end
-    UIManager:show(InfoMessage:new{ text = text })
-end
-
 -- Checking --------------------------------------------------------------------
 
 function Game:check(auto)
@@ -527,9 +552,15 @@ function Game:check(auto)
         if not self.state.solved then
             self:bankTime()
             self.state.solved = true
+            -- a clean final board: no notes, no X marks
+            self.state.marks = {}
+            self.state.notes = {}
             self.selected = nil
+            self.tool = nil
+            self.highlight = nil
             self:save()
         end
+        self:updateTitle()
         self:updateClue()
         self:refresh()
         local m = p.murderer and p.suspects[p.murderer]
@@ -628,6 +659,18 @@ function Game:showHint()
     })
 end
 
+function Game:showQuickTips()
+    UIManager:show(InfoMessage:new{
+        text = "Quick tips\n\n"
+            .. "• Tap a suspect, then tap squares to note where they might be.\n"
+            .. "• Hold a square to place the selected suspect there.\n"
+            .. "• With nobody selected, a tap crosses a square out.\n"
+            .. "• Dark squares are obstacles: nobody can stand there.\n"
+            .. "• Hold a square or a suspect for details.\n\n"
+            .. "Full rules: Menu › How to play.",
+    })
+end
+
 function Game:showMenu()
     local p = self.puzzle
     local dialog
@@ -647,14 +690,17 @@ function Game:showMenu()
                 callback = function() close(); self:showHint() end } },
             { { text = "How to play", callback = function()
                     close()
-                    UIManager:show(TextViewer:new{ title = "How to play", text = RULES })
+                    Html.show("How to play", Html.HOW_TO_PLAY)
                 end },
               { text = string.format("Time: %s", fmtTime((self.state.elapsed or 0) + self:runningSpan())),
                 enabled = false } },
-            { { text = (self.options.auto_shade and "☑" or "☐") .. " Dot blocked rows/cols",
-                callback = function() toggle("auto_shade") end },
+            { { text = (self.options.highlight and "☑" or "☐") .. " Highlight clue squares",
+                callback = function() toggle("highlight"); self:updateHighlight(); self:refresh() end },
               { text = (self.options.room_names and "☑" or "☐") .. " Show area names",
                 callback = function() toggle("room_names") end } },
+            { { text = (self.options.textures and "☑" or "☐") .. " Area textures",
+                callback = function() toggle("textures") end },
+              { text = "Quick tips", callback = function() close(); self:showQuickTips() end } },
             { { text = "Clear X marks & notes", callback = function()
                     close()
                     self:action(function()
@@ -672,6 +718,7 @@ function Game:showMenu()
                                 solved = false, elapsed = 0, hints_shown = 0 }
                             self.started_at = os.time()
                             self.selected = nil
+                            self.tool = nil
                             self:afterChange()
                         end,
                     })
@@ -748,6 +795,10 @@ end
 
 function Game:onShow()
     UIManager:setDirty(self, "full")
+    if not Store.getOption("seen_quick_tips", false) then
+        Store.setOption("seen_quick_tips", true)
+        UIManager:nextTick(function() self:showQuickTips() end)
+    end
 end
 
 return Game

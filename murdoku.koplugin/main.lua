@@ -26,24 +26,25 @@ local _ = require("gettext")
 local TextViewer = require("ui/widget/textviewer")
 local Store = require("murdoku_store")
 
-local ABOUT_TEXT = _([[
-Murdoku for KOReader is an UNOFFICIAL, fan-made player.
-It is not affiliated with, endorsed by, or connected to Murdoku, Manuel Garand, or Digivoid Studios Inc.
+local ABOUT_HTML = [[
+<h2>Murdoku for KOReader</h2>
+<p>An <b>unofficial</b>, fan-made player for Murdoku logic-mystery cases. It is not affiliated with, endorsed by, or connected to Murdoku, Manuel Garand, or Digivoid Studios Inc.</p>
+<p><b>Murdoku</b> is created by Manuel Garand. Play online, get the books and find more cases at <b>murdoku.com</b>.</p>
 
-Murdoku is created by Manuel Garand.
-Play online, get the books and find more cases at:
-https://murdoku.com
+<h2>Get the book</h2>
+<p>If you enjoy these cases, the best way to say thanks is to buy the books. <a href="https://link.amazon/B04hUyE9T">Murdoku Volume 1 on Amazon</a> (tap for a QR code) has the rest of the series on the same page.</p>
+<p class="small">This is an affiliate link: buying through it supports the development of this plugin, at no extra cost to you.</p>
 
-The free cases shown here are downloaded straight from murdoku.com onto your device. No murdoku.com puzzles are included with or redistributed by this plugin. All murdoku.com puzzles, names and clues are © their creators. Murdoku™ is a trademark of Digivoid Studios Inc.
+<h2>Where the cases come from</h2>
+<p>The free cases from murdoku.com are downloaded straight onto your device. No murdoku.com puzzles are included with or redistributed by this plugin. All murdoku.com puzzles, names and clues are © their creators. Murdoku™ is a trademark of Digivoid Studios Inc.</p>
+<p><b>Originals</b> (marked ◆) are cases written for this plugin by its own generator and ship with it. <b>Random</b> cases (marked ⚄) are generated on your device. Neither comes from murdoku.com.</p>
 
-"Originals" (marked ◆) are cases written for this plugin by its own generator and ship with it. "Random" cases (marked ⚄) are generated on your device. Neither comes from murdoku.com.
+<h2>List symbols</h2>
+<p>★ latest case &#160; ✓ solved &#160; … in progress &#160; ◌ solution revealed &#160; ⇩ not downloaded yet &#160; ◆ Original (bundled) &#160; ⚄ Random (made on this device; hold to delete)</p>
 
-If you enjoy the cases, please support the creator by buying the Murdoku books.
-
-List symbols:
-★ latest case   ✓ solved   … in progress   ◌ solution revealed   ⇩ not downloaded yet
-◆ Original (bundled)   ⚄ Random (made on this device; hold to delete)
-]])
+<h2>Credits</h2>
+<p class="small">Object icons by Delapouite, Lorc, Skoll, Caro Asercion, John Redman, Pierre Leducq, Faithtoken and HeavenlyDog from game-icons.net (CC BY 3.0, recoloured); Fluent Emoji High Contrast © Microsoft Corporation (MIT); Material Design Icons © Pictogrammers (Apache 2.0); Temaki by Bryan Housel (CC0); toolbar icons from Lucide (ISC). Suspect portraits are built from Open Peeps by Pablo Stanley (CC0). Full details are in ATTRIBUTION.md in the plugin folder.</p>
+]]
 local Puzzle = require("murdoku_puzzle")
 
 local Murdoku = WidgetContainer:extend{
@@ -383,10 +384,7 @@ function Murdoku:showListMenu()
             end } },
             { { text = _("About"), callback = function()
                 UIManager:close(dialog)
-                UIManager:show(TextViewer:new{
-                    title = _("About Murdoku for KOReader"),
-                    text = ABOUT_TEXT,
-                })
+                require("murdoku_html").show(_("About Murdoku for KOReader"), ABOUT_HTML)
             end } },
         }) do
         table.insert(buttons, row)

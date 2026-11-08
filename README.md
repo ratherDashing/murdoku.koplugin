@@ -36,15 +36,20 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 - Filter by source (murdoku.com / Originals / Random), difficulty (Very easy → Expert) and
   solved/unsolved; sort by newest, oldest,
   difficulty, name or grid size. The list header shows how many cases you've solved.
-- Finger-friendly controls built for e-ink:
-  - Tap a suspect, then tap a square to place them. Tap again to remove.
-  - **Mark** mode: tap to X out squares, or **swipe** across a row or column to X out a whole line.
-  - **Note** mode: pencil in a suspect's letter as a possibility.
-  - **Hold** a square to see its area and object. Hold a suspect to read their clue.
+- Finger-friendly controls built for e-ink, matching murdoku.com:
+  - Tap a suspect to select them. Then **tap** a square to pencil in a note, or **hold** a
+    square to place them. Placing someone crosses out the rest of their row and column
+    with real X marks (undoable), and clears the selection.
+  - With nobody selected, tap a square to X it out, or **swipe** across a row or column to
+    X out a whole line.
+  - Icon toolbar: X (mark mode), eraser, undo, hint, check, menu.
+  - **Hold** a square to see what's there ("You can stand here." / "You can't stand here.").
+    Hold a suspect to read their clue.
   - Unlimited undo, saved with the case so it still works after closing and reopening.
   - Check (flags misplaced suspects with **!**), step-by-step hints, reveal solution.
-- Rows and columns already used by a placed suspect are dotted automatically (can be turned off).
-- Obstacles (tables, trees, plants…) are dark blocks. Chairs, beds and other standable items are outlined. Carpets are dotted.
+  - A live timer in the title bar. It pauses while the device sleeps.
+- Rows and columns are labelled R1… and C1…. Squares nobody can stand on are dark; everything
+  you can stand on (floor, carpets, chairs, beds, boats…) is light.
 - Portrait and landscape layouts, including grids that aren't square (e.g. 11×9), up to 16×16.
 - Progress is saved after every move: leave a case half-solved and pick it up later (marked … in the list).
 
@@ -69,7 +74,8 @@ Place every character on the crime scene so that:
 - every suspect's clue is true ("beside" = directly left/right/above/below **and in the same area").
 
 The murderer is the one person who was **alone with the victim** in the same area.
-The game checks automatically once everyone is placed.
+The game checks automatically once everyone is placed. The full rules, with examples,
+are in the game's menu under **How to play**.
 
 ## Development
 
@@ -111,6 +117,23 @@ LUA_PATH="$KO/common/?.lua;;" LUA_CPATH="$KO/common/?.so;;" $KO/luajit tests/tes
 ```
 
 Downloaded cases are stored in `koreader/murdoku/` on the device (random cases in `koreader/murdoku/random/`).
+
+## Support the plugin
+
+If you enjoy the cases, please buy the books:
+[Murdoku Volume 1 on Amazon](https://link.amazon/B04hUyE9T). This is an **affiliate link**:
+buying through it supports this plugin at no extra cost to you. The rest of the series is
+on the same Amazon page.
+
+## Credits
+
+Object icons made by Delapouite, Lorc, Skoll, Caro Asercion, John Redman, Pierre Leducq,
+Faithtoken and HeavenlyDog, from https://game-icons.net, licensed under CC BY 3.0
+(https://creativecommons.org/licenses/by/3.0/). Changes: recoloured to black and white
+and converted to standalone SVG. Also Fluent Emoji High Contrast © Microsoft Corporation (MIT),
+Material Design Icons © Pictogrammers (Apache 2.0), Temaki by Bryan Housel (CC0), and
+toolbar icons from Lucide (ISC). Suspect portraits are built from Open Peeps by Pablo
+Stanley (CC0). See `murdoku.koplugin/ATTRIBUTION.md` for the full list and licence texts.
 
 ## License
 

@@ -143,6 +143,7 @@ return {
     [138] = { name = "Oil Slick", occupiable = true },
     [139] = { name = "Paint Spill", occupiable = true },
     [140] = { name = "Path", occupiable = true },
+    [142] = { name = "Mud", occupiable = true },
     [145] = { name = "Drum Set", occupiable = false },
     [146] = { name = "Pyro Fire", occupiable = false },
     [147] = { name = "Portable Toilet", occupiable = true },
