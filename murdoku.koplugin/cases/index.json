@@ -1,0 +1,245 @@
+{
+ "creator": "Murdoku for KOReader",
+ "cases": [
+  {
+   "id": "orig-the-last-campfire",
+   "title": "The Last Campfire",
+   "difficulty": "very-easy",
+   "gridSize": "5x5",
+   "theme": "campsite",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-smugglers-cove",
+   "title": "The Smugglers' Cove",
+   "difficulty": "very-easy",
+   "gridSize": "6x6",
+   "theme": "harbour",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-detention",
+   "title": "Detention",
+   "difficulty": "very-easy",
+   "gridSize": "5x5",
+   "theme": "school",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-haunted-churchyard",
+   "title": "The Haunted Churchyard",
+   "difficulty": "very-easy",
+   "gridSize": "6x6",
+   "theme": "churchyard",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-checkout-time",
+   "title": "Checkout Time",
+   "difficulty": "very-easy",
+   "gridSize": "5x5",
+   "theme": "hotel",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-snowed-in",
+   "title": "Snowed In",
+   "difficulty": "very-easy",
+   "gridSize": "6x6",
+   "theme": "ski lodge",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-late-shift-at-the-diner",
+   "title": "Late Shift at the Diner",
+   "difficulty": "easy",
+   "gridSize": "6x6",
+   "theme": "diner",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-haunted-lighthouse",
+   "title": "The Haunted Lighthouse",
+   "difficulty": "easy",
+   "gridSize": "7x7",
+   "theme": "lighthouse",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-last-train",
+   "title": "The Last Train",
+   "difficulty": "easy",
+   "gridSize": "6x6",
+   "theme": "station",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-trouble-on-the-farm",
+   "title": "Trouble on the Farm",
+   "difficulty": "easy",
+   "gridSize": "7x7",
+   "theme": "farm",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-midnight-at-the-manor",
+   "title": "Midnight at the Manor",
+   "difficulty": "easy",
+   "gridSize": "6x6",
+   "theme": "manor",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-curtain-call",
+   "title": "Curtain Call",
+   "difficulty": "easy",
+   "gridSize": "7x7",
+   "theme": "theatre",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-garden-party",
+   "title": "The Garden Party",
+   "difficulty": "easy",
+   "gridSize": "6x6",
+   "theme": "garden party",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-midnight-museum",
+   "title": "The Midnight Museum",
+   "difficulty": "easy",
+   "gridSize": "7x7",
+   "theme": "museum",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-lost-in-the-pines",
+   "title": "Lost in the Pines",
+   "difficulty": "easy",
+   "gridSize": "6x6",
+   "theme": "campsite",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-low-tide",
+   "title": "Low Tide",
+   "difficulty": "medium",
+   "gridSize": "7x7",
+   "theme": "harbour",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-science-fair",
+   "title": "The Science Fair",
+   "difficulty": "medium",
+   "gridSize": "8x8",
+   "theme": "school",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-midnight-mass",
+   "title": "Midnight Mass",
+   "difficulty": "medium",
+   "gridSize": "9x9",
+   "theme": "churchyard",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-do-not-disturb",
+   "title": "Do Not Disturb",
+   "difficulty": "medium",
+   "gridSize": "7x7",
+   "theme": "hotel",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-avalanche-warning",
+   "title": "Avalanche Warning",
+   "difficulty": "medium",
+   "gridSize": "8x8",
+   "theme": "ski lodge",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-cold-coffee",
+   "title": "Cold Coffee",
+   "difficulty": "medium",
+   "gridSize": "9x9",
+   "theme": "diner",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-storm-at-the-lighthouse",
+   "title": "Storm at the Lighthouse",
+   "difficulty": "medium",
+   "gridSize": "7x7",
+   "theme": "lighthouse",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-platform-nine",
+   "title": "Platform Nine",
+   "difficulty": "medium",
+   "gridSize": "8x8",
+   "theme": "station",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-harvest-moon",
+   "title": "Harvest Moon",
+   "difficulty": "medium",
+   "gridSize": "9x9",
+   "theme": "farm",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-ballroom-affair",
+   "title": "The Ballroom Affair",
+   "difficulty": "hard",
+   "gridSize": "8x8",
+   "theme": "manor",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-death-of-a-diva",
+   "title": "Death of a Diva",
+   "difficulty": "hard",
+   "gridSize": "9x9",
+   "theme": "theatre",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-poison-in-the-punch",
+   "title": "Poison in the Punch",
+   "difficulty": "hard",
+   "gridSize": "8x8",
+   "theme": "garden party",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-a-missing-masterpiece",
+   "title": "A Missing Masterpiece",
+   "difficulty": "hard",
+   "gridSize": "9x9",
+   "theme": "museum",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-ghost-stories",
+   "title": "Ghost Stories",
+   "difficulty": "hard",
+   "gridSize": "8x8",
+   "theme": "campsite",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+   "id": "orig-the-captains-chest",
+   "title": "The Captain's Chest",
+   "difficulty": "hard",
+   "gridSize": "9x9",
+   "theme": "harbour",
+   "releaseAt": "2026-01-01T00:00:00.000Z"
+  }
+ ]
+}
