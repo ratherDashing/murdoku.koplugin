@@ -525,9 +525,8 @@ function Game:check(auto)
     local res = Puzzle.check(p, self.state.placed)
     if res.solved then
         if not self.state.solved then
+            self:bankTime()
             self.state.solved = true
-            self.state.elapsed = (self.state.elapsed or 0) + (os.time() - self.started_at)
-            self.started_at = os.time()
             self.selected = nil
             self:save()
         end
@@ -650,8 +649,7 @@ function Game:showMenu()
                     close()
                     UIManager:show(TextViewer:new{ title = "How to play", text = RULES })
                 end },
-              { text = string.format("Time: %s", fmtTime((self.state.elapsed or 0)
-                    + (self.state.solved and 0 or (os.time() - self.started_at)))),
+              { text = string.format("Time: %s", fmtTime((self.state.elapsed or 0) + self:runningSpan())),
                 enabled = false } },
             { { text = (self.options.auto_shade and "☑" or "☐") .. " Dot blocked rows/cols",
                 callback = function() toggle("auto_shade") end },
@@ -700,11 +698,25 @@ end
 
 -- Lifecycle -------------------------------------------------------------------
 
+-- The clock only counts time spent playing: each span between actions is
+-- capped (so a forgotten session doesn't count), and sleep pauses it.
+local MAX_SPAN = 600
+
+function Game:runningSpan()
+    if self.state.solved or self.paused then return 0 end
+    local d = os.time() - (self.started_at or os.time())
+    if d < 0 then return 0 end
+    return math.min(d, MAX_SPAN)
+end
+
+function Game:bankTime()
+    self.state.elapsed = (self.state.elapsed or 0) + self:runningSpan()
+    self.started_at = os.time()
+end
+
 function Game:save()
+    self:bankTime()
     local s = deepcopy(self.state)
-    if not s.solved then
-        s.elapsed = (s.elapsed or 0) + (os.time() - self.started_at)
-    end
     -- string keys survive serialisation reliably
     local placed = {}
     for i, pos in pairs(s.placed) do placed[tostring(i)] = pos end
@@ -718,6 +730,16 @@ function Game:onClose()
     UIManager:close(self, "full")
     if self.on_close then self.on_close() end
     return true
+end
+
+function Game:onSuspend()
+    self:save()
+    self.paused = true
+end
+
+function Game:onResume()
+    self.paused = false
+    self.started_at = os.time()
 end
 
 function Game:onCloseWidget()
