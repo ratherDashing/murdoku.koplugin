@@ -22,16 +22,19 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 
 - Every free case on murdoku.com, including each new release (the newest is starred ★).
 - **Download all cases** for offline play. Retired cases you've downloaded stay playable.
+- Filter by difficulty (Very easy → Expert) and by solved/unsolved; sort by newest, oldest,
+  difficulty, name or grid size. The list header shows how many cases you've solved.
 - Finger-friendly controls built for e-ink:
   - Tap a suspect, then tap a square to place them. Tap again to remove.
   - **Mark** mode: tap to X out squares, or **swipe** across a row or column to X out a whole line.
   - **Note** mode: pencil in a suspect's letter as a possibility.
   - **Hold** a square to see its area and object. Hold a suspect to read their clue.
-  - Undo, Check (flags misplaced suspects with **!**), step-by-step hints, reveal solution.
+  - Unlimited undo, saved with the case so it still works after closing and reopening.
+  - Check (flags misplaced suspects with **!**), step-by-step hints, reveal solution.
 - Rows and columns already used by a placed suspect are dotted automatically (can be turned off).
 - Obstacles (tables, trees, plants…) are dark blocks. Chairs, beds and other standable items are outlined. Carpets are dotted.
 - Portrait and landscape layouts, including grids that aren't square (e.g. 11×9), up to 16×16.
-- Progress, time and hints are saved per case.
+- Progress is saved after every move: leave a case half-solved and pick it up later (marked … in the list).
 
 ## Install
 

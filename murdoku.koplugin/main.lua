@@ -86,23 +86,102 @@ local function statusFor(id)
     local st = Store.loadState(id)
     if type(st) ~= "table" then return nil end
     if st.solved then return st.revealed and "revealed" or "solved" end
-    if st.placed and next(st.placed) then return "started" end
+    for _i, field in ipairs({ "placed", "marks", "notes" }) do
+        if type(st[field]) == "table" and next(st[field]) then return "started" end
+    end
     return nil
+end
+
+local DIFFICULTIES = { "very-easy", "easy", "medium", "hard", "expert" }
+local SORTS = {
+    { id = "newest", label = _("Newest") },
+    { id = "oldest", label = _("Oldest") },
+    { id = "difficulty", label = _("Difficulty") },
+    { id = "name", label = _("Name") },
+    { id = "size", label = _("Size") },
+}
+local STATUS_FILTERS = {
+    { id = "all", label = _("All") },
+    { id = "unsolved", label = _("Unsolved") },
+    { id = "solved", label = _("Solved") },
+}
+
+local function gridCells(e)
+    local w, h = (e.size or ""):match("(%d+)x(%d+)")
+    return (tonumber(w) or 0) * (tonumber(h) or 0)
+end
+
+-- Sort keys per mode; ties fall back to newest first, then id.
+local SORT_KEYS = {
+    newest = function(e) return { -e.release } end,
+    oldest = function(e) return { e.release } end,
+    difficulty = function(e) return { e.difficulty_rank, -e.release } end,
+    name = function(e) return { e.title:lower() } end,
+    size = function(e) return { gridCells(e), e.difficulty_rank, -e.release } end,
+}
+
+local function sortList(list, how)
+    local keyfn = SORT_KEYS[how] or SORT_KEYS.newest
+    local sorted = {}
+    for i, e in ipairs(list) do
+        sorted[i] = { e = e, k = keyfn(e) }
+    end
+    table.sort(sorted, function(a, b)
+        for i = 1, #a.k do
+            if a.k[i] ~= b.k[i] then return a.k[i] < b.k[i] end
+        end
+        return a.e.id < b.e.id
+    end)
+    for i, item in ipairs(sorted) do sorted[i] = item.e end
+    return sorted
+end
+
+function Murdoku:filterState()
+    return {
+        difficulty = Store.getOption("filter_difficulty", "all"),
+        status = Store.getOption("filter_status", "all"),
+        sort = Store.getOption("sort", "newest"),
+    }
+end
+
+--- Subtitle like the website's "42 puzzles · 0 completed".
+function Murdoku:subtitle()
+    local list = self.catalog or {}
+    local solved = 0
+    for __, e in ipairs(list) do
+        if statusFor(e.id) == "solved" then solved = solved + 1 end
+    end
+    local f = self:filterState()
+    local parts = { string.format(_("%d cases · %d solved"), #list, solved) }
+    if f.difficulty ~= "all" then table.insert(parts, Store.DIFFICULTY_LABEL[f.difficulty]) end
+    if f.status ~= "all" then
+        for __, sf in ipairs(STATUS_FILTERS) do if sf.id == f.status then table.insert(parts, sf.label) end end
+    end
+    for __, so in ipairs(SORTS) do
+        if so.id == f.sort then table.insert(parts, _("by ") .. so.label:lower()) end
+    end
+    return table.concat(parts, " · ")
 end
 
 function Murdoku:buildItems()
     local items = {}
     local show_retired = Store.getOption("show_retired", false)
+    local f = self:filterState()
     local list = self.catalog or {}
     local seen = {}
     -- The site publishes a new case every week or so; flag the newest one.
     local latest
-    for _, e in ipairs(list) do
+    for __, e in ipairs(list) do
+        seen[e.id] = true
         if not e.retired and (not latest or e.release > latest.release) then latest = e end
     end
-    for _, e in ipairs(list) do
-        seen[e.id] = true
+    for __, e in ipairs(sortList(list, f.sort)) do
         local status = statusFor(e.id)
+        local keep = (f.difficulty == "all" or e.difficulty == f.difficulty)
+            and (f.status == "all"
+                or (f.status == "solved" and status == "solved")
+                or (f.status == "unsolved" and status ~= "solved" and status ~= "revealed"))
+        if keep then
         local mark = status == "solved" and "✓ " or (status == "revealed" and "◌ " or (status == "started" and "… " or ""))
         local right = {}
         if e.difficulty then table.insert(right, Store.DIFFICULTY_LABEL[e.difficulty]) end
@@ -115,10 +194,11 @@ function Murdoku:buildItems()
             mandatory = table.concat(right, " · "),
             callback = function() self:openCase(e) end,
         })
+        end
     end
     -- downloaded puzzles no longer in the catalogue are still playable
-    for _, id in ipairs(Store.downloadedIds()) do
-        if not seen[id] and (show_retired or not self.catalog) then
+    for __, id in ipairs(Store.downloadedIds()) do
+        if not seen[id] and (show_retired or not self.catalog) and f.difficulty == "all" then
             local status = statusFor(id)
             table.insert(items, {
                 text = (status == "solved" and "✓ " or "") .. id:gsub("^puzzle%-", ""):gsub("%-", " "),
@@ -127,7 +207,16 @@ function Murdoku:buildItems()
             })
         end
     end
-    if #items == 0 then
+    if #items == 0 and #list > 0 then
+        table.insert(items, {
+            text = _("No cases match this filter – tap to show all"),
+            callback = function()
+                Store.setOption("filter_difficulty", "all")
+                Store.setOption("filter_status", "all")
+                self:updateMenu()
+            end,
+        })
+    elseif #items == 0 then
         table.insert(items, {
             text = _("No cases yet – tap to download the case list"),
             callback = function() self:refreshCatalog() end,
@@ -141,6 +230,7 @@ function Murdoku:openCaseList()
     self.catalog = Store.cachedCatalog(show_retired)
     self.menu = Menu:new{
         title = _("Murdoku cases"),
+        subtitle = self:subtitle(),
         item_table = self:buildItems(),
         is_borderless = true,
         is_popout = false,
@@ -153,6 +243,11 @@ function Murdoku:openCaseList()
             self.menu = nil
         end,
     }
+    -- Keep the list open behind a case (Menu closes itself on select by default).
+    self.menu.onMenuSelect = function(_menu, item)
+        if item.callback then item.callback() end
+        return true
+    end
     UIManager:show(self.menu)
     -- Fetch a fresh list if we've never got one, or quietly if already online.
     if not self.catalog then
@@ -170,7 +265,7 @@ end
 
 function Murdoku:updateMenu()
     if self.menu then
-        self.menu:switchItemTable(nil, self:buildItems(), -1)
+        self.menu:switchItemTable(nil, self:buildItems(), -1, nil, self:subtitle())
     end
 end
 
@@ -193,9 +288,41 @@ end
 function Murdoku:showListMenu()
     local dialog
     local show_retired = Store.getOption("show_retired", false)
-    dialog = ButtonDialog:new{
-        title = _("Murdoku"),
-        buttons = {
+    local f = self:filterState()
+    local function choice(label, selected, option, value)
+        return {
+            text = (selected and "● " or "") .. label,
+            callback = function()
+                UIManager:close(dialog)
+                Store.setOption(option, value)
+                self:updateMenu()
+                self:showListMenu() -- stay open so several choices can be made
+            end,
+        }
+    end
+    local diff_rows = { {}, {} }
+    table.insert(diff_rows[1], choice(_("All"), f.difficulty == "all", "filter_difficulty", "all"))
+    for i, d in ipairs(DIFFICULTIES) do
+        local row = i <= 2 and 1 or 2
+        table.insert(diff_rows[row], choice(Store.DIFFICULTY_LABEL[d], f.difficulty == d, "filter_difficulty", d))
+    end
+    local status_row = {}
+    for __, sf in ipairs(STATUS_FILTERS) do
+        table.insert(status_row, choice(sf.label, f.status == sf.id, "filter_status", sf.id))
+    end
+    local sort_rows = { {}, {} }
+    for i, so in ipairs(SORTS) do
+        table.insert(sort_rows[i <= 3 and 1 or 2], choice(so.label, f.sort == so.id, "sort", so.id))
+    end
+    local buttons = {
+        { { text = _("Difficulty"), enabled = false } },
+        diff_rows[1], diff_rows[2],
+        { { text = _("Show"), enabled = false } },
+        status_row,
+        { { text = _("Sort by"), enabled = false } },
+        sort_rows[1], sort_rows[2],
+    }
+    for __, row in ipairs({
             { { text = _("Refresh case list"), callback = function()
                 UIManager:close(dialog)
                 self:refreshCatalog()
@@ -217,7 +344,12 @@ function Murdoku:showListMenu()
                     text = ABOUT_TEXT,
                 })
             end } },
-        },
+        }) do
+        table.insert(buttons, row)
+    end
+    dialog = ButtonDialog:new{
+        title = _("Murdoku"),
+        buttons = buttons,
     }
     UIManager:show(dialog)
 end
@@ -231,7 +363,7 @@ function Murdoku:downloadAll()
             local list = Store.fetchCatalog(Store.getOption("show_retired", false)) or self.catalog or {}
             self.catalog = list
             local todo = {}
-            for _, e in ipairs(list) do
+            for __, e in ipairs(list) do
                 if not Store.isDownloaded(e.id) then table.insert(todo, e) end
             end
             if #todo == 0 then

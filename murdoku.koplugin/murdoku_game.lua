@@ -95,7 +95,7 @@ function Game:init()
     }
     local saved = Store.loadState(p.id)
     self.state = {
-        placed = {}, marks = {}, notes = {},
+        placed = {}, marks = {}, notes = {}, history = {},
         solved = false, elapsed = 0, hints_shown = 0,
     }
     if type(saved) == "table" then
@@ -111,7 +111,7 @@ function Game:init()
         end
         self.state.notes = notes
     end
-    self.history = {}
+    self.state.history = self.state.history or {}
     self.mode = "place"
     self.selected = nil
     self.started_at = os.time()
@@ -342,26 +342,40 @@ end
 
 -- State changes ---------------------------------------------------------------
 
-function Game:snapshot()
-    table.insert(self.history, {
-        placed = deepcopy(self.state.placed),
-        marks = deepcopy(self.state.marks),
-        notes = deepcopy(self.state.notes),
-    })
-    if #self.history > 200 then table.remove(self.history, 1) end
+-- Undo history: unlimited, and saved with the case. Each entry is the list of
+-- {field, key, old_value} changes one action made, so it stays small.
+function Game:change(field, key, value)
+    local t = self.state[field]
+    local old = t[key]
+    if old == value then return end
+    table.insert(self.tx, { field, key, deepcopy(old) })
+    t[key] = value
+end
+
+-- Run fn as a single undoable action.
+function Game:action(fn)
+    self.tx = {}
+    fn()
+    if #self.tx > 0 then table.insert(self.state.history, self.tx) end
+    self.tx = nil
+    self:afterChange()
 end
 
 function Game:undo()
-    local h = table.remove(self.history)
+    if self.state.solved then
+        UIManager:show(InfoMessage:new{ text = "This case is closed. Use Restart case to play it again.", timeout = 2 })
+        return
+    end
+    local h = table.remove(self.state.history)
     if not h then
         UIManager:show(InfoMessage:new{ text = "Nothing to undo.", timeout = 1 })
         return
     end
-    self.state.placed, self.state.marks, self.state.notes = h.placed, h.marks, h.notes
-    self.wrong_cells = nil
-    self:updateConflicts()
-    self:save()
-    self:refresh()
+    for i = #h, 1, -1 do
+        local field, key, old = h[i][1], h[i][2], h[i][3]
+        self.state[field][key] = old
+    end
+    self:afterChange()
 end
 
 function Game:updateConflicts()
@@ -417,10 +431,8 @@ function Game:onCellTap(r, c)
     local who = self:occupantAt(r, c)
 
     if self.mode == "mark" or (self.mode == "place" and not self.selected and not who) then
-        if who then return end
-        self:snapshot()
-        self.state.marks[k] = not self.state.marks[k] or nil
-        self:afterChange()
+        if who or not Puzzle.standable(p, r, c) then return end
+        self:action(function() self:change("marks", k, not self.state.marks[k] or nil) end)
         return
     end
 
@@ -430,21 +442,17 @@ function Game:onCellTap(r, c)
             return
         end
         if who then return end
-        self:snapshot()
-        local notes = self.state.notes[k] or {}
+        local notes = deepcopy(self.state.notes[k] or {})
         notes[self.selected] = not notes[self.selected] or nil
         if next(notes) == nil then notes = nil end
-        self.state.notes[k] = notes
-        self:afterChange()
+        self:action(function() self:change("notes", k, notes) end)
         return
     end
 
     -- place mode
     if who then
         if self.selected == who then
-            self:snapshot()
-            self.state.placed[who] = nil
-            self:afterChange()
+            self:action(function() self:change("placed", who, nil) end)
         else
             -- tapping someone already placed selects them (so you can move them)
             self.selected = who
@@ -461,10 +469,10 @@ function Game:onCellTap(r, c)
         })
         return
     end
-    self:snapshot()
-    self.state.placed[self.selected] = { r, c }
-    self.state.marks[k] = nil
-    self:afterChange()
+    self:action(function()
+        self:change("placed", self.selected, { r, c })
+        self:change("marks", k, nil)
+    end)
 end
 
 function Game:onCellsSwipe(cells)
@@ -474,18 +482,18 @@ function Game:onCellsSwipe(cells)
     local all_marked = true
     for _, rc in ipairs(cells) do
         local k = rc[1] .. "," .. rc[2]
-        if not p.cells[rc[1]][rc[2]].void and not self:occupantAt(rc[1], rc[2]) and not self.state.marks[k] then
+        if Puzzle.standable(p, rc[1], rc[2]) and not self:occupantAt(rc[1], rc[2]) and not self.state.marks[k] then
             all_marked = false
         end
     end
-    self:snapshot()
-    for _, rc in ipairs(cells) do
-        local k = rc[1] .. "," .. rc[2]
-        if not p.cells[rc[1]][rc[2]].void and not self:occupantAt(rc[1], rc[2]) then
-            self.state.marks[k] = (not all_marked) or nil
+    self:action(function()
+        for _, rc in ipairs(cells) do
+            local k = rc[1] .. "," .. rc[2]
+            if Puzzle.standable(p, rc[1], rc[2]) and not self:occupantAt(rc[1], rc[2]) then
+                self:change("marks", k, (not all_marked) or nil)
+            end
         end
-    end
-    self:afterChange()
+    end)
 end
 
 function Game:onCellHold(r, c)
@@ -639,9 +647,10 @@ function Game:showMenu()
                 callback = function() toggle("room_names") end } },
             { { text = "Clear X marks & notes", callback = function()
                     close()
-                    self:snapshot()
-                    self.state.marks, self.state.notes = {}, {}
-                    self:afterChange()
+                    self:action(function()
+                        for k in pairs(deepcopy(self.state.marks)) do self:change("marks", k, nil) end
+                        for k in pairs(deepcopy(self.state.notes)) do self:change("notes", k, nil) end
+                    end)
                 end },
               { text = "Restart case", callback = function()
                     close()
@@ -649,9 +658,8 @@ function Game:showMenu()
                         text = "Clear the whole board and start this case again?",
                         ok_text = "Restart",
                         ok_callback = function()
-                            self:snapshot()
-                            self.state = { placed = {}, marks = {}, notes = {}, solved = false,
-                                elapsed = 0, hints_shown = 0 }
+                            self.state = { placed = {}, marks = {}, notes = {}, history = {},
+                                solved = false, elapsed = 0, hints_shown = 0 }
                             self.started_at = os.time()
                             self.selected = nil
                             self:afterChange()
@@ -664,10 +672,10 @@ function Game:showMenu()
                         text = "Show the full solution? This fills in the board.",
                         ok_text = "Reveal",
                         ok_callback = function()
-                            self:snapshot()
-                            for i, s in ipairs(p.suspects) do self.state.placed[i] = { s.sol[1], s.sol[2] } end
                             self.state.revealed = true
-                            self:afterChange()
+                            self:action(function()
+                                for i, s in ipairs(p.suspects) do self:change("placed", i, { s.sol[1], s.sol[2] }) end
+                            end)
                         end,
                     })
                 end },
