@@ -301,6 +301,27 @@ function Puzzle.parse(data, id)
     end
     p.hints = hints
 
+    -- Show each person by the first letter of their name when those letters
+    -- are all different (the site numbers them A, B, C... which nearly always
+    -- matches, but not quite always). Hints that say "(F)" follow along.
+    local firsts, remap, clash = {}, {}, false
+    for _, sp in ipairs(p.suspects) do
+        local fl = sp.name:sub(1, 1):upper()
+        if not fl:match("%u") or firsts[fl] then clash = true break end
+        firsts[fl] = true
+    end
+    if not clash then
+        for _, sp in ipairs(p.suspects) do
+            local fl = sp.name:sub(1, 1):upper()
+            if fl ~= sp.letter then remap[sp.letter] = fl; sp.letter = fl end
+        end
+        if next(remap) then
+            for n, h in ipairs(p.hints) do
+                p.hints[n] = h:gsub("%((%u)%)", function(l) return "(" .. (remap[l] or l) .. ")" end)
+            end
+        end
+    end
+
     -- General clues apply to everyone. The site uses clue_custom_text<N> and
     -- (v2) general_clue_<N>, often with the same text in both.
     local general, seen = {}, {}

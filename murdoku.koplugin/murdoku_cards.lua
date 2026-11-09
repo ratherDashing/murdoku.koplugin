@@ -45,6 +45,28 @@ local function badge(letter, face, inverted)
     }
 end
 
+-- A person's name with its first letter shown as the badge: "[A]ndy".
+-- If the badge letter isn't the name's first letter, badge then full name.
+local function nameBadge(s, name_face, inverted, max_w)
+    local first = s.name:sub(1, 1)
+    if first:upper() == s.letter then
+        local bdg = badge(s.letter, name_face, inverted)
+        local rest = s.name:sub(2)
+        return HorizontalGroup:new{ align = "center",
+            bdg,
+            TextWidget:new{ text = rest, face = name_face, bold = true,
+                padding = 0, max_width = max_w and (max_w - bdg:getSize().w) or nil },
+        }
+    end
+    local bdg = badge(s.letter, name_face, inverted)
+    return HorizontalGroup:new{ align = "center",
+        bdg,
+        HorizontalSpan:new{ width = Size.padding.small },
+        TextWidget:new{ text = s.name, face = name_face, bold = true,
+            max_width = max_w and (max_w - bdg:getSize().w - Size.padding.small) or nil },
+    }
+end
+
 local function faceImage(s, size)
     local fn = Faces.file(s)
     if not fn then return HorizontalSpan:new{ width = size } end
@@ -125,13 +147,7 @@ function SuspectPanel:build()
         local inner_h = h - 2 * bw - 2 * pad
         -- left column: face with the letter badge and name under it
         local col_w = self:leftColumnWidth(w)
-        local bdg = badge(s.letter, self.f_badge, pos ~= nil)
-        local head = HorizontalGroup:new{ align = "center",
-            bdg,
-            HorizontalSpan:new{ width = Size.padding.small },
-            TextWidget:new{ text = s.name, face = self.f_name, bold = true,
-                max_width = col_w - bdg:getSize().w - Size.padding.small },
-        }
+        local head = nameBadge(s, self.f_name, pos ~= nil, col_w)
         local fsz = math.max(10, math.min(col_w, inner_h - head:getSize().h))
         local left = VerticalGroup:new{ align = "center",
             faceImage(s, fsz),
@@ -161,11 +177,7 @@ function SuspectPanel:leftColumnWidth(w)
     if self.col_w then return self.col_w end
     local widest = 0
     for _, s in ipairs(self.puzzle.suspects) do
-        local hg = HorizontalGroup:new{
-            badge(s.letter, self.f_badge, false),
-            HorizontalSpan:new{ width = Size.padding.small },
-            TextWidget:new{ text = s.name, face = self.f_name, bold = true },
-        }
+        local hg = nameBadge(s, self.f_name, false)
         widest = math.max(widest, hg:getSize().w)
         hg:free()
     end
@@ -362,12 +374,7 @@ function M.showSuspectPopup(p, i, placed)
     table.insert(traits, 1, who)
     local pos = placed[i]
     local lines = VerticalGroup:new{ align = "left",
-        HorizontalGroup:new{ align = "center",
-            badge(s.letter, Font:getFace("cfont", 20), pos ~= nil),
-            HorizontalSpan:new{ width = Size.padding.large },
-            TextWidget:new{ text = s.name, face = Font:getFace("cfont", 24), bold = true,
-                max_width = text_w - Screen:scaleBySize(50) },
-        },
+        nameBadge(s, Font:getFace("cfont", 24), pos ~= nil, text_w),
         TextWidget:new{ text = table.concat(traits, " · ") .. (pos and string.format("  ·  placed at R%d C%d", pos[1], pos[2]) or ""),
             face = Font:getFace("cfont", 16), fgcolor = C.COLOR_DARK_GRAY, max_width = text_w },
         VerticalSpan:new{ width = Size.padding.large },

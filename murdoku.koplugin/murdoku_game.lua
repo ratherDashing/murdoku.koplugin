@@ -605,9 +605,10 @@ function Game:showAllClues()
     end
     for i, s in ipairs(p.suspects) do
         local pos = self.state.placed[i]
-        table.insert(lines, string.format("%s · %s%s%s\n%s", s.letter, s.name,
+        local label = s.name:sub(1, 1):upper() == s.letter and s.name or (s.letter .. " · " .. s.name)
+        table.insert(lines, string.format("%s%s%s\n%s", label,
             s.is_victim and " (victim)" or (s.female and " (woman)" or " (man)"),
-            pos and string.format("  [row %d, col %d]", pos[1], pos[2]) or "",
+            pos and string.format("  [R%d C%d]", pos[1], pos[2]) or "",
             s.clue))
     end
     local areas = {}
