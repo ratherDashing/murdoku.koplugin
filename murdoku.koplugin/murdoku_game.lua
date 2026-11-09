@@ -96,7 +96,7 @@ function Game:init()
     self.state.history = self.state.history or {}
     self.tool = nil      -- nil | "mark" | "erase"
     self.selected = nil
-    self.started_at = os.time()
+    self.started_at = Game.now()
     self:updateConflicts()
 
     if Device:hasKeys() then
@@ -708,7 +708,7 @@ function Game:showMenu()
                         ok_callback = function()
                             self.state = { placed = {}, marks = {}, notes = {}, history = {},
                                 solved = false, elapsed = 0, hints_shown = 0 }
-                            self.started_at = os.time()
+                            self.started_at = Game.now()
                             self.selected = nil
                             self.tool = nil
                             self:afterChange()
@@ -737,20 +737,29 @@ end
 
 -- Lifecycle -------------------------------------------------------------------
 
--- The clock only counts time spent playing: each span between actions is
--- capped (so a forgotten session doesn't count), and sleep pauses it.
-local MAX_SPAN = 600
+-- The clock only counts time spent playing. It runs on the monotonic clock,
+-- which stops while the Kindle sleeps (wall-clock time kept counting if a
+-- Suspend event went astray). Each stretch without a tap is also capped, so
+-- a game left open on the screen doesn't run up the time.
+local MAX_SPAN = 300
+local ok_time, ktime = pcall(require, "ui/time")
+
+local function now()
+    if ok_time and ktime and ktime.monotonic then return ktime.to_s(ktime.monotonic()) end
+    return os.time()
+end
+Game.now = now
 
 function Game:runningSpan()
     if self.state.solved or self.paused then return 0 end
-    local d = os.time() - (self.started_at or os.time())
+    local d = now() - (self.started_at or now())
     if d < 0 then return 0 end
-    return math.min(d, MAX_SPAN)
+    return math.floor(math.min(d, MAX_SPAN))
 end
 
 function Game:bankTime()
     self.state.elapsed = (self.state.elapsed or 0) + self:runningSpan()
-    self.started_at = os.time()
+    self.started_at = now()
 end
 
 function Game:save()
@@ -778,7 +787,7 @@ end
 
 function Game:onResume()
     self.paused = false
-    self.started_at = os.time()
+    self.started_at = now()
 end
 
 function Game:onCloseWidget()
