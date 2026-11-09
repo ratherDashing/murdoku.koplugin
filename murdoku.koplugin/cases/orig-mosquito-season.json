@@ -7,11 +7,12 @@
   "total_chars": "5",
   "murderer": "1",
   "difficulty": "0",
-  "player_hint_1_en": "Only one square of row 2 is still open to anyone (row 2, column 1). Someone must stand there, so nobody else can use column 1. Ada's clue (\"She was in the same area as someone else standing in a puddle.\") needs the person standing in a puddle in Ada's area on a square that does not share her row or column; that rules out squares for Ada. All of Bruno's squares are in row 1, so nobody else can use it. Ada's own clue (\"She was in the same area as someone else standing in a puddle.\") rules out more squares. So Ada (A) must be at row 5, column 5. Cross out her row and column.",
-  "player_hint_2_en": "Dinah's clue (\"She was alone with a woman.\") needs a partner who does not share her row or column; that rules out squares for Dinah. So Dinah (D) must be at row 4, column 4. Cross out her row and column.",
-  "player_hint_3_en": "With the rows and columns of Ada and Dinah crossed out, only one square is left for Bruno that fits his clue (\"He was in the top row.\"). So Bruno (B) must be at row 1, column 2. Cross out his row and column.",
-  "player_hint_4_en": "The murderer must be in Vivian's area without sharing her row or column; that rules out squares for Vivian. So Vivian (the victim) must be at row 2, column 1. Cross out her row and column.",
-  "player_hint_5_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Clement that fits his clue (\"He was in the Ranger Station or the Parking Area.\"). So Clement (C) must be at row 3, column 3. Cross out his row and column. Bruno is the only person in the Ranger Station with Vivian, so Bruno is the murderer!"
+  "player_hint_1_en": "Only one square of row 2 is still open to anyone (row 2, column 1). Someone must stand there, so nobody else can use column 1.",
+  "player_hint_2_en": "Ada's clue (\"She was in the same area as someone else standing in a puddle.\") needs the person standing in a puddle in Ada's area on a square that does not share her row or column; that rules out squares for Ada. All of Bruno's squares are in row 1, so nobody else can use it. Ada's own clue (\"She was in the same area as someone else standing in a puddle.\") rules out more squares. So Ada (A) must be at row 5, column 5. Cross out her row and column.",
+  "player_hint_3_en": "Dinah's clue (\"She was alone with a woman.\") needs a partner who does not share her row or column; that rules out squares for Dinah. So Dinah (D) must be at row 4, column 4. Cross out her row and column.",
+  "player_hint_4_en": "With the rows and columns of Ada and Dinah crossed out, only one square is left for Bruno that fits his clue (\"He was in the top row.\"). So Bruno (B) must be at row 1, column 2. Cross out his row and column.",
+  "player_hint_5_en": "The murderer must be in Vivian's area without sharing her row or column; that rules out squares for Vivian. So Vivian (the victim) must be at row 2, column 1. Cross out her row and column.",
+  "player_hint_6_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Clement that fits his clue (\"He was in the Ranger Station or the Parking Area.\"). So Clement (C) must be at row 3, column 3. Cross out his row and column. Bruno is the only person in the Ranger Station with Vivian, so Bruno is the murderer!"
  },
  "CHARACTERS": {
   "title_en_": "Mosquito Season",

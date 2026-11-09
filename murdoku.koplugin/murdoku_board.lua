@@ -1,7 +1,6 @@
 --[[--
 Custom-painted widgets for the Murdoku game screen:
   * Board      – the crime scene grid
-  * SuspectBar – tappable suspect chips
 
 All drawing is done straight onto the blitbuffer with greys only, so it stays
 crisp on e-ink.
@@ -63,19 +62,6 @@ local function drawLeft(bb, f, text, x, top, color, bold)
     RenderText:renderUtf8Text(bb, x, math.floor(top + asc), f, text, true, bold, color)
 end
 
--- Dotted rectangle outline (used for carpets).
-local function dottedRect(bb, x, y, w, h, color, dot, gap)
-    for i = x, x + w - dot, dot + gap do
-        bb:paintRect(i, y, dot, dot, color)
-        bb:paintRect(i, y + h - dot, dot, dot, color)
-    end
-    for j = y, y + h - dot, dot + gap do
-        bb:paintRect(x, j, dot, dot, color)
-        bb:paintRect(x + w - dot, j, dot, dot, color)
-    end
-end
-
--- Thick diagonal cross.
 local function drawCross(bb, x, y, size, thick, color)
     for i = 0, size - thick do
         bb:paintRect(x + i, y + i, thick, thick, color)
@@ -527,84 +513,6 @@ function Board:onSwipeBoard(_, ges)
 end
 
 --------------------------------------------------------------------------------
--- SuspectBar
---------------------------------------------------------------------------------
-
-local SuspectBar = InputContainer:extend{
-    puzzle = nil,
-    game = nil,
-    width = nil,
-}
-
-function SuspectBar:init()
-    local n = #self.puzzle.suspects
-    local min_chip = Screen:scaleBySize(62)
-    self.per_row = math.max(1, math.min(n, math.floor(self.width / min_chip)))
-    self.rows = math.ceil(n / self.per_row)
-    self.per_row = math.ceil(n / self.rows) -- balance rows
-    self.chip_w = math.floor(self.width / self.per_row)
-    self.chip_h = Screen:scaleBySize(56)
-    self.gap = Screen:scaleBySize(3)
-    self.dimen = Geom:new{ x = 0, y = 0, w = self.width, h = self.rows * self.chip_h }
-    self.f_letter = face("NotoSans-Bold.ttf", self.chip_h * 0.42)
-    self.f_name = face("NotoSans-Regular.ttf", self.chip_h * 0.24)
-    local range = function() return self.dimen end
-    self.ges_events = {
-        TapChip = { GestureRange:new{ ges = "tap", range = range } },
-        HoldChip = { GestureRange:new{ ges = "hold", range = range } },
-    }
-end
-
-function SuspectBar:chipAt(x, y)
-    local col = math.floor((x - self.dimen.x) / self.chip_w)
-    local row = math.floor((y - self.dimen.y) / self.chip_h)
-    local i = row * self.per_row + col + 1
-    if i >= 1 and i <= #self.puzzle.suspects and col < self.per_row then return i end
-end
-
-function SuspectBar:paintTo(bb, x, y)
-    self.dimen.x, self.dimen.y = x, y
-    local p, g = self.puzzle, self.game
-    bb:paintRect(x, y, self.dimen.w, self.dimen.h, C.COLOR_WHITE)
-    for i, s in ipairs(p.suspects) do
-        local row = math.floor((i - 1) / self.per_row)
-        local col = (i - 1) % self.per_row
-        local cx = x + col * self.chip_w + self.gap
-        local cy = y + row * self.chip_h + self.gap
-        local w, h = self.chip_w - 2 * self.gap, self.chip_h - 2 * self.gap
-        local placed = g.state.placed[i] ~= nil
-        local fg = C.COLOR_BLACK
-        if i == g.selected then
-            bb:paintRect(cx, cy, w, h, C.COLOR_BLACK)
-            fg = C.COLOR_WHITE
-        else
-            bb:paintRect(cx, cy, w, h, placed and C.COLOR_GRAY_D or C.COLOR_WHITE)
-            bb:paintBorder(cx, cy, w, h, 2, C.COLOR_BLACK)
-        end
-        drawCentered(bb, self.f_letter, s.letter, cx + w / 2, cy + h * 0.36, fg, true)
-        local name = fitText(self.f_name, s.name, w - 4)
-        drawCentered(bb, self.f_name, name, cx + w / 2, cy + h * 0.78, fg)
-        if placed then
-            -- small tick bar in the corner shows "already on the board"
-            local t = math.max(4, math.floor(h * 0.12))
-            bb:paintRect(cx + w - t - 3, cy + 3, t, t, fg)
-        end
-    end
-end
-
-function SuspectBar:onTapChip(_, ges)
-    local i = self:chipAt(ges.pos.x, ges.pos.y)
-    if i then self.game:onSuspectTap(i) end
-    return true
-end
-
-function SuspectBar:onHoldChip(_, ges)
-    local i = self:chipAt(ges.pos.x, ges.pos.y)
-    if i then self.game:onSuspectHold(i) end
-    return true
-end
-
---------------------------------------------------------------------------------
 -- Toolbar: a row of icon buttons (no text). Active tools are drawn inverted.
 --------------------------------------------------------------------------------
 
@@ -680,6 +588,5 @@ end
 
 return {
     Board = Board,
-    SuspectBar = SuspectBar,
     Toolbar = Toolbar,
 }

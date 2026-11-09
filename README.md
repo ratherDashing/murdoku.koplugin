@@ -36,10 +36,19 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 - Filter by source (murdoku.com / Originals / Random), difficulty (Very easy → Expert) and
   solved/unsolved; sort by newest, oldest,
   difficulty, name or grid size. The list header shows how many cases you've solved.
+- **Suspect cards** under the board (beside it in landscape): a face, the name with its
+  initial as a badge, and the clue with its key words in **bold**. Hold a card for the full
+  clue.
+- **Clue highlighting**: select a suspect and the squares their clue allows are outlined on
+  the board ("in the Library, but not beside a shelf", "in the top row", "north of Freya"
+  once Freya is placed…). Turn it off in the menu if you prefer to work it out yourself.
+- **Icons** for every object, white on dark for obstacles and black on light for things you
+  can stand on, sit on or lie on.
 - Finger-friendly controls built for e-ink, matching murdoku.com:
   - Tap a suspect to select them. Then **tap** a square to pencil in a note, or **hold** a
     square to place them. Placing someone crosses out the rest of their row and column
-    with real X marks (undoable), and clears the selection.
+    with real X marks (undoable), and clears the selection. Taking them off again removes
+    those automatic X marks but keeps the ones you made.
   - With nobody selected, tap a square to X it out, or **swipe** across a row or column to
     X out a whole line.
   - Icon toolbar: X (mark mode), eraser, undo, hint, check, menu.
@@ -47,13 +56,20 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
     Hold a suspect to read their clue.
   - Unlimited undo, saved with the case so it still works after closing and reopening.
   - Check (flags misplaced suspects with **!**), step-by-step hints, reveal solution.
-  - A live timer in the title bar. It pauses while the device sleeps.
+  - A live timer in the title bar. It stops while the device sleeps, and a long pause
+    without a tap only counts a few minutes.
 - Rows and columns are labelled R1… and C1…. Squares nobody can stand on are dark; everything
   you can stand on (floor, carpets, chairs, beds, boats…) is light.
 - Portrait and landscape layouts, including grids that aren't square (e.g. 11×9), up to 16×16.
 - Progress is saved after every move: leave a case half-solved and pick it up later (marked … in the list).
 
 ## Install
+
+**With [Storefront](https://github.com/ultimatejimmy/storefront.koplugin)** (easiest):
+open Storefront on your e-reader, search for **Murdoku**, and tap Install. Storefront
+also tells you when there's an update.
+
+**By hand:**
 
 1. Download `murdoku.koplugin.zip` from the [latest release](../../releases/latest)
    (or clone this repo).
@@ -64,6 +80,16 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 
 Tip: Use the ☰ menu on the case list to **Download all cases for offline play**.
 You can also assign "Murdoku" to a gesture under *Settings → Taps and gestures*.
+
+## What's new in 1.3.0
+
+- A new look: suspect cards with faces, object icons, dark squares for obstacles, R1/C1
+  labels, an icon toolbar and clue highlighting.
+- murdoku.com-style controls: tap for a note, hold to place, an eraser, automatic X marks.
+- A brand-new Originals pack of 30 cases, each built around a satisfying "aha" step, with
+  one-idea-at-a-time hints.
+- A rewritten How to play with examples for every kind of clue.
+- The timer no longer counts while the device is asleep.
 
 ## How to play
 

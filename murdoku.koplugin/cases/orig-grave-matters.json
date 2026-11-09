@@ -8,11 +8,14 @@
   "murderer": "2",
   "difficulty": "0",
   "player_hint_1_en": "Using the general clue (\"No one was sitting in a chair.\"), some squares are ruled out for Alma. So Alma (A) must be at row 4, column 4. Cross out her row and column.",
-  "player_hint_2_en": "Only one square of row 3 is still open to anyone (row 3, column 3). Someone must stand there, so nobody else can use column 3. Look at Erin: every square she could still use shares a row or column with row 1, column 6. So nobody else can stand at row 1, column 6, or Erin would have nowhere to go. The murderer must be in Valentine's area without sharing his row or column; that rules out squares for Valentine. The same kind of reasoning rules out a few more squares. Erin is now the only person who can still go in row 2. So Erin (E) must be at row 2, column 6. Cross out her row and column.",
-  "player_hint_3_en": "With the rows and columns of Alma and Erin crossed out, only one square is left for Desmond that fits his clue (\"He was in the Vestry.\"). So Desmond (D) must be at row 6, column 5. Cross out his row and column.",
-  "player_hint_4_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Bonnie that fits her clue (\"She was in the Old Yew Grove or the Chapel.\"). So Bonnie (B) must be at row 5, column 1. Cross out her row and column.",
-  "player_hint_5_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Valentine. So Valentine (the victim) must be at row 3, column 3. Cross out his row and column.",
-  "player_hint_6_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Clement that fits his clue (\"He was north of Valentine.\"). So Clement (C) must be at row 1, column 2. Cross out his row and column. Clement is the only person in the Crypt with Valentine, so Clement is the murderer!"
+  "player_hint_2_en": "Only one square of row 3 is still open to anyone (row 3, column 3). Someone must stand there, so nobody else can use column 3.",
+  "player_hint_3_en": "Look at Erin: every square she could still use shares a row or column with row 1, column 6. So nobody else can stand at row 1, column 6, or Erin would have nowhere to go.",
+  "player_hint_4_en": "The murderer must be in Valentine's area without sharing his row or column; that rules out squares for Valentine.",
+  "player_hint_5_en": "The same kind of reasoning rules out a few more squares. Erin is now the only person who can still go in row 2. So Erin (E) must be at row 2, column 6. Cross out her row and column.",
+  "player_hint_6_en": "With the rows and columns of Alma and Erin crossed out, only one square is left for Desmond that fits his clue (\"He was in the Vestry.\"). So Desmond (D) must be at row 6, column 5. Cross out his row and column.",
+  "player_hint_7_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Bonnie that fits her clue (\"She was in the Old Yew Grove or the Chapel.\"). So Bonnie (B) must be at row 5, column 1. Cross out her row and column.",
+  "player_hint_8_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Valentine. So Valentine (the victim) must be at row 3, column 3. Cross out his row and column.",
+  "player_hint_9_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Clement that fits his clue (\"He was north of Valentine.\"). So Clement (C) must be at row 1, column 2. Cross out his row and column. Clement is the only person in the Crypt with Valentine, so Clement is the murderer!"
  },
  "CHARACTERS": {
   "title_en_": "Grave Matters",

@@ -41,7 +41,7 @@ local function validate(data, res, label)
         local c = p.cells[res.pz.row[x] + 1][res.pz.col[x] + 1]
         if c.obj ~= res.pz.obj[x] or c.area ~= res.pz.area[x] then return fail(label .. " board mismatch") end
     end
-    if #p.hints ~= res.pz.n then return fail(label .. " expected one hint per person") end
+    if #p.hints < res.pz.n then return fail(label .. " expected at least one hint per person") end
     -- "designed aha" cases: re-profile from the final atoms and re-check the accept filter
     if res.profile then
         local P = St.profile(res.pz, res.atoms, nil)

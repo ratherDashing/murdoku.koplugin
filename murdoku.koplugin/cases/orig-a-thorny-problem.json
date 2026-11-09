@@ -9,10 +9,13 @@
   "difficulty": "1",
   "player_hint_1_en": "Only one square fits both parts of Dora's clue (\"She was beside the water. She was in the last column.\"). So Dora (D) must be at row 2, column 6. Cross out her row and column.",
   "player_hint_2_en": "With the rows and columns of Dora crossed out, only one square is left for Alma that fits her clue (\"She was the only person beside a box.\"). So Alma (A) must be at row 5, column 5. Cross out her row and column.",
-  "player_hint_3_en": "Look at Bella: every square she could still use shares a row or column with row 3, column 2. So nobody else can stand at row 3, column 2, or Bella would have nowhere to go. The murderer must be in Vanessa's area without sharing her row or column; that rules out squares for Vanessa. Look at Vanessa: every square she could still use shares a row or column with row 3, column 1. So nobody else can stand at row 3, column 1, or Vanessa would have nowhere to go. The same kind of reasoning rules out a few more squares. Ernest is now the only person who can still go in column 4. So Ernest (E) must be at row 6, column 4. Cross out his row and column.",
-  "player_hint_4_en": "Cyril is now the only person who can still go in column 3. So Cyril (C) must be at row 1, column 3. Cross out his row and column.",
-  "player_hint_5_en": "The murderer must be in Vanessa's area without sharing her row or column; that rules out squares for Vanessa. So Vanessa (the victim) must be at row 3, column 1. Cross out her row and column.",
-  "player_hint_6_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Bella that fits her clue (\"She was not in a hammock.\"). So Bella (B) must be at row 4, column 2. Cross out her row and column. Cyril is the only person in the Driveway with Vanessa, so Cyril is the murderer!"
+  "player_hint_3_en": "Look at Bella: every square she could still use shares a row or column with row 3, column 2. So nobody else can stand at row 3, column 2, or Bella would have nowhere to go.",
+  "player_hint_4_en": "The murderer must be in Vanessa's area without sharing her row or column; that rules out squares for Vanessa.",
+  "player_hint_5_en": "Look at Vanessa: every square she could still use shares a row or column with row 3, column 1. So nobody else can stand at row 3, column 1, or Vanessa would have nowhere to go.",
+  "player_hint_6_en": "The same kind of reasoning rules out a few more squares. Ernest is now the only person who can still go in column 4. So Ernest (E) must be at row 6, column 4. Cross out his row and column.",
+  "player_hint_7_en": "Cyril is now the only person who can still go in column 3. So Cyril (C) must be at row 1, column 3. Cross out his row and column.",
+  "player_hint_8_en": "The murderer must be in Vanessa's area without sharing her row or column; that rules out squares for Vanessa. So Vanessa (the victim) must be at row 3, column 1. Cross out her row and column.",
+  "player_hint_9_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Bella that fits her clue (\"She was not in a hammock.\"). So Bella (B) must be at row 4, column 2. Cross out her row and column. Cyril is the only person in the Driveway with Vanessa, so Cyril is the murderer!"
  },
  "CHARACTERS": {
   "title_en_": "A Thorny Problem",

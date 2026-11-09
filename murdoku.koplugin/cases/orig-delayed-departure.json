@@ -7,12 +7,16 @@
   "total_chars": "6",
   "murderer": "1",
   "difficulty": "1",
-  "player_hint_1_en": "Look at Elliot: every square he could still use shares a row or column with row 4, column 3. So nobody else can stand at row 4, column 3, or Elliot would have nowhere to go. Delia's clue (\"There was another woman in her area.\") needs a partner who does not share her row or column; that rules out squares for Delia. Elliot and Victor can't share a row or column, so Elliot's clue (\"He was exactly one column east of Victor.\") rules out more squares for Victor. The same kind of reasoning rules out a few more squares. All of Cedric's squares are in column 6, so nobody else can use it. Because of Elliot's clue (\"He was the only person beside a plant.\"), nobody else can be on those squares. Delia is now the only person who can still go in row 5. So Delia (D) must be at row 5, column 4. Cross out her row and column.",
-  "player_hint_2_en": "Cedric is now the only person who can still go in row 6. So Cedric (C) must be at row 6, column 6. Cross out his row and column.",
-  "player_hint_3_en": "Bonnie and Victor can only use rows 1 and 2 between them, so nobody else can be in those rows. Who can be the woman in Delia's area? Only Amber, because nobody else can still reach a square that fits Delia's clue (\"There was another woman in her area.\"). That rules out Amber's other squares. So Amber (A) must be at row 4, column 5. Cross out her row and column.",
-  "player_hint_4_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Elliot that fits his clue (\"He was the only person beside a plant. He was exactly one column east of Victor.\"). So Elliot (E) must be at row 3, column 3. Cross out his row and column.",
-  "player_hint_5_en": "Bonnie is now the only person who can still go in column 1. So Bonnie (B) must be at row 1, column 1. Cross out her row and column.",
-  "player_hint_6_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Victor. So Victor (the victim) must be at row 2, column 2. Cross out his row and column. Bonnie is the only person in the Footbridge with Victor, so Bonnie is the murderer!"
+  "player_hint_1_en": "Look at Elliot: every square he could still use shares a row or column with row 4, column 3. So nobody else can stand at row 4, column 3, or Elliot would have nowhere to go.",
+  "player_hint_2_en": "Delia's clue (\"There was another woman in her area.\") needs a partner who does not share her row or column; that rules out squares for Delia.",
+  "player_hint_3_en": "Elliot and Victor can't share a row or column, so Elliot's clue (\"He was exactly one column east of Victor.\") rules out more squares for Victor.",
+  "player_hint_4_en": "The same kind of reasoning rules out a few more squares. All of Cedric's squares are in column 6, so nobody else can use it. Because of Elliot's clue (\"He was the only person beside a plant.\"), nobody else can be on those squares. Delia is now the only person who can still go in row 5. So Delia (D) must be at row 5, column 4. Cross out her row and column.",
+  "player_hint_5_en": "Cedric is now the only person who can still go in row 6. So Cedric (C) must be at row 6, column 6. Cross out his row and column.",
+  "player_hint_6_en": "Bonnie and Victor can only use rows 1 and 2 between them, so nobody else can be in those rows.",
+  "player_hint_7_en": "Who can be the woman in Delia's area? Only Amber, because nobody else can still reach a square that fits Delia's clue (\"There was another woman in her area.\"). That rules out Amber's other squares. So Amber (A) must be at row 4, column 5. Cross out her row and column.",
+  "player_hint_8_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Elliot that fits his clue (\"He was the only person beside a plant. He was exactly one column east of Victor.\"). So Elliot (E) must be at row 3, column 3. Cross out his row and column.",
+  "player_hint_9_en": "Bonnie is now the only person who can still go in column 1. So Bonnie (B) must be at row 1, column 1. Cross out her row and column.",
+  "player_hint_10_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Victor. So Victor (the victim) must be at row 2, column 2. Cross out his row and column. Bonnie is the only person in the Footbridge with Victor, so Bonnie is the murderer!"
  },
  "CHARACTERS": {
   "title_en_": "Delayed Departure",

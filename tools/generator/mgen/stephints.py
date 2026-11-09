@@ -127,7 +127,11 @@ def make_step_hints(pz, P, murderer, texts, own):
                         adv.append(txt)
             if len(adv) > 3:
                 adv = adv[:3] + ['The same kind of reasoning rules out a few more squares']
-            parts += adv
+            # one idea per hint: each earlier idea is its own hint, so the
+            # hint button climbs a ladder instead of showing a wall of text
+            for t in adv[:-1]:
+                hints.append(t[0].upper() + t[1:] + '.')
+            parts += adv[-1:]
             seen = set()
             for t in seg:
                 if t['level'] != 1 or j not in {k for k, _ in t['rm']}:

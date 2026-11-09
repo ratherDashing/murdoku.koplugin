@@ -951,6 +951,11 @@ function Gen.stepHints(pz, P, murderer, texts, own)
                         local txt = Gen.stepText(pz, t)
                         if txt and not have[txt] then
                             nadv = nadv + 1
+                            -- one idea per hint: the previous idea becomes its own hint
+                            if nadv > 1 and nadv <= 4 and #parts > 0 then
+                                hints[#hints + 1] = cap(parts[#parts]) .. "."
+                                parts[#parts] = nil
+                            end
                             if nadv <= 3 then add(txt)
                             elseif nadv == 4 then add("The same kind of reasoning rules out a few more squares") end
                         end

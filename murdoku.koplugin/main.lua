@@ -274,6 +274,19 @@ function Murdoku:openCaseList()
             self.menu = nil
         end,
     }
+    -- KOReader draws the right-hand column ("Hard · 9×9") in a monospace font;
+    -- redraw those items in the normal UI font so the list reads as one piece.
+    local orig_update = self.menu.updateItems
+    self.menu.updateItems = function(menu, ...)
+        orig_update(menu, ...)
+        for _, it in ipairs(menu.item_group or {}) do
+            if type(it) == "table" and it.mandatory and it.infont ~= "cfont" and it.init then
+                it.infont = "cfont"
+                it:init()
+            end
+        end
+    end
+    self.menu:updateItems()
     -- Keep the list open behind a case (Menu closes itself on select by default).
     self.menu.onMenuSelect = function(_menu, item)
         if item.callback then item.callback() end
@@ -433,11 +446,11 @@ end
 
 -- Random cases ---------------------------------------------------------------
 
--- What the on-device generator offers. Desktop LuaJIT timings (tests/test_generator.lua):
--- very easy/easy/medium take well under a second up to 7x7 and about 1-4 s on
--- average at 8x8/9x9; hard takes about 1.5 s at 5x5/6x6 but 5-16 s (up to ~50 s)
--- at 7x7-9x9. A Kindle is roughly 8-15x slower, so hard is limited to 6x6 here;
--- bigger hard cases are in the bundled Originals.
+-- What the on-device generator offers. Very easy and easy cases up to 7x7 use
+-- the "aha" search (a few seconds on a Kindle) and fall back to the classic
+-- generator if it runs out of tries; see Gen.AHA_MAX_SIZE in murdoku_gen.lua
+-- for timings. Hard is limited to 6x6 here because a Kindle is roughly 8-15x
+-- slower than a desktop; bigger hard cases are in the bundled Originals.
 local RANDOM_DIFFICULTIES = { "very-easy", "easy", "medium", "hard" }
 local RANDOM_SIZES = { 5, 6, 7, 8, 9 }
 local RANDOM_MAX_SIZE = { hard = 6 }

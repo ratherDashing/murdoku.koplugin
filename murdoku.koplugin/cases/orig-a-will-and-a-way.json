@@ -7,12 +7,15 @@
   "total_chars": "6",
   "murderer": "3",
   "difficulty": "1",
-  "player_hint_1_en": "Look at Erin: every square she could still use shares a row or column with row 4, column 1. So nobody else can stand at row 4, column 1, or Erin would have nowhere to go. Ada and Dahlia can't share a row or column, so Ada's clue (\"She was exactly three rows south of Dahlia.\") rules out more squares for Dahlia. The murderer must be in Vernon's area without sharing his row or column; that rules out squares for Vernon. The same kind of reasoning rules out a few more squares. Ada's own clue (\"She was beside a table. She was exactly three rows south of Dahlia.\") rules out more squares. So Ada (A) must be at row 4, column 6. Cross out her row and column.",
-  "player_hint_2_en": "With the rows and columns of Ada crossed out, only one square is left for Erin that fits her clue (\"She was in the Hall.\"). So Erin (E) must be at row 3, column 1. Cross out her row and column.",
-  "player_hint_3_en": "Using Ada's clue (\"She was exactly three rows south of Dahlia.\"), some squares are ruled out for Dahlia. So Dahlia (D) must be at row 1, column 4. Cross out her row and column.",
-  "player_hint_4_en": "Look at Barnaby: every square he could still use shares a row or column with row 6, column 2. So nobody else can stand at row 6, column 2, or Barnaby would have nowhere to go. Barnaby is now the only person who can still go in column 2. So Barnaby (B) must be at row 5, column 2. Cross out his row and column.",
-  "player_hint_5_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Cyril that fits his clue (\"He was in the Kitchen, but not beside a table.\"). So Cyril (C) must be at row 6, column 5. Cross out his row and column.",
-  "player_hint_6_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Vernon. So Vernon (the victim) must be at row 2, column 3. Cross out his row and column. Dahlia is the only person in the Ballroom with Vernon, so Dahlia is the murderer!"
+  "player_hint_1_en": "Look at Erin: every square she could still use shares a row or column with row 4, column 1. So nobody else can stand at row 4, column 1, or Erin would have nowhere to go.",
+  "player_hint_2_en": "Ada and Dahlia can't share a row or column, so Ada's clue (\"She was exactly three rows south of Dahlia.\") rules out more squares for Dahlia.",
+  "player_hint_3_en": "The murderer must be in Vernon's area without sharing his row or column; that rules out squares for Vernon.",
+  "player_hint_4_en": "The same kind of reasoning rules out a few more squares. Ada's own clue (\"She was beside a table. She was exactly three rows south of Dahlia.\") rules out more squares. So Ada (A) must be at row 4, column 6. Cross out her row and column.",
+  "player_hint_5_en": "With the rows and columns of Ada crossed out, only one square is left for Erin that fits her clue (\"She was in the Hall.\"). So Erin (E) must be at row 3, column 1. Cross out her row and column.",
+  "player_hint_6_en": "Using Ada's clue (\"She was exactly three rows south of Dahlia.\"), some squares are ruled out for Dahlia. So Dahlia (D) must be at row 1, column 4. Cross out her row and column.",
+  "player_hint_7_en": "Look at Barnaby: every square he could still use shares a row or column with row 6, column 2. So nobody else can stand at row 6, column 2, or Barnaby would have nowhere to go. Barnaby is now the only person who can still go in column 2. So Barnaby (B) must be at row 5, column 2. Cross out his row and column.",
+  "player_hint_8_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Cyril that fits his clue (\"He was in the Kitchen, but not beside a table.\"). So Cyril (C) must be at row 6, column 5. Cross out his row and column.",
+  "player_hint_9_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Vernon. So Vernon (the victim) must be at row 2, column 3. Cross out his row and column. Dahlia is the only person in the Ballroom with Vernon, so Dahlia is the murderer!"
  },
  "CHARACTERS": {
   "title_en_": "A Will and a Way",

@@ -9,11 +9,12 @@
   "difficulty": "1",
   "player_hint_1_en": "Only one square fits Agnes's clue (\"She was beside a barrel and a table.\"). So Agnes (A) must be at row 6, column 6. Cross out her row and column.",
   "player_hint_2_en": "All of Eleanor's squares are in row 1, so nobody else can use it. So Freya (F) must be at row 4, column 4. Cross out her row and column.",
-  "player_hint_3_en": "Look at Cedric: every square he could still use shares a row or column with row 5, column 2. So nobody else can stand at row 5, column 2, or Cedric would have nowhere to go. The murderer must be in Violet's area without sharing her row or column; that rules out squares for Violet. All of Basil's squares are in row 3, so nobody else can use it. Dexter is now the only person who can still go in row 7. So Dexter (D) must be at row 7, column 2. Cross out his row and column.",
-  "player_hint_4_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Cedric that fits his clue (\"He was in the Green Room, but not beside the TV.\"). So Cedric (C) must be at row 5, column 1. Cross out his row and column.",
-  "player_hint_5_en": "Suppose Basil were at row 3, column 3: then Violet would have nowhere left to go. So Basil can't be there. So Basil (B) must be at row 3, column 7. Cross out his row and column.",
-  "player_hint_6_en": "The victim must share an area with exactly one other person. So Violet (the victim) must be at row 2, column 3. Cross out her row and column.",
-  "player_hint_7_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Eleanor that fits her clue (\"She was in the top row.\"). So Eleanor (E) must be at row 1, column 5. Cross out her row and column. Freya is the only person in the Foyer with Violet, so Freya is the murderer!"
+  "player_hint_3_en": "Look at Cedric: every square he could still use shares a row or column with row 5, column 2. So nobody else can stand at row 5, column 2, or Cedric would have nowhere to go.",
+  "player_hint_4_en": "The murderer must be in Violet's area without sharing her row or column; that rules out squares for Violet. All of Basil's squares are in row 3, so nobody else can use it. Dexter is now the only person who can still go in row 7. So Dexter (D) must be at row 7, column 2. Cross out his row and column.",
+  "player_hint_5_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Cedric that fits his clue (\"He was in the Green Room, but not beside the TV.\"). So Cedric (C) must be at row 5, column 1. Cross out his row and column.",
+  "player_hint_6_en": "Suppose Basil were at row 3, column 3: then Violet would have nowhere left to go. So Basil can't be there. So Basil (B) must be at row 3, column 7. Cross out his row and column.",
+  "player_hint_7_en": "The victim must share an area with exactly one other person. So Violet (the victim) must be at row 2, column 3. Cross out her row and column.",
+  "player_hint_8_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Eleanor that fits her clue (\"She was in the top row.\"). So Eleanor (E) must be at row 1, column 5. Cross out her row and column. Freya is the only person in the Foyer with Violet, so Freya is the murderer!"
  },
  "CHARACTERS": {
   "title_en_": "The Final Act",
