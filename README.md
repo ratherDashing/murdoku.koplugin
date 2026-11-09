@@ -16,9 +16,14 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 > The "Originals" pack and "Random" cases are made by this project's own generator
 > (`tools/generator/`); they are not murdoku.com cases and are not derived from them.
 
-| Portrait | Landscape | Case list |
-|---|---|---|
-| ![portrait](docs/portrait.png) | ![landscape](docs/landscape.png) | ![case list](docs/case-list.png) |
+<p align="center">
+  <img src="docs/img/game.png" width="30%" alt="A case in progress in portrait">
+  <img src="docs/img/case-list.png" width="30%" alt="The case list">
+  <img src="docs/img/suspect.png" width="30%" alt="Holding a suspect shows their card">
+</p>
+<p align="center">
+  <img src="docs/img/landscape.png" width="62%" alt="An 8x8 case in landscape with the suspect cards beside the board">
+</p>
 
 ## Features
 
