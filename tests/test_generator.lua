@@ -7,6 +7,7 @@ package.path = here .. "/murdoku.koplugin/?.lua;" .. package.path
 local Gen = require("murdoku_gen")
 local S = require("murdoku_solver")
 local Puzzle = require("murdoku_puzzle")
+local St = require("murdoku_steps")
 
 local per = tonumber(arg[1]) or 20
 local diffs = {}
@@ -41,12 +42,19 @@ local function validate(data, res, label)
         if c.obj ~= res.pz.obj[x] or c.area ~= res.pz.area[x] then return fail(label .. " board mismatch") end
     end
     if #p.hints ~= res.pz.n then return fail(label .. " expected one hint per person") end
+    -- "designed aha" cases: re-profile from the final atoms and re-check the accept filter
+    if res.profile then
+        local P = St.profile(res.pz, res.atoms, nil)
+        if not St.accept(P, res.grade, res.grade) then return fail(label .. " aha case fails the accept filter") end
+        if #St.midAhas(P) == 0 then return fail(label .. " aha case without a mid-solve aha") end
+    end
 end
 
-print(string.format("%-6s %-10s %5s %8s %8s %8s  %s", "size", "difficulty", "ok", "mean s", "max s", "attempts", "grades"))
+print(string.format("%-6s %-10s %5s %8s %8s %8s %5s  %s", "size", "difficulty", "ok", "mean s", "max s", "attempts", "aha",
+    "grades"))
 for N = 5, 9 do
     for _, diff in ipairs(diffs) do
-        local times, ok, grades, att = {}, 0, {}, 0
+        local times, ok, grades, att, aha = {}, 0, {}, 0, 0
         for k = 1, per do
             local seed = 10000 * N + 100 * k + #diff
             total = total + 1
@@ -63,6 +71,7 @@ for N = 5, 9 do
                 if failures == before then ok = ok + 1 end
                 grades[res.grade] = (grades[res.grade] or 0) + 1
                 att = att + res.attempts
+                if res.profile then aha = aha + 1 end
             end
         end
         local sum, mx = 0, 0
@@ -70,8 +79,8 @@ for N = 5, 9 do
         local g = {}
         for k, v in pairs(grades) do g[#g + 1] = k .. "=" .. v end
         table.sort(g)
-        print(string.format("%dx%-4d %-10s %2d/%-2d %8.2f %8.2f %8.1f  %s", N, N, diff, ok, per, sum / per, mx,
-            att / per, table.concat(g, " ")))
+        print(string.format("%dx%-4d %-10s %2d/%-2d %8.2f %8.2f %8.1f %5d  %s", N, N, diff, ok, per, sum / per, mx,
+            att / per, aha, table.concat(g, " ")))
         io.stdout:flush()
     end
 end

@@ -16,13 +16,14 @@ local POSITIONAL = { row = true, col = true, compass = true, offset = true }
 C.STRONG = { on = true, onroom = true, onlyon = true, beside2 = true, besideroom = true, onlybeside = true,
     onlygender = true, alonewith = true }
 C.WEAK = { orroom = true, notroom = true, noton = true, notbeside = true, notwith = true, nogender = true,
-    existsg = true, compass = true, with = true, exists = true }
+    existsg = true, compass = true, with = true, exists = true, samearea = true, withg = true }
 C.KIND_W = {
     area = 3, orroom = 1.5, notroom = 1, on = 4, onroom = 2, noton = 0.8, onlyon = 2.5,
     beside = 4, beside2 = 2, besideroom = 1.5, notbeside = 1.5, onlybeside = 1.5,
     alone = 2, aloneroom = 1.5, alonewith = 1.5, alonewithg = 1.5, with = 1.5, notwith = 0.7,
     nogender = 1, onlygender = 1.2, exists = 1.5, existsg = 1, corner = 1,
     row = 0.6, col = 0.6, compass = 0.5, offset = 0.4,
+    samearea = 1.2, rowof = 0.8, withg = 1.0,
     victim = 0,
 }
 
@@ -214,12 +215,16 @@ function C.candidates(g, i, rng)
         local y = sol[j]
         local w2 = wordAt(g, y)
         if w2 then
-            add("exists", { A.Exists(i, "samearea", pz:onSet(w2)) },
-                "Someone else in " .. his .. " area was " .. T.on_verb[w2] .. " " .. art(g, w2, true) .. ".")
+            local phrase = T.on_verb[w2] .. " " .. art(g, w2, true)
+            local at = A.Exists(i, "samearea", pz:onSet(w2))
+            at.desc = "the person " .. phrase .. " in " .. pz.names[i] .. "'s area"
+            add("exists", { at }, "Someone else in " .. his .. " area was " .. phrase .. ".")
         end
         for _, w3 in ipairs(besideWords(g, y)) do
-            add("exists", { A.Exists(i, "samearea", pz:besideSet(w3)) },
-                "Someone else in " .. his .. " area was beside " .. art(g, w3, true) .. ".")
+            local phrase = "beside " .. art(g, w3, true)
+            local at = A.Exists(i, "samearea", pz:besideSet(w3))
+            at.desc = "the person " .. phrase .. " in " .. pz.names[i] .. "'s area"
+            add("exists", { at }, "Someone else in " .. his .. " area was " .. phrase .. ".")
         end
     end
 
@@ -253,6 +258,60 @@ function C.candidates(g, i, rng)
                 add("offset", { A.Rel(i, j, "cols", dc) },
                     He .. " was exactly " .. NUM[k] .. " column" .. (k > 1 and "s" or "") .. " " .. ew .. " of " .. nm .. ".")
             end
+        end
+    end
+    return out
+end
+
+--- "Someone ..." sentences for suspect i (aha mode; port of
+-- clues.existential_candidates). Each atom gets a `desc` for the hints.
+function C.existentialCandidates(g, i)
+    local pz, sol = g.pz, g.sol
+    local x = sol[i]
+    local He, _him, _his = pz:pron(i)
+    local a = pz.area[x]
+    local name = pz.names[i]
+    local out = {}
+    local function add(kind, at, desc, text)
+        at.desc = desc
+        out[#out + 1] = newClue(kind, { at }, text, i)
+    end
+    for _, w in ipairs(g.words) do
+        if T.on_verb[w] then
+            local cells = pz:onSet(w)
+            if next(cells) and not (w == "carpet" and cells[x]) then
+                local phrase = T.on_verb[w] .. " " .. art(g, w, true)
+                local occ_on = false
+                for j = 1, pz.n do
+                    if j ~= i and pz.area[sol[j]] == a and cells[sol[j]] then occ_on = true end
+                end
+                if occ_on then
+                    add("samearea", A.Exists(i, "samearea", cells), "the person " .. phrase .. " in " .. name .. "'s area",
+                        He .. " was in the same area as someone " .. phrase .. ".")
+                end
+                for _, kw in ipairs({ { -1, "north" }, { 1, "south" } }) do
+                    local k = kw[1]
+                    local hit = false
+                    for j = 1, pz.n do
+                        if j ~= i and pz.row[x] - pz.row[sol[j]] == k and cells[sol[j]] then hit = true end
+                    end
+                    if hit then
+                        add("rowof", A.Exists(i, "rows", cells, nil, k),
+                            "the person " .. phrase .. " one row " .. (k < 0 and "south" or "north") .. " of " .. name,
+                            He .. " was exactly one row " .. kw[2] .. " of someone " .. phrase .. ".")
+                    end
+                end
+            end
+        end
+    end
+    for _, fw in ipairs({ { false, "man" }, { true, "woman" } }) do
+        local hit = false
+        for j = 1, pz.n - 1 do
+            if j ~= i and pz.area[sol[j]] == a and pz.female[j] == fw[1] then hit = true end
+        end
+        if hit then
+            add("withg", A.AreaCount(i, "with", { t = "female", v = fw[1] }), "the " .. fw[2] .. " in " .. name .. "'s area",
+                He .. " was with a " .. fw[2] .. ".")
         end
     end
     return out

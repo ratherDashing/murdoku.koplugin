@@ -90,6 +90,7 @@ murdoku.koplugin/
   murdoku_solver.lua   clue atoms, solution counter, logical solver/grader (no KOReader deps)
   murdoku_clues.lua    clue sentences for a known solution (no KOReader deps)
   murdoku_gen.lua      on-device generator: layout, clues, hints, export (no KOReader deps)
+  murdoku_steps.lua    step solver naming each technique; "designed aha" accept filter/score
   murdoku_themes.lua   themed rooms/names/titles, generated from tools/generator/mgen/themes.py
   cases/               the bundled Originals (site v2 JSON) and index.json
 tests/test_puzzles.lua    parser check (built-in checks + any folders of puzzle JSON files)
@@ -98,7 +99,11 @@ tools/generator/          offline generator (Python): --pack, --check, --bench
 ```
 
 The offline generator writes cases in the site's v2 JSON format, so the normal parser
-loads them unchanged. `--check` re-parses each case's clue **text** and confirms it has
+loads them unchanged. By default it makes "designed aha" cases (`mgen/aha.py`): a step
+solver names the technique of every deduction, and the clue set is hill-climbed until the
+solve has a mid-solve aha (cross-block, line-clash, subset, "who can be the person in the
+car?", or a quick what-if) followed by a cascade of easy placements, with the victim placed
+last or second to last (`--classic` uses the older pipeline). `--check` re-parses each case's clue **text** and confirms it has
 exactly one solution, equal to the stored one:
 
 ```sh

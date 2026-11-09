@@ -43,6 +43,9 @@ class Puzzle:
                     lst.append(rr * W + cc)
             self.nbrs.append(lst)
         self.exact = (self.n == H == W)  # one per row/col, every row/col filled
+        # False: two-person pruning ignores 'nobody shares a row/column' (the step
+        # solver toggles this to recognise 'line-clash' deductions).
+        self.line_aware = True
         self._cache = {}
 
     def rc(self, i):
@@ -107,6 +110,8 @@ class Puzzle:
 
     def free(self, x, y):
         """Two people can stand at x and y together (different row and column)."""
+        if not self.line_aware:
+            return True
         return self.row[x] != self.row[y] and self.col[x] != self.col[y]
 
 

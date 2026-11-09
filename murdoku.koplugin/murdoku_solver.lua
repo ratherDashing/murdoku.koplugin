@@ -73,7 +73,10 @@ function S.newPuzzle(H, W, area, obj, carpet, names, female, room_names, sol, mu
     return pz
 end
 
+-- line_aware = false: two-person pruning ignores "nobody shares a row/column"
+-- (the step solver toggles it to recognise "line-clash" deductions).
 function Puzzle:free(x, y)
+    if self.line_aware == false then return true end
     return self.row[x] ~= self.row[y] and self.col[x] ~= self.col[y]
 end
 
@@ -266,8 +269,8 @@ function A.Rel(who, other, kind, k)
     return { type = "Rel", who = who, other = other, kind = kind, k = k, fn = relFn(kind, k), positional = true }
 end
 
-function A.Exists(who, kind, cells, fem)
-    return { type = "Exists", who = who, kind = kind, cells = cells, fem = fem, fn = relFn(kind) }
+function A.Exists(who, kind, cells, fem, k)
+    return { type = "Exists", who = who, kind = kind, cells = cells, fem = fem, k = k, fn = relFn(kind, k) }
 end
 
 function A.Count(cells, lo, hi)
@@ -549,6 +552,7 @@ end
 
 local function check(pz, at, asg, complete) return CHECK[at.type](pz, at, asg, complete) end
 S.check = check
+S.PRUNE = PRUNE
 
 --------------------------------------------------------------------------------
 -- Domains
