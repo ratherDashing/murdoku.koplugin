@@ -82,8 +82,25 @@ function Parse.html(p, text)
     return table.concat(out)
 end
 
+-- Names the site's clues use that differ from our object names.
+local ALIASES = {
+    ["mud puddle"] = { 34, 142 }, ["water puddle"] = { 34 }, ["puddle"] = { 34, 142 },
+    ["cash register"] = { 28, 94, 141 }, ["sand pit"] = { 24 }, ["sand tile"] = { 24 },
+    ["path tile"] = { 140 }, ["cart"] = { 71, 98 }, ["golf tee"] = { 78 }, ["lilypad"] = { 79, 104 },
+    ["lily pad"] = { 79, 104 }, ["boat"] = { 25, 73, 74, 76, 77, 110, 111, 112, 113, 124 },
+    ["animal"] = { 15, 17, 26, 35, 40, 47, 48, 50, 52, 53, 54, 55, 59, 62, 64, 68, 84, 91, 96, 137, 151 },
+}
+
 -- Object ids whose (lower-case) name matches word w (singular or plural).
 local function objectIds(w)
+    for _, cand in ipairs({ w, (w:gsub("es$", "")), (w:gsub("s$", "")) }) do
+        local a = ALIASES[cand]
+        if a then
+            local ids = {}
+            for _, id in ipairs(a) do ids[id] = true end
+            return ids
+        end
+    end
     local ids = {}
     for id, o in pairs(OBJECTS) do
         if id ~= 0 and o.name then
@@ -192,6 +209,7 @@ local function sentenceCells(p, s)
         if ord == "last" or ord == "bottom" or ord == "rightmost" then idx = n
         elseif ord == "top" or ord == "leftmost" then idx = 1
         elseif ord and ORD[ord] then idx = ORD[ord]
+        elseif s:match("(%d+)%a%a " .. word) then idx = tonumber(s:match("(%d+)%a%a " .. word))
         else idx = tonumber(s:match(word .. " (%d+)")) end
         return idx
     end
@@ -229,7 +247,7 @@ function Parse.cells(p, i)
     local s = p.suspects[i]
     if not s or s.is_victim then return nil end
     local set, minus
-    for sentence in (s.clue .. " "):gmatch("([^%.!?]+)[%.!?]") do
+    for sentence in (s.clue .. "."):gmatch("([^%.!?]+)[%.!?]") do -- the last sentence may lack a full stop
         -- "in the Shipyard, but not beside the box": read each clause on its own
         local low = sentence:lower():gsub(",? but ", "|"):gsub(",? and ", "|"):gsub(",? nor ", "|not ")
             :gsub("; ", "|"):gsub(", ", "|")
@@ -250,9 +268,9 @@ function Parse.cells(p, i)
             end
         end
     end
-    -- "not" parts only narrow down a positive part; on their own they would
-    -- light up most of the board, which helps nobody
-    if minus and set then
+    -- "not" parts take squares away; on their own they show every other square
+    if minus then
+        set = set or cellsWhere(p, function() return true end)
         for k in pairs(minus) do set[k] = nil end
     end
     if set and next(set) == nil then return nil end

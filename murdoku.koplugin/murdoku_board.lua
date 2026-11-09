@@ -188,8 +188,10 @@ function Board:computeRoomLabels()
             c = c + run
         end
     end
+    self.under_label = {}
     for area, b in pairs(best) do
         self.room_label[b.r .. "," .. b.c] = { name = p.rooms[area].name, span = b.span }
+        for c = b.c, b.c + b.span - 1 do self.under_label[b.r .. "," .. c] = true end
     end
 end
 
@@ -389,7 +391,10 @@ function Board:paintTo(bb, x, y)
                         local w = textWidth(self.f_note, text, true)
                         local h = self.f_note.ftsize:getHeightAndAscender()
                         local ny = cy + math.floor(cs * 0.06) + math.floor(self.thick / 2)
-                        if state.marks[k] then ny = cy + cs - h - math.floor(cs * 0.04) end
+                        -- below an X, or under an area name, the notes go at the bottom
+                        if state.marks[k] or (opts.room_names and self.under_label[k]) then
+                            ny = cy + cs - h - math.floor(cs * 0.04)
+                        end
                         bb:paintRect(math.floor(cx + (cs - w) / 2) - 2, ny, w + 4, h, C.COLOR_WHITE)
                         drawLeft(bb, self.f_note, text, math.floor(cx + (cs - w) / 2), ny, C.COLOR_BLACK, true)
                     end
