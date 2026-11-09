@@ -1,0 +1,227 @@
+--[[--
+A small reader for clue sentences, used for display only:
+  * Parse.html(p, text)       – clue as HTML with the keywords in bold
+  * Parse.cells(p, i)         – set of "r,c" squares a suspect's clue points
+                                at (area, on/beside an object, row, column,
+                                corner), or nil if nothing was recognised
+It is deliberately simple: positive sentences only, intersected.
+--]]
+
+local Puzzle = require("murdoku_puzzle")
+local OBJECTS = require("murdoku_objects")
+
+local Parse = {}
+
+local ORD = { first = 1, second = 2, third = 3, fourth = 4, fifth = 5, sixth = 6, seventh = 7,
+    eighth = 8, ninth = 9, tenth = 10, eleventh = 11, twelfth = 12 }
+
+local KEYWORDS = { "north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest",
+    "beside", "next to", "not", "only", "alone", "corner", "row", "column", "exactly", "no", "nobody",
+    "with", "man", "woman", "men", "women", "victim", "murderer", "same", "different", "everyone" }
+
+local function esc(s)
+    return (s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;"))
+end
+
+-- Lower-case phrases to make bold, longest first (cached per puzzle).
+local function phrases(p)
+    if p._kw then return p._kw end
+    local set = {}
+    for _, w in ipairs(KEYWORDS) do set[w] = true end
+    for _, room in pairs(p.rooms) do
+        if room.name then set[room.name:lower()] = true end
+    end
+    for _, s in ipairs(p.suspects) do set[s.name:lower()] = true end
+    for id, o in pairs(OBJECTS) do
+        if id ~= 0 and o.name then
+            local n = o.name:lower()
+            set[n] = true
+            set[n .. "s"] = true
+            set[n .. "es"] = true
+        end
+    end
+    local list = {}
+    for k in pairs(set) do table.insert(list, k) end
+    table.sort(list, function(a, b) return #a > #b end)
+    p._kw = list
+    return list
+end
+
+local function isWordChar(ch)
+    return ch ~= "" and ch:match("[%w']") ~= nil
+end
+
+--- Clue text as an HTML fragment with keywords in <b>.
+function Parse.html(p, text)
+    local list = phrases(p)
+    local lower = text:lower()
+    local out = {}
+    local i, n = 1, #text
+    local plain_start = 1
+    while i <= n do
+        local prev = i > 1 and lower:sub(i - 1, i - 1) or ""
+        local matched
+        if not isWordChar(prev) and isWordChar(lower:sub(i, i)) then
+            for _, ph in ipairs(list) do
+                if lower:sub(i, i + #ph - 1) == ph and not isWordChar(lower:sub(i + #ph, i + #ph)) then
+                    matched = ph
+                    break
+                end
+            end
+        end
+        if matched then
+            table.insert(out, esc(text:sub(plain_start, i - 1)))
+            table.insert(out, "<b>" .. esc(text:sub(i, i + #matched - 1)) .. "</b>")
+            i = i + #matched
+            plain_start = i
+        else
+            i = i + 1
+        end
+    end
+    table.insert(out, esc(text:sub(plain_start)))
+    return table.concat(out)
+end
+
+-- Object ids whose (lower-case) name matches word w (singular or plural).
+local function objectIds(w)
+    local ids = {}
+    for id, o in pairs(OBJECTS) do
+        if id ~= 0 and o.name then
+            local n = o.name:lower()
+            if w == n or w == n .. "s" or w == n .. "es" then ids[id] = true end
+        end
+    end
+    return next(ids) and ids or nil
+end
+
+-- Find an object phrase right after position pos in sentence s.
+local function objectAfter(s, pos)
+    local rest = s:sub(pos):gsub("^%s*(%a+)%s+", function(det)
+        if det == "a" or det == "an" or det == "the" or det == "some" or det == "one" then return "" end
+    end)
+    local w1, w2 = rest:match("^%s*([%a']+)%s*([%a']*)")
+    if not w1 then return nil end
+    if w2 and w2 ~= "" then
+        local ids = objectIds(w1 .. " " .. w2)
+        if ids then return ids end
+    end
+    return objectIds(w1)
+end
+
+local function cellsWhere(p, pred)
+    local set = {}
+    for r = 1, p.h do
+        for c = 1, p.w do
+            if Puzzle.standable(p, r, c) and pred(r, c, p.cells[r][c]) then set[r .. "," .. c] = true end
+        end
+    end
+    return set
+end
+
+local function intersect(a, b)
+    if not a then return b end
+    local out = {}
+    for k in pairs(a) do if b[k] then out[k] = true end end
+    return out
+end
+
+local function sentenceCells(p, s)
+    if s:find("%f[%a]not%f[%A]") or s:find("n't") or s:find("%f[%a]no%f[%A]") or s:find("nobody")
+            or s:find("someone") or s:find("%f[%a]else%f[%A]") or s:find("everyone") or s:find("there was")
+            or s:find("there were") then
+        return nil
+    end
+    local set
+    -- area
+    local best, best_len
+    for code, room in pairs(p.rooms) do
+        local name = room.name and room.name:lower()
+        if name and #name > (best_len or 0) and s:find(name, 1, true) then best, best_len = code, #name end
+    end
+    if best then
+        set = intersect(set, cellsWhere(p, function(_, _, cell) return cell.area == best end))
+    end
+    -- beside an object (same area only)
+    for _, kw in ipairs({ "beside", "next to" }) do
+        local start = 1
+        while true do
+            local b = s:find(kw, start, true)
+            if not b then break end
+            start = b + #kw
+            local ids = objectAfter(s, b + #kw)
+            if ids then
+                set = intersect(set, cellsWhere(p, function(r, c, cell)
+                    for _, d in ipairs({ { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } }) do
+                        local n = Puzzle.cell(p, r + d[1], c + d[2])
+                        if n and not n.void and n.area == cell.area and ids[n.obj] then return true end
+                    end
+                    return false
+                end))
+            end
+        end
+    end
+    -- on / in / sitting in an object
+    for _, verb in ipairs({ "on ", "in ", "inside ", "under " }) do
+        local start = 1
+        while true do
+            local a = s:find(verb, start, true)
+            if not a then break end
+            start = a + 1
+            if a == 1 or not s:sub(a - 1, a - 1):match("%a") then
+                local ids = objectAfter(s, a + #verb)
+                if ids then
+                    set = intersect(set, cellsWhere(p, function(_, _, cell) return ids[cell.obj] == true end))
+                    break
+                end
+            end
+        end
+    end
+    -- row / column
+    local function line(word, n)
+        local idx
+        local ord = s:match("(%a+) " .. word)
+        if ord == "last" then idx = n
+        elseif ord and ORD[ord] then idx = ORD[ord]
+        else idx = tonumber(s:match(word .. " (%d+)")) end
+        return idx
+    end
+    local row = line("row", p.h)
+    if row and not s:find("rows? north") and not s:find("rows? south") then
+        set = intersect(set, cellsWhere(p, function(r) return r == row end))
+    end
+    local col = line("column", p.w)
+    if col and not s:find("columns? east") and not s:find("columns? west") then
+        set = intersect(set, cellsWhere(p, function(_, c) return c == col end))
+    end
+    -- corner of the area
+    if s:find("corner of h") then
+        set = intersect(set, cellsWhere(p, function(r, c, cell)
+            local function wall(dr, dc)
+                local n = Puzzle.cell(p, r + dr, c + dc)
+                return not n or n.void or n.area ~= cell.area
+            end
+            local up, down, left, right = wall(-1, 0), wall(1, 0), wall(0, -1), wall(0, 1)
+            return (up or down) and (left or right)
+        end))
+    end
+    return set
+end
+
+--- Squares a suspect's clue points at, or nil.
+function Parse.cells(p, i)
+    local s = p.suspects[i]
+    if not s or s.is_victim then return nil end
+    local set
+    for sentence in (s.clue .. " "):gmatch("([^%.!?]+)[%.!?]") do
+        -- "in the Shipyard, but not beside the box": read each clause on its own
+        local low = sentence:lower():gsub(",? but ", "|"):gsub(", and ", "|"):gsub("; ", "|")
+        for clause in (low .. "|"):gmatch("([^|]+)|") do
+            local cs = sentenceCells(p, clause)
+            if cs then set = intersect(set, cs) end
+        end
+    end
+    if set and next(set) == nil then return nil end
+    return set
+end
+
+return Parse

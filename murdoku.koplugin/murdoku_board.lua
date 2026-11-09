@@ -14,6 +14,7 @@ local Geom = require("ui/geometry")
 local GestureRange = require("ui/gesturerange")
 local InputContainer = require("ui/widget/container/inputcontainer")
 local RenderText = require("ui/rendertext")
+local Size = require("ui/size")
 local InfoMessage = require("ui/widget/infomessage")
 local UIManager = require("ui/uimanager")
 local Puzzle = require("murdoku_puzzle")
@@ -249,7 +250,22 @@ function Board:paintObject(bb, id, obj, blocked, cx, cy, cs, marked)
     end
 end
 
-function Board:paintTexture(bb, cell, cx, cy, cs) end
+local Textures = require("murdoku_textures")
+
+function Board:paintTexture(bb, cell, cx, cy, cs)
+    if not self.game.options.textures then return end
+    self.tex = self.tex or {}
+    local t = self.tex[cell.area]
+    if t == nil then
+        local room = self.puzzle.rooms[cell.area]
+        t = Textures.forName(room and room.name) or false
+        self.tex[cell.area] = t
+    end
+    if t then
+        local tint = self.tint[cell.area]
+        t(bb, cx, cy, cs, cs, tint == 4 and C.Color8(0xC4) or C.Color8(0xDD))
+    end
+end
 
 -- Clue highlight: a light frame inside the square.
 function Board:paintHighlight(bb, cx, cy, cs)
@@ -586,7 +602,7 @@ function Toolbar:paintTo(bb, x, y)
         if active then
             bb:paintRect(bx, y + gap, w, h, C.COLOR_BLACK)
         else
-            bb:paintBorder(bx, y + gap, w, h, 2, enabled and C.COLOR_BLACK or C.COLOR_GRAY_9)
+            bb:paintBorder(bx, y + gap, w, h, Size.border.thin, enabled and C.COLOR_BLACK or C.COLOR_GRAY_9)
         end
         local img = active and it.img_w or it.img
         img:paintTo(bb, math.floor(bx + (w - self.isz) / 2), math.floor(y + gap + (h - self.isz) / 2))

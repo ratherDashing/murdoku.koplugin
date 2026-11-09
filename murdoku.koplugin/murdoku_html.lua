@@ -17,8 +17,11 @@ local VerticalGroup = require("ui/widget/verticalgroup")
 local Screen = Device.screen
 
 local CSS = [[
+@font-face { font-family: 'MurdokuSans'; src: url('fonts/noto/NotoSans-Regular.ttf') }
+@font-face { font-family: 'MurdokuSans'; src: url('fonts/noto/NotoSans-Bold.ttf'); font-weight: bold }
+@font-face { font-family: 'MurdokuSans'; src: url('fonts/noto/NotoSans-Italic.ttf'); font-style: italic }
 @page { margin: 0; }
-body { margin: 0; padding: 0; line-height: 1.3; text-align: left; }
+body { margin: 0; padding: 0; line-height: 1.3; text-align: left; font-family: 'MurdokuSans'; }
 h2 { font-size: 1.15em; font-weight: bold; margin: 0.9em 0 0.3em 0; border-bottom: 1px solid black; }
 h2:first-child { margin-top: 0.2em; }
 p { margin: 0.35em 0; text-indent: 0; }
@@ -28,7 +31,7 @@ ul ul { margin: 0.15em 0; }
 .ex { font-style: italic; }
 .small { font-size: 0.85em; }
 .box { border: 1px solid black; padding: 0.3em 0.5em; margin: 0.5em 0; }
-a { color: black; text-decoration: underline; }
+a { color: #000000 !important; text-decoration: underline; font-weight: bold; }
 ]]
 
 local HtmlPage = InputContainer:extend{
@@ -128,7 +131,7 @@ M.HOW_TO_PLAY = [[
 <ul>
 <li><b>"in the Kitchen"</b>: on any square of the Kitchen.</li>
 <li><b>"on a chair" / "in a car"</b>: standing on that object's square.</li>
-<li><b>"beside the table"</b>: directly left, right, above or below a table square, <b>and in the same area as it</b>. Diagonals don't count, and a table on the other side of a wall doesn't count.
+<li><b>"beside" anything</b> (a table, plant, tree, barrel, person…): directly left, right, above or below one of its squares, <b>and in the same area as it</b>. Diagonals don't count, and anything on the other side of a wall doesn't count. This applies to every "beside" clue, not just tables.
 <ul><li class="ex">Example: the table is at R3 C3 in the Kitchen. R3 C4 is beside it only if R3 C4 is also in the Kitchen.</li></ul></li>
 <li><b>"north of Bella"</b>: in any row above Bella's row, in any column and any area. <b>South</b> = any row below; <b>west</b> = any column to the left; <b>east</b> = any column to the right.</li>
 <li><b>"exactly one row north of Bella"</b>: in the row directly above Bella's row (in any column).</li>

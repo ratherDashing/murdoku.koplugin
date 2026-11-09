@@ -40,6 +40,7 @@ local Store = require("murdoku_store")
 local Widgets = require("murdoku_board")
 local Html = require("murdoku_html")
 local Cards = require("murdoku_cards")
+local Parse = require("murdoku_clueparse")
 local Screen = Device.screen
 
 
@@ -281,9 +282,9 @@ function Game:statusText()
     elseif p.general_clues and #p.general_clues > 0 then
         return "General: " .. table.concat(p.general_clues, " ")
     elseif self.selected then
-        return p.suspects[self.selected].name .. ": tap a square for a note, hold it to place."
+        return p.suspects[self.selected].name .. ": tap\u{00A0}=\u{00A0}note, hold\u{00A0}=\u{00A0}place."
     end
-    return "Pick a suspect: tap a square for a note, hold it to place them."
+    return "Pick a suspect: tap a square for a note, hold it to place."
 end
 
 function Game:updateClue()
@@ -477,9 +478,13 @@ function Game:showCellCard(r, c)
         who and self.puzzle.suspects[who])
 end
 
--- Tier-3 hook: cells the selected suspect's clue refers to.
+-- Squares the selected suspect's clue refers to (an option, on by default).
 function Game:updateHighlight()
     self.highlight = nil
+    if self.options.highlight and self.selected and not self.state.solved then
+        local ok, set = pcall(Parse.cells, self.puzzle, self.selected)
+        if ok then self.highlight = set end
+    end
 end
 
 function Game:onCellsSwipe(cells)

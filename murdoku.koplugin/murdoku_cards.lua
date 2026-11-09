@@ -8,6 +8,7 @@ Suspect cards and popups for the game screen:
 
 local Blitbuffer = require("ffi/blitbuffer")
 local Device = require("device")
+local CenterContainer = require("ui/widget/container/centercontainer")
 local Font = require("ui/font")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local Geom = require("ui/geometry")
@@ -26,6 +27,7 @@ local VerticalSpan = require("ui/widget/verticalspan")
 local lfs = require("libs/libkoreader-lfs")
 local Faces = require("murdoku_faces")
 local Puzzle = require("murdoku_puzzle")
+local Parse = require("murdoku_clueparse")
 local Screen = Device.screen
 
 local C = Blitbuffer
@@ -122,28 +124,26 @@ function SuspectPanel:build()
         local pad = Size.padding.small + (bw_max - bw)
         local inner_h = h - 2 * bw - 2 * pad
         -- left column: face with the letter badge and name under it
-        local col_w = math.floor(math.min(w * 0.3, Screen:scaleBySize(110)))
+        local col_w = self:leftColumnWidth(w)
+        local bdg = badge(s.letter, self.f_badge, pos ~= nil)
         local head = HorizontalGroup:new{ align = "center",
-            badge(s.letter, self.f_badge, pos ~= nil),
+            bdg,
             HorizontalSpan:new{ width = Size.padding.small },
             TextWidget:new{ text = s.name, face = self.f_name, bold = true,
-                max_width = col_w - Screen:scaleBySize(24) },
+                max_width = col_w - bdg:getSize().w - Size.padding.small },
         }
         local fsz = math.max(10, math.min(col_w, inner_h - head:getSize().h))
         local left = VerticalGroup:new{ align = "center",
             faceImage(s, fsz),
             head,
         }
-        local text_w = w - 2 * bw - 2 * pad - math.max(col_w, head:getSize().w) - Size.padding.default
+        left = CenterContainer:new{ dimen = Geom:new{ w = col_w, h = inner_h }, left }
+        local text_w = w - 2 * bw - 2 * pad - col_w - Size.padding.default
         local clue = s.clue
-        if pos then clue = clue .. string.format("  [R%d C%d]", pos[1], pos[2]) end
-        local body = TextBoxWidget:new{
-            text = clue, face = self.f_clue, width = text_w,
-            height = inner_h, height_overflow_show_ellipsis = true,
-        }
+        if pos then clue = clue .. string.format(" [R%d\u{00A0}C%d]", pos[1], pos[2]) end
+        local body = self:clueWidget(i, clue, text_w, inner_h)
         local card = FrameContainer:new{
             width = w, height = h, bordersize = bw, padding = pad, margin = 0,
-            radius = Size.radius.default,
             color = selected and C.COLOR_BLACK or C.COLOR_DARK_GRAY,
             background = C.COLOR_WHITE,
             HorizontalGroup:new{ align = "top",
@@ -154,6 +154,54 @@ function SuspectPanel:build()
         }
         table.insert(self.cards, { i = i, w = card })
     end
+end
+
+-- Same width for every card's face/name column, so the clues line up.
+function SuspectPanel:leftColumnWidth(w)
+    if self.col_w then return self.col_w end
+    local widest = 0
+    for _, s in ipairs(self.puzzle.suspects) do
+        local hg = HorizontalGroup:new{
+            badge(s.letter, self.f_badge, false),
+            HorizontalSpan:new{ width = Size.padding.small },
+            TextWidget:new{ text = s.name, face = self.f_name, bold = true },
+        }
+        widest = math.max(widest, hg:getSize().w)
+        hg:free()
+    end
+    self.col_w = math.floor(math.min(math.max(widest, Screen:scaleBySize(60)), w * (self.cols == 1 and 0.44 or 0.36)))
+    return self.col_w
+end
+
+-- Clue with bold keywords, rendered once per suspect and reused.
+local CLUE_CSS = [[
+@font-face { font-family: 'MurdokuSans'; src: url('fonts/noto/NotoSans-Regular.ttf') }
+@font-face { font-family: 'MurdokuSans'; src: url('fonts/noto/NotoSans-Bold.ttf'); font-weight: bold }
+@font-face { font-family: 'MurdokuSans'; src: url('fonts/noto/NotoSans-Italic.ttf'); font-style: italic }
+@page { margin: 0; }
+body { margin: 0; padding: 0; line-height: 1.15; text-align: left; font-family: 'MurdokuSans'; }
+p { margin: 0; text-indent: 0; }
+]]
+
+function SuspectPanel:clueWidget(i, clue, w, h)
+    self.clue_cache = self.clue_cache or {}
+    local key = i .. ":" .. w .. "x" .. h .. ":" .. clue
+    local wd = self.clue_cache[key]
+    if not wd then
+        local ok, HtmlBoxWidget = pcall(require, "ui/widget/htmlboxwidget")
+        if ok then
+            wd = HtmlBoxWidget:new{ dimen = Geom:new{ w = w, h = h } }
+            local okc = pcall(wd.setContent, wd, "<p>" .. Parse.html(self.puzzle, clue) .. "</p>",
+                CLUE_CSS, math.floor(self.f_clue.size * 1.0))
+            if not okc then wd = nil end
+        end
+        if not wd then
+            wd = TextBoxWidget:new{ text = clue, face = self.f_clue, width = w,
+                height = h, height_overflow_show_ellipsis = true }
+        end
+        self.clue_cache[key] = wd
+    end
+    return wd
 end
 
 function SuspectPanel:stripText()
@@ -277,11 +325,29 @@ function Popup:close()
     if self.on_close then self.on_close() end
     return true
 end
+-- a popup laid out for the old screen size is useless after a rotation
+function Popup:onSetRotationMode() self:close() end
+function Popup:onScreenResize() self:close() end
 Popup.onTapClose = Popup.close
 Popup.onHoldClose = Popup.close
 Popup.onClose = Popup.close
 
 local M = { SuspectPanel = SuspectPanel }
+
+local function popupClue(p, clue, w)
+    local f = Font:getFace("cfont", 21)
+    local probe = TextBoxWidget:new{ text = clue, face = f, width = w }
+    local h = probe:getSize().h + math.floor(f.size * 0.6)
+    probe:free()
+    local ok, HtmlBoxWidget = pcall(require, "ui/widget/htmlboxwidget")
+    if ok then
+        local wd = HtmlBoxWidget:new{ dimen = Geom:new{ w = w, h = h } }
+        if pcall(wd.setContent, wd, "<p>" .. Parse.html(p, clue) .. "</p>", CLUE_CSS, math.floor(f.size)) then
+            return wd
+        end
+    end
+    return TextBoxWidget:new{ text = clue, face = f, width = w }
+end
 
 --- XRay-style bottom sheet for a held suspect.
 function M.showSuspectPopup(p, i, placed)
@@ -305,7 +371,7 @@ function M.showSuspectPopup(p, i, placed)
         TextWidget:new{ text = table.concat(traits, " · ") .. (pos and string.format("  ·  placed at R%d C%d", pos[1], pos[2]) or ""),
             face = Font:getFace("cfont", 16), fgcolor = C.COLOR_DARK_GRAY, max_width = text_w },
         VerticalSpan:new{ width = Size.padding.large },
-        TextBoxWidget:new{ text = s.clue, face = Font:getFace("cfont", 21), width = text_w },
+        popupClue(p, s.clue, text_w),
     }
     local content = VerticalGroup:new{ align = "left",
         LineWidget:new{ dimen = Geom:new{ w = sw, h = Size.line.thick }, background = C.COLOR_DARK_GRAY },
