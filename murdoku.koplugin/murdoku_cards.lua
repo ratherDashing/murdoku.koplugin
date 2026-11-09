@@ -34,12 +34,13 @@ local C = Blitbuffer
 local PLUGIN_DIR = debug.getinfo(1, "S").source:match("^@(.*)/[^/]*$") or "."
 
 -- Letter badge: white letter on a black square (outlined when placed).
-local function badge(letter, face, inverted)
+local function badge(letter, face, inverted, tight)
     local tw = TextWidget:new{ text = letter, face = face, bold = true,
         fgcolor = inverted and C.COLOR_BLACK or C.COLOR_WHITE }
+    local hp = tight and Screen:scaleBySize(2) or Size.padding.small
     return FrameContainer:new{
         bordersize = Size.border.thick, color = C.COLOR_BLACK, margin = 0,
-        padding = 0, padding_left = Size.padding.small, padding_right = Size.padding.small,
+        padding = 0, padding_left = hp, padding_right = hp,
         background = inverted and C.COLOR_WHITE or C.COLOR_BLACK,
         tw,
     }
@@ -50,12 +51,20 @@ end
 local function nameBadge(s, name_face, inverted, max_w)
     local first = s.name:sub(1, 1)
     if first:upper() == s.letter then
-        local bdg = badge(s.letter, name_face, inverted)
-        local rest = s.name:sub(2)
+        -- the initial sits in a box exactly one text line tall, so it lines
+        -- up with the rest of the name: [A]ndy. Placed people get a grey box.
+        local hp = Screen:scaleBySize(2)
+        local bdg = FrameContainer:new{
+            bordersize = 0, margin = 0, padding = 0, padding_left = hp, padding_right = hp,
+            background = inverted and C.COLOR_LIGHT_GRAY or C.COLOR_BLACK,
+            TextWidget:new{ text = s.letter, face = name_face, bold = true,
+                fgcolor = inverted and C.COLOR_BLACK or C.COLOR_WHITE },
+        }
         return HorizontalGroup:new{ align = "center",
             bdg,
-            TextWidget:new{ text = rest, face = name_face, bold = true,
-                padding = 0, max_width = max_w and (max_w - bdg:getSize().w) or nil },
+            HorizontalSpan:new{ width = Screen:scaleBySize(1) },
+            TextWidget:new{ text = s.name:sub(2), face = name_face, bold = true,
+                max_width = max_w and (max_w - bdg:getSize().w) or nil },
         }
     end
     local bdg = badge(s.letter, name_face, inverted)

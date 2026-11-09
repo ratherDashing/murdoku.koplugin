@@ -142,6 +142,13 @@ M.HOW_TO_PLAY = [[
 <li><b>"not with Dan"</b>: Dan is in a different area.</li>
 <li><b>"the only person on a chair"</b>: nobody else, the victim included, is on any chair anywhere.</li>
 <li><b>"There was a woman in his area"</b>: at least one <i>other</i> person in his area is a woman.</li>
+<li><b>"with a woman" / "with a man"</b>: at least one <i>other</i> person in her area is a woman (or a man). The victim counts.</li>
+<li><b>"alone with a woman"</b>: exactly two people in her area, her and one woman.</li>
+<li><b>"alone in the Garden"</b>: she was in the Garden and nobody else was.</li>
+<li><b>"the only woman in the Library"</b>: no other woman is in the Library, the victim included. Men may be.</li>
+<li><b>"Someone else in her area was on a chair"</b> / <b>"in the same area as someone else on a chair"</b>: another person in her area (it can be the victim) is on a chair.</li>
+<li><b>"beside a table and a plant"</b>: beside both.</li>
+<li><b>"in the Kitchen or the Hall"</b>: in either one.</li>
 <li><b>General clues</b> (shown above the suspects) apply to everyone, the victim included.</li>
 </ul>
 
@@ -149,7 +156,7 @@ M.HOW_TO_PLAY = [[
 <ul>
 <li><b>Tap a suspect</b> to select them. Their clue cells are highlighted on the board (you can turn this off in the menu).</li>
 <li>With a suspect selected, <b>tap a square</b> to pencil in a <b>note</b> (a small letter). Tap again to remove it.</li>
-<li>With a suspect selected, <b>hold a square</b> to <b>place</b> them there (a big letter). The rest of their row and column are crossed out for you, and the selection is cleared.</li>
+<li>With a suspect selected, <b>hold a square</b> to <b>place</b> them there (a big letter). The rest of their row and column are crossed out for you, and the selection is cleared. Taking them off again removes those automatic X marks; the ones you made stay.</li>
 <li>With nobody selected, <b>tap a square</b> to cross it out with an <b>X</b>, or tap a placed person to select them again (hold another square to move them).</li>
 <li><b>Swipe</b> across a row or column of squares to cross them all out.</li>
 <li><b>Hold</b> a square to see what's there, or hold a suspect to read their clue in full.</li>

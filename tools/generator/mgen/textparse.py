@@ -140,7 +140,7 @@ class TextParser:
 
     def body(self, i, b):
         pz = self.pz
-        m = re.fullmatch(r'in the same area as someone (.+)', b)
+        m = re.fullmatch(r'in the same area as someone (?:else )?(.+)', b)
         if m:
             return [Exists(i, 'samearea', cells=self.where(m.group(1)))]
         m = re.fullmatch(r'exactly one row (north|south) of someone (.+)', b)

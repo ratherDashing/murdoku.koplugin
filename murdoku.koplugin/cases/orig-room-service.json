@@ -10,7 +10,7 @@
   "player_hint_1_en": "Only one square fits both parts of Bonnie's clue (\"She was in the Bar, but not beside a register. She was in the bottom row.\"). So Bonnie (B) must be at row 5, column 3. Cross out her row and column.",
   "player_hint_2_en": "With the rows and columns of Bonnie crossed out, only one square is left for Dinah that fits her clue (\"She was sitting in a chair in the Bar.\"). So Dinah (D) must be at row 1, column 5. Cross out her row and column.",
   "player_hint_3_en": "With the rows and columns of Bonnie and Dinah crossed out, only one square is left for Clement that fits his clue (\"He was beside a register in the Bar.\"). So Clement (C) must be at row 2, column 4. Cross out his row and column.",
-  "player_hint_4_en": "Angus's clue (\"He was in the same area as someone sitting in a chair.\") needs the person sitting in a chair in Angus's area on a square that does not share his row or column; that rules out squares for Angus. So Angus (A) must be at row 4, column 2. Cross out his row and column.",
+  "player_hint_4_en": "Angus's clue (\"He was in the same area as someone else sitting in a chair.\") needs the person sitting in a chair in Angus's area on a square that does not share his row or column; that rules out squares for Angus. So Angus (A) must be at row 4, column 2. Cross out his row and column.",
   "player_hint_5_en": "With the rows and columns of everyone placed so far crossed out, only one square is left for Valentine. So Valentine (the victim) must be at row 3, column 1. Cross out his row and column. Angus is the only person in the Reception with Valentine, so Angus is the murderer!"
  },
  "CHARACTERS": {
@@ -96,7 +96,7 @@
   "room_name_3": "Reception",
   "char_name_0": "Angus",
   "char_sex_0": "0",
-  "char_quote_en_0": "He was in the same area as someone sitting in a chair.",
+  "char_quote_en_0": "He was in the same area as someone else sitting in a chair.",
   "solution_x_0": "1",
   "solution_y_0": "3",
   "char_name_1": "Bonnie",

@@ -299,6 +299,10 @@ function Puzzle.parse(data, id)
             if h ~= "" then table.insert(hints, h) end
         end
     end
+    -- a few site clues lack the final full stop
+    for _, sp in ipairs(p.suspects) do
+        if sp.clue and sp.clue ~= "" and not sp.clue:match("[%.!?\"')]%s*$") then sp.clue = sp.clue .. "." end
+    end
     p.hints = hints
 
     -- Show each person by the first letter of their name when those letters

@@ -287,7 +287,7 @@ function C.existentialCandidates(g, i)
                 end
                 if occ_on then
                     add("samearea", A.Exists(i, "samearea", cells), "the person " .. phrase .. " in " .. name .. "'s area",
-                        He .. " was in the same area as someone " .. phrase .. ".")
+                        He .. " was in the same area as someone else " .. phrase .. ".")
                 end
                 for _, kw in ipairs({ { -1, "north" }, { 1, "south" } }) do
                     local k = kw[1]

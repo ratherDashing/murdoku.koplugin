@@ -217,7 +217,7 @@ def candidates(g, i, rng):
 def existential_candidates(g, i):
     """'Someone ...' sentences for suspect i (aha mode). They create the
     "who can be the person in the car?" deductions hand-made puzzles use:
-      samearea  He was in the same area as someone sitting in a chair.
+      samearea  He was in the same area as someone else sitting in a chair.
       rowof     He was exactly one row north of someone on a bed.
       withg     He was with a woman.
     Each atom gets a `desc` naming the unknown companion, used by the hints."""
@@ -238,7 +238,7 @@ def existential_candidates(g, i):
         if any(sol[j] in cells for j in occ):
             at = Exists(i, 'samearea', cells=cells)
             at.desc = f'the person {phrase} in {name}\'s area'
-            out.append(Clue('samearea', [at], f'{He} was in the same area as someone {phrase}.', i))
+            out.append(Clue('samearea', [at], f'{He} was in the same area as someone else {phrase}.', i))
         for k, word in ((-1, 'north'), (1, 'south')):
             if any(pz.row[x] - pz.row[sol[j]] == k and sol[j] in cells for j in range(pz.n) if j != i):
                 at = Exists(i, 'rows', cells=cells, k=k)

@@ -142,13 +142,48 @@ local function intersect(a, b)
     return out
 end
 
-local function sentenceCells(p, s)
+local function sentenceCells(p, s, placed, self_i)
     if s:find("%f[%a]not%f[%A]") or s:find("n't") or s:find("%f[%a]no%f[%A]") or s:find("nobody")
             or s:find("someone") or s:find("%f[%a]else%f[%A]") or s:find("%f[%a]who%f[%A]") or s:find("everyone") or s:find("there was")
-            or s:find("there were") then
+            or s:find("there were") or s:find("of an? w?o?man%f[%A]") or s:find("of the w?o?man%f[%A]")
+            or s:find("of a person") then
+        -- these describe somebody else, not where this person stands
         return nil
     end
-    local set
+    -- relative to a person who is already on the board
+    local NUM = { one = 1, two = 2, three = 3, four = 4, five = 5, six = 6, seven = 7, eight = 8 }
+    local rel_set
+    if placed then
+        for j, sp in ipairs(p.suspects) do
+            local nm = sp.name:lower()
+            local a = j ~= self_i and placed[j] and s:find("%f[%a]" .. nm:gsub("%p", "%%%0") .. "%f[%A]")
+            if a then
+                local pr, pc = placed[j][1], placed[j][2]
+                local pred
+                local n, unit, dir = s:match("exactly (%a+) (%a+) (%a+) of " .. nm)
+                local k = n and (NUM[n] or tonumber(n))
+                if k and unit and dir then
+                    local isrow = unit:match("^row")
+                    if isrow and dir == "north" then pred = function(r) return r == pr - k end
+                    elseif isrow and dir == "south" then pred = function(r) return r == pr + k end
+                    elseif not isrow and dir == "west" then pred = function(_, c) return c == pc - k end
+                    elseif not isrow and dir == "east" then pred = function(_, c) return c == pc + k end end
+                else
+                    dir = s:match("(%a+) of " .. nm)
+                    if dir == "north" then pred = function(r) return r < pr end
+                    elseif dir == "south" then pred = function(r) return r > pr end
+                    elseif dir == "west" then pred = function(_, c) return c < pc end
+                    elseif dir == "east" then pred = function(_, c) return c > pc end
+                    elseif s:find("with " .. nm) then
+                        local area = p.cells[pr][pc].area
+                        pred = function(_, _, cell) return cell.area == area end
+                    end
+                end
+                if pred then rel_set = intersect(rel_set, cellsWhere(p, pred)) end
+            end
+        end
+    end
+    local set = rel_set
     -- area
     local best, best_len
     for code, room in pairs(p.rooms) do
@@ -243,7 +278,7 @@ end
 --- Squares a suspect's clue points at, or nil.
 -- Positive clauses are intersected; "not ..." clauses (not in the X, not beside
 -- a Y, not on a chair, not in the first row) take their squares away.
-function Parse.cells(p, i)
+function Parse.cells(p, i, placed)
     local s = p.suspects[i]
     if not s or s.is_victim then return nil end
     local set, minus
@@ -256,7 +291,7 @@ function Parse.cells(p, i)
             if neg then
                 if negatable(clause) then
                     local pos = clause:gsub("n't", ""):gsub("%f[%a]not%s+", "")
-                    local cs = sentenceCells(p, pos)
+                    local cs = sentenceCells(p, pos, placed, i)
                     if cs and next(cs) then
                         minus = minus or {}
                         for k in pairs(cs) do minus[k] = true end
@@ -265,14 +300,18 @@ function Parse.cells(p, i)
             elseif clause:find(" or ") then
                 -- "in the Fiction area or in the Archives": either part will do
                 local union, all = {}, true
+                local lead
                 for part in (clause .. " or "):gmatch("(.-) or ") do
-                    local cs = sentenceCells(p, part)
+                    local cs = sentenceCells(p, part, placed, i)
+                    if not cs and lead then cs = sentenceCells(p, lead .. part, placed, i) end
+                    lead = lead or part:match("^(.*%f[%a]beside%s+)") or part:match("^(.*%f[%a]on%s+)")
+                        or part:match("^(.*%f[%a]in%s+)")
                     if not cs then all = false break end
                     for k in pairs(cs) do union[k] = true end
                 end
                 if all then set = intersect(set, union) end
             else
-                local cs = sentenceCells(p, clause)
+                local cs = sentenceCells(p, clause, placed, i)
                 if cs then set = intersect(set, cs) end
             end
         end

@@ -504,7 +504,7 @@ end
 function Game:updateHighlight()
     self.highlight = nil
     if self.options.highlight and self.selected and not self.state.solved then
-        local ok, set = pcall(Parse.cells, self.puzzle, self.selected)
+        local ok, set = pcall(Parse.cells, self.puzzle, self.selected, self.state.placed)
         if ok then self.highlight = set end
     end
 end
