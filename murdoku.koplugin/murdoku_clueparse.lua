@@ -4,7 +4,7 @@ A small reader for clue sentences, used for display only:
   * Parse.cells(p, i)         – set of "r,c" squares a suspect's clue points
                                 at (area, on/beside an object, row, column,
                                 corner), or nil if nothing was recognised
-It is deliberately simple: positive sentences only, intersected.
+Positive clauses are intersected; "not" clauses subtract.
 --]]
 
 local Puzzle = require("murdoku_puzzle")
@@ -140,6 +140,10 @@ local function sentenceCells(p, s)
     end
     if best then
         set = intersect(set, cellsWhere(p, function(_, _, cell) return cell.area == best end))
+        -- blank the area name out so "in the Tool Shed" isn't read as "in a tool"
+        local name = p.rooms[best].name:lower()
+        local a = s:find(name, 1, true)
+        s = s:sub(1, a - 1) .. string.rep("_", #name) .. s:sub(a + #name)
     end
     -- beside an object (same area only)
     for _, kw in ipairs({ "beside", "next to" }) do
@@ -160,6 +164,10 @@ local function sentenceCells(p, s)
             end
         end
     end
+    -- on a carpet (carpets are a separate layer, not an object)
+    if s:find("carpet") and (s:find("on a carpet") or s:find("on the carpet") or s:find("on carpet")) then
+        set = intersect(set, cellsWhere(p, function(_, _, cell) return cell.carpet end))
+    end
     -- on / in / sitting in an object
     for _, verb in ipairs({ "on ", "in ", "inside ", "under " }) do
         local start = 1
@@ -169,6 +177,7 @@ local function sentenceCells(p, s)
             start = a + 1
             if a == 1 or not s:sub(a - 1, a - 1):match("%a") then
                 local ids = objectAfter(s, a + #verb)
+                if ids and ids[5] then ids = nil end -- carpets handled above
                 if ids then
                     set = intersect(set, cellsWhere(p, function(_, _, cell) return ids[cell.obj] == true end))
                     break
@@ -180,7 +189,8 @@ local function sentenceCells(p, s)
     local function line(word, n)
         local idx
         local ord = s:match("(%a+) " .. word)
-        if ord == "last" then idx = n
+        if ord == "last" or ord == "bottom" or ord == "rightmost" then idx = n
+        elseif ord == "top" or ord == "leftmost" then idx = 1
         elseif ord and ORD[ord] then idx = ORD[ord]
         else idx = tonumber(s:match(word .. " (%d+)")) end
         return idx
@@ -207,18 +217,43 @@ local function sentenceCells(p, s)
     return set
 end
 
+local function negatable(c)
+    return not (c:find("someone") or c:find("%f[%a]else%f[%A]") or c:find("everyone") or c:find("nobody")
+        or c:find("there was") or c:find("there were") or c:find("%f[%a]no%f[%A]"))
+end
+
 --- Squares a suspect's clue points at, or nil.
+-- Positive clauses are intersected; "not ..." clauses (not in the X, not beside
+-- a Y, not on a chair, not in the first row) take their squares away.
 function Parse.cells(p, i)
     local s = p.suspects[i]
     if not s or s.is_victim then return nil end
-    local set
+    local set, minus
     for sentence in (s.clue .. " "):gmatch("([^%.!?]+)[%.!?]") do
         -- "in the Shipyard, but not beside the box": read each clause on its own
-        local low = sentence:lower():gsub(",? but ", "|"):gsub(", and ", "|"):gsub("; ", "|")
+        local low = sentence:lower():gsub(",? but ", "|"):gsub(",? and ", "|"):gsub(",? nor ", "|not ")
+            :gsub("; ", "|"):gsub(", ", "|")
         for clause in (low .. "|"):gmatch("([^|]+)|") do
-            local cs = sentenceCells(p, clause)
-            if cs then set = intersect(set, cs) end
+            local neg = clause:find("%f[%a]not%f[%A]") or clause:find("n't")
+            if neg then
+                if negatable(clause) then
+                    local pos = clause:gsub("n't", ""):gsub("%f[%a]not%s+", "")
+                    local cs = sentenceCells(p, pos)
+                    if cs and next(cs) then
+                        minus = minus or {}
+                        for k in pairs(cs) do minus[k] = true end
+                    end
+                end
+            else
+                local cs = sentenceCells(p, clause)
+                if cs then set = intersect(set, cs) end
+            end
         end
+    end
+    -- "not" parts only narrow down a positive part; on their own they would
+    -- light up most of the board, which helps nobody
+    if minus and set then
+        for k in pairs(minus) do set[k] = nil end
     end
     if set and next(set) == nil then return nil end
     return set
