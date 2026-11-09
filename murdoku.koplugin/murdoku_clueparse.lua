@@ -144,7 +144,7 @@ end
 
 local function sentenceCells(p, s)
     if s:find("%f[%a]not%f[%A]") or s:find("n't") or s:find("%f[%a]no%f[%A]") or s:find("nobody")
-            or s:find("someone") or s:find("%f[%a]else%f[%A]") or s:find("everyone") or s:find("there was")
+            or s:find("someone") or s:find("%f[%a]else%f[%A]") or s:find("%f[%a]who%f[%A]") or s:find("everyone") or s:find("there was")
             or s:find("there were") then
         return nil
     end
@@ -262,6 +262,15 @@ function Parse.cells(p, i)
                         for k in pairs(cs) do minus[k] = true end
                     end
                 end
+            elseif clause:find(" or ") then
+                -- "in the Fiction area or in the Archives": either part will do
+                local union, all = {}, true
+                for part in (clause .. " or "):gmatch("(.-) or ") do
+                    local cs = sentenceCells(p, part)
+                    if not cs then all = false break end
+                    for k in pairs(cs) do union[k] = true end
+                end
+                if all then set = intersect(set, union) end
             else
                 local cs = sentenceCells(p, clause)
                 if cs then set = intersect(set, cs) end
