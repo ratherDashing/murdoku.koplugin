@@ -69,7 +69,7 @@ return {
     noun = { ["bed-v"] = "bed", ["tv"] = "TV" },
     themes = {
         { name = "campsite",
-          titles = { "The Last Campfire", "Lost in the Pines", "Ghost Stories", "Mosquito Season" },
+          titles = { "The Last Campfire", "Lost in the Pines", "Ghost Stories", "Mosquito Season", "Bear Country", "Canoe Trip" },
           rooms = {
             { "Campfire", { { "fire", 1 }, { "stump", 2 }, { "chair", 2 } } },
             { "Lake", { { "water", 3 }, { "rowboat", 2 }, { "raft", 1 } } },
@@ -134,7 +134,7 @@ return {
             { "Driveway", { { "car", 2 }, { "puddle", 1 } } },
           } },
         { name = "harbour",
-          titles = { "The Smugglers' Cove", "Low Tide", "The Captain's Chest", "Rum and Rope" },
+          titles = { "The Smugglers' Cove", "Low Tide", "The Captain's Chest", "Rum and Rope", "Fog in the Harbour", "Message in a Bottle" },
           rooms = {
             { "Dock", { { "rowboat", 3 }, { "barrel", 2 } } },
             { "Tavern", { { "table", 2 }, { "chair", 3 }, { "barrel", 1 } } },

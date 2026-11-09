@@ -7,7 +7,7 @@ from .solver import GRADES
 from .themes import THEMES, ON_VERB
 
 CREATOR = 'Murdoku for KOReader'
-GEN_VERSION = '1'
+GEN_VERSION = '2'
 
 
 def slugify(s):
@@ -48,6 +48,11 @@ def to_json(res, title, case_id=None):
         'id': case_id, 'theme': res.theme, 'grade': res.grade, 'trials': res.logic['trials'],
         'seed': res.seed, 'generator': GEN_VERSION,
     }
+    P_ = getattr(res, 'profile', None)
+    if P_ is not None:
+        meta['aha'] = [dict(tech=e['aha_key'], placed=e['placed'], cascade=e['cascade'])
+                       for e in P_['episodes'] if e['aha']]
+        meta['aha_score'] = getattr(res, 'score', None)
     return {'PROPERTIES': P, 'CHARACTERS': C, 'META': meta}
 
 
@@ -59,35 +64,82 @@ def clue_texts(res):
 
 
 # ---------------------------------------------------------------- playtest sheets
-RULES = """RULES
-1. Every person (all suspects and the victim) stands on exactly one square.
-   There is exactly one person in each row and exactly one person in each column.
-2. Nobody can stand on an obstacle square (marked OBSTACLE in the legend).
-   People CAN stand on empty floor, on carpets and on the objects marked
-   CAN STAND (chairs, beds, cars, boats...). Standing on any square of a
-   multi-square object (a car or bed covers 2 squares) counts as being on it.
-3. "in the <Area>" means standing on one of that area's squares.
-4. "beside X" means directly left, right, above or below a square holding X,
-   AND in the same area as that square. Diagonals do not count.
-5. "north of" = in a higher row (smaller row number), any column, any area.
-   "south of" = larger row number, "west of" = smaller column number,
-   "east of" = larger column number. "exactly two rows north of B" means
-   B's row number minus 2.
-6. "alone" = no other person in the same area. "alone with X" = exactly one
-   other person in the area, and it is X. "with X" = X is in the same area
-   (others may be too). "not with X" = X is in a different area.
-7. "There was no other man in his area" = no man other than him in his area.
-   "There was a woman in his area" = at least one woman other than him there.
-   "the only woman in the Library" = she is in the Library and no other
-   woman is (men may be). "Someone else in her area was ..." = at least one
-   other person in her area matches.
-8. "the only person sitting in a chair" = nobody else (victim included) is on
-   any chair square. General clues apply to everyone, victim included.
-9. "in a corner of her area" = her square has a wall or the edge of the map on
-   two sides that meet (e.g. top and left).
-10. The victim (V) was alone with exactly one other person in an area: that
-   person is the murderer. Every case has exactly one solution and can be
-   solved by logic alone."""
+RULES = """HOW TO PLAY
+
+THE GOAL
+- Someone has been murdered. Work out where every person was standing, then
+  you will know who did it.
+- The murderer is the one person who was alone with the victim: the victim's
+  area holds exactly two people, the victim and the murderer.
+
+THE GRID
+- Each row has exactly one person, and each column has exactly one person. So
+  when you place someone, cross out the rest of their row and column.
+- The map is split into areas (rooms, gardens, lakes...) by walls ("|" and
+  "----" on the map above).
+- An area can be empty, unless a general clue says otherwise ("There was no
+  empty area.").
+
+WHERE PEOPLE CAN STAND
+- Squares marked OBSTACLE in the object list (tables, trees, shelves...):
+  nobody can stand there.
+- Everything else is fine: empty floor, carpets, and the objects marked CAN
+  STAND (chairs, beds, cars, boats...).
+- Big things (a car, a bed) cover two or more squares; all covered squares are
+  listed. Standing on any one of them counts as being on it.
+
+READING THE CLUES
+- "in the Kitchen": on any square of the Kitchen. "in the Kitchen or the
+  Hall": on a square of one of the two. "not in the Kitchen": anywhere else.
+- "sitting in a chair" / "in a car" / "on a carpet": standing on a square of
+  that object. "not sitting in a chair": not on any chair square.
+- "beside the table": directly left, right, above or below a table square, AND
+  in the same area as that square. Diagonals do not count, and a table on the
+  other side of a wall does not count.
+  Example: the table is at r3c3 in the Kitchen. r3c4 is beside it only if
+  r3c4 is also in the Kitchen.
+- "beside a tree and some flowers": beside both. "in the Kitchen, but not
+  beside the table": in the Kitchen and not beside any table.
+- "north of Bella": in any row above Bella's row, in any column and any area.
+  South = any row below; west = any column to the left; east = any column to
+  the right.
+- "exactly one row north of Bella": in the row directly above Bella's row (any
+  column). "exactly two columns east of Bella": two columns to the right.
+- "in the top row" / "in the last column": that row or column of the map.
+- "in a corner of her area": her square has a wall or the map edge on two
+  sides that touch, such as top and left. Walls between areas count, not just
+  the map edge.
+- "alone": nobody else is in the same area. "alone in the Kitchen": in the
+  Kitchen, and nobody else is there.
+- "alone with Dan": exactly two people in the area, her and Dan. "alone with a
+  man": exactly two people in the area, her and a man.
+- "with Dan": Dan is in the same area (others may be too). "not with Dan": Dan
+  is in a different area.
+- "with a man" / "There was a man in her area": at least one OTHER person in
+  her area is a man (the victim counts). "There was no other woman in her
+  area": no woman other than her is in her area.
+- "the only woman in the Library": she is in the Library and no other woman
+  (the victim included) is; men may be.
+- "the only person sitting in a chair" / "the only person beside the piano":
+  she is, and nobody else, the victim included, is on any chair (beside the
+  piano) anywhere.
+- "Someone else in her area was sitting in a chair" / "in the same area as
+  someone sitting in a chair": at least one OTHER person in her area (the
+  victim counts) is on a chair.
+- "exactly one row north of someone on a bed": some OTHER person, in the row
+  directly below hers (any column, any area), is on a bed.
+- General clues apply to everyone, the victim included. "There was exactly
+  one person beside a tree", "No one was on a carpet", "No area contained
+  exactly one person" mean just what they say.
+
+TIPS
+- Start with the clue that allows the fewest squares.
+- Cross out every square someone can't be on; keep a short list of the two or
+  three squares a person might still be on.
+- If a guess leaves someone with nowhere to go, the guess was wrong.
+- The victim's clue is always the same: they were alone with the murderer. It
+  often settles the last step.
+- Every case has exactly one solution and can be solved by logic alone."""
 
 
 def _codes(pz):
@@ -206,6 +258,19 @@ def answer_text(res, case_id, title):
               f'Theme: {res.theme}  seed: {res.seed}',
               f'Clue kinds: ' + ', '.join(c.kind for lst in res.chosen for c in lst)
               + (' | general: ' + ', '.join(g.kind for g in res.general) if res.general else ''),
-              '', 'Hints:']
+              '']
+    P_ = getattr(res, 'profile', None)
+    if P_ is not None:
+        from .stephints import aha_summary, trace_lines
+        techs = ', '.join(f'{k} {v}' for k, v in sorted(P_['techs'].items()))
+        lines += [f'Step solver: {P_["whatifs"]} what-if(s), {P_["n_eps"]} bottleneck episode(s), '
+                  f'aha score {getattr(res, "score", "?")}; d0 {P_["d0"]:.2f}, givens {P_["givens"]}',
+                  f'Techniques used: {techs}',
+                  'Aha moments:']
+        lines += [f'  - {a}' for a in aha_summary(pz, P_)] or ['  (none)']
+        lines += ['Step-solver trace (placements and bottlenecks):']
+        lines += [f'  {t}' for t in trace_lines(pz, P_)]
+        lines += ['']
+    lines += ['Hints:']
     lines += [f'  {k}. {h}' for k, h in enumerate(res.hints, 1)]
     return '\n'.join(lines) + '\n'

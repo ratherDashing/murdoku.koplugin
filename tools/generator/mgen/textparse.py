@@ -140,6 +140,15 @@ class TextParser:
 
     def body(self, i, b):
         pz = self.pz
+        m = re.fullmatch(r'in the same area as someone (.+)', b)
+        if m:
+            return [Exists(i, 'samearea', cells=self.where(m.group(1)))]
+        m = re.fullmatch(r'exactly one row (north|south) of someone (.+)', b)
+        if m:
+            return [Exists(i, 'rows', cells=self.where(m.group(2)), k=-1 if m.group(1) == 'north' else 1)]
+        m = re.fullmatch(r'with a (man|woman)', b)
+        if m:
+            return [AreaCount(i, 'with', ('female', m.group(1) == 'woman'))]
         m = re.fullmatch(r'the only person (.+)', b)
         if m:
             cells = self.where(m.group(1))

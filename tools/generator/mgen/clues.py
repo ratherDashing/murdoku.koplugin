@@ -7,13 +7,15 @@ ORD = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eight
 NUM = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight']
 POSITIONAL = {'row', 'col', 'compass', 'offset'}
 STRONG = {'on', 'onroom', 'onlyon', 'beside2', 'besideroom', 'onlybeside', 'onlygender', 'alonewith'}
-WEAK = {'orroom', 'notroom', 'noton', 'notbeside', 'notwith', 'nogender', 'existsg', 'compass', 'with', 'exists'}
+WEAK = {'orroom', 'notroom', 'noton', 'notbeside', 'notwith', 'nogender', 'existsg', 'compass', 'with', 'exists',
+        'samearea', 'withg'}
 KIND_W = {
     'area': 3, 'orroom': 1.5, 'notroom': 1, 'on': 4, 'onroom': 2, 'noton': 0.8, 'onlyon': 2.5,
     'beside': 4, 'beside2': 2, 'besideroom': 1.5, 'notbeside': 1.5, 'onlybeside': 1.5,
     'alone': 2, 'aloneroom': 1.5, 'alonewith': 1.5, 'alonewithg': 1.5, 'with': 1.5, 'notwith': 0.7,
     'nogender': 1, 'onlygender': 1.2, 'exists': 1.5, 'existsg': 1, 'corner': 1,
     'row': 0.6, 'col': 0.6, 'compass': 0.5, 'offset': 0.4,
+    'samearea': 1.2, 'rowof': 0.8, 'withg': 1.0,
 }
 
 
@@ -83,6 +85,12 @@ class Ctx:
 
     def room(self, a):
         return self.pz.room_names[a]
+
+
+def _desc(atom, desc):
+    """Words for the unknown companion of a 'someone' clue (used by the hints)."""
+    atom.desc = desc
+    return atom
 
 
 def _true_for_others(pz, sol, i, cells):
@@ -169,11 +177,13 @@ def candidates(g, i, rng):
         y = sol[j]
         w2 = g.word_at(y)
         if w2:
-            add('exists', [Exists(i, 'samearea', cells=pz.on_set(w2))],
-                f'Someone else in {his} area was {ON_VERB[w2]} {g.art(w2, only=True)}.')
+            phrase = f'{ON_VERB[w2]} {g.art(w2, only=True)}'
+            add('exists', [_desc(Exists(i, 'samearea', cells=pz.on_set(w2)), f'the person {phrase} in {pz.names[i]}\'s area')],
+                f'Someone else in {his} area was {phrase}.')
         for w3 in g.beside_words(y):
-            add('exists', [Exists(i, 'samearea', cells=pz.beside_set(w3))],
-                f'Someone else in {his} area was beside {g.art(w3, only=True)}.')
+            phrase = f'beside {g.art(w3, only=True)}'
+            add('exists', [_desc(Exists(i, 'samearea', cells=pz.beside_set(w3)), f'the person {phrase} in {pz.names[i]}\'s area')],
+                f'Someone else in {his} area was {phrase}.')
 
     N = pz.H
     r, c = pz.row[x], pz.col[x]
@@ -201,6 +211,44 @@ def candidates(g, i, rng):
         if abs(dc) <= 2:
             k = abs(dc)
             add('offset', [Rel(i, j, 'cols', dc)], f'{He} was exactly {NUM[k]} column{"s" if k > 1 else ""} {ew} of {nm}.')
+    return out
+
+
+def existential_candidates(g, i):
+    """'Someone ...' sentences for suspect i (aha mode). They create the
+    "who can be the person in the car?" deductions hand-made puzzles use:
+      samearea  He was in the same area as someone sitting in a chair.
+      rowof     He was exactly one row north of someone on a bed.
+      withg     He was with a woman.
+    Each atom gets a `desc` naming the unknown companion, used by the hints."""
+    pz, sol = g.pz, g.sol
+    x = sol[i]
+    He, him, his = pz.pron(i)
+    a = pz.area[x]
+    occ = [j for j in range(pz.n) if j != i and pz.area[sol[j]] == a]
+    out = []
+    name = pz.names[i]
+    for w in g.words:
+        if w not in ON_VERB:
+            continue
+        cells = pz.on_set(w)
+        if not cells or (w == 'carpet' and x in cells):
+            continue
+        phrase = f'{ON_VERB[w]} {g.art(w, only=True)}'
+        if any(sol[j] in cells for j in occ):
+            at = Exists(i, 'samearea', cells=cells)
+            at.desc = f'the person {phrase} in {name}\'s area'
+            out.append(Clue('samearea', [at], f'{He} was in the same area as someone {phrase}.', i))
+        for k, word in ((-1, 'north'), (1, 'south')):
+            if any(pz.row[x] - pz.row[sol[j]] == k and sol[j] in cells for j in range(pz.n) if j != i):
+                at = Exists(i, 'rows', cells=cells, k=k)
+                at.desc = f'the person {phrase} one row {"south" if k < 0 else "north"} of {name}'
+                out.append(Clue('rowof', [at], f'{He} was exactly one row {word} of someone {phrase}.', i))
+    for fem, word in ((False, 'man'), (True, 'woman')):
+        if any(pz.female[j] == fem for j in occ if j != pz.victim):
+            at = AreaCount(i, 'with', ('female', fem))
+            at.desc = f'the {word} in {name}\'s area'
+            out.append(Clue('withg', [at], f'{He} was with a {word}.', i))
     return out
 
 
