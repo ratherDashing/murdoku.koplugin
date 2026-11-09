@@ -322,9 +322,22 @@ function Board:paintTo(bb, x, y)
                 if hl[k] then self:paintHighlight(bb, cx, cy, cs) end
             end
             if cell.carpet and not cell.void and not blocked then
-                local inset = math.max(3, math.floor(cs * 0.05))
-                local dot = math.max(2, math.floor(cs / 30))
-                dottedRect(bb, cx + inset, cy + inset, cs - 2 * inset, cs - 2 * inset, C.COLOR_GRAY_4, dot, dot * 2)
+                -- rug icon: full size on a bare carpet, small in the corner under an object
+                local alone = not obj
+                local size = math.floor(cs * (alone and 0.62 or 0.3))
+                local img = self:icon(5, false, size)
+                if img and not (who and alone) then
+                    local ix, iy
+                    if alone then
+                        ix = math.floor(cx + (cs - size) / 2)
+                        iy = math.floor(cy + (cs - size) / 2 + cs * 0.06)
+                    else
+                        local pad = math.max(2, math.floor(cs * 0.04))
+                        ix, iy = cx + cs - size - pad, cy + cs - size - pad
+                    end
+                    img:paintTo(bb, ix, iy)
+                    if state.marks[k] then bb:lightenRect(ix, iy, size, size, 0.65) end
+                end
             end
 
             -- object

@@ -390,7 +390,7 @@ function Game:erase(r, c)
     local who = self:occupantAt(r, c)
     if not who and not self.state.marks[k] and not self.state.notes[k] then return end
     self:action(function()
-        if who then self:change("placed", who, nil) end
+        if who then self:clearAutoMarks(who); self:change("placed", who, nil) end
         self:change("marks", k, nil)
         self:change("notes", k, nil)
     end)
@@ -410,6 +410,25 @@ function Game:toggleNote(i, r, c)
     self:action(function() self:change("notes", k, notes) end)
 end
 
+-- Remove the automatic X marks a placed person put on their row and column,
+-- keeping hand-made X marks and squares still crossed by someone else.
+function Game:clearAutoMarks(i)
+    local pos = self.state.placed[i]
+    if not pos then return end
+    local p, r, c = self.puzzle, pos[1], pos[2]
+    local function covered(rr, cc)
+        for j, q in pairs(self.state.placed) do
+            if j ~= i and (q[1] == rr or q[2] == cc) then return true end
+        end
+    end
+    local function un(rr, cc)
+        local k = rr .. "," .. cc
+        if self.state.marks[k] == "auto" and not covered(rr, cc) then self:change("marks", k, nil) end
+    end
+    for cc = 1, p.w do un(r, cc) end
+    for rr = 1, p.h do un(rr, c) end
+end
+
 -- Place suspect i on (r, c). The rest of their row and column get real X
 -- marks (undoable along with the placement). The selection is cleared.
 function Game:place(i, r, c)
@@ -419,17 +438,20 @@ function Game:place(i, r, c)
     self.selected = nil
     if who == i then
         -- holding your own square again takes the person back off the board
-        self:action(function() self:change("placed", i, nil) end)
+        self:action(function() self:clearAutoMarks(i); self:change("placed", i, nil) end)
         return
     end
     self:action(function()
-        if who then self:change("placed", who, nil) end
+        if who then self:clearAutoMarks(who); self:change("placed", who, nil) end
+        self:clearAutoMarks(i)
         self:change("placed", i, { r, c })
         self:change("marks", k, nil)
         self:change("notes", k, nil)
         local function cross(rr, cc)
-            if (rr ~= r or cc ~= c) and Puzzle.standable(p, rr, cc) and not self:occupantAt(rr, cc) then
-                self:change("marks", rr .. "," .. cc, true)
+            local mk = rr .. "," .. cc
+            if (rr ~= r or cc ~= c) and Puzzle.standable(p, rr, cc) and not self:occupantAt(rr, cc)
+                    and not self.state.marks[mk] then
+                self:change("marks", mk, "auto")
             end
         end
         for cc = 1, p.w do cross(r, cc) end

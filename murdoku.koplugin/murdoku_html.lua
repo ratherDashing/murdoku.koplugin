@@ -123,7 +123,7 @@ M.HOW_TO_PLAY = [[
 <h2>Where people can stand</h2>
 <ul>
 <li><b>Dark squares</b> are obstacles (tables, trees, shelves…). Nobody can stand there.</li>
-<li><b>Light squares</b> are fine: empty floor, carpets, and things you can stand, sit or lie on (chairs, beds, cars, boats…).</li>
+<li><b>Light squares</b> are fine: empty floor, carpets (the rug icon with a fringe), and things you can stand, sit or lie on (chairs, beds, cars, boats…). Hold any square to see what is on it.</li>
 <li>Big things (a car, a bed, a bus) cover two or more squares. Standing on any one of them counts as being on it.</li>
 </ul>
 
