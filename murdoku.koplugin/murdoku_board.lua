@@ -41,8 +41,8 @@ local function fitText(f, text, max_w, bold)
     -- try abbreviations: "Lily Pad" -> "Lily", then first letters
     local first = text:match("^(%S+)")
     if first and first ~= text and textWidth(f, first, bold) <= max_w then return first end
-    for n = math.min(#text, 5), 1, -1 do
-        local s = text:sub(1, n)
+    for n = #text - 1, 2, -1 do
+        local s = text:sub(1, n):gsub("[%s%p]+$", "") .. "…"
         if textWidth(f, s, bold) <= max_w then return s end
     end
     return ""
@@ -120,6 +120,7 @@ function Board:init()
     self.f_object = face("NotoSans-Regular.ttf", math.max(10, cell * 0.2))
     self.f_object_small = face("NotoSans-Regular.ttf", math.max(9, cell * 0.15))
     self.f_room = face("NotoSans-Bold.ttf", math.max(9, cell * 0.17))
+    self.f_room_small = face("NotoSans-Bold.ttf", math.max(8, cell * 0.13))
     self.f_note = face("NotoSans-Bold.ttf", math.max(9, cell * 0.21))
 
     self:computeTints()
@@ -169,19 +170,26 @@ end
 -- Each area's name is written at its top-left cell, spanning the run of
 -- same-area cells to the right.
 function Board:computeRoomLabels()
+    -- Each area's name goes at the start of its widest horizontal run of
+    -- squares (topmost, then leftmost on ties), so long names get room.
     local p = self.puzzle
     self.room_label = {}
-    local seen = {}
+    local best = {}
     for r = 1, p.h do
-        for c = 1, p.w do
+        local c = 1
+        while c <= p.w do
             local cell = p.cells[r][c]
-            if not seen[cell.area] and not cell.void then
-                seen[cell.area] = true
-                local run = 0
-                while p.cells[r][c + run] and p.cells[r][c + run].area == cell.area do run = run + 1 end
-                self.room_label[r .. "," .. c] = { name = p.rooms[cell.area].name, span = run }
+            local run = 1
+            while c + run <= p.w and p.cells[r][c + run].area == cell.area do run = run + 1 end
+            if not cell.void and p.rooms[cell.area] then
+                local b = best[cell.area]
+                if not b or run > b.span then best[cell.area] = { r = r, c = c, span = run } end
             end
+            c = c + run
         end
+    end
+    for area, b in pairs(best) do
+        self.room_label[b.r .. "," .. b.c] = { name = p.rooms[area].name, span = b.span }
     end
 end
 
@@ -449,13 +457,33 @@ function Board:paintTo(bb, x, y)
             local r, c = key:match("(%d+),(%d+)")
             r, c = tonumber(r), tonumber(c)
             local cx, cy = ox + (c - 1) * cs, oy + (r - 1) * cs
-            local text = fitText(self.f_room, info.name, info.span * cs - 2 * pad - self.thick, true)
-            if text ~= "" then
-                local w = textWidth(self.f_room, text, true)
-                local h = self.f_room.ftsize:getHeightAndAscender()
-                local lx, ly = cx + pad + math.floor(self.thick / 2), cy + math.floor(self.thick / 2)
-                bb:paintRect(lx - 2, ly, w + 4, h, C.COLOR_WHITE)
-                drawLeft(bb, self.f_room, text, lx, ly, C.COLOR_BLACK, true)
+            local max_w = info.span * cs - 2 * pad - self.thick
+            local lx, ly = cx + pad + math.floor(self.thick / 2), cy + math.floor(self.thick / 2)
+            -- full name at the normal size, then smaller, then on two lines,
+            -- and only then shortened
+            local lines, font
+            for _, f in ipairs({ self.f_room, self.f_room_small }) do
+                if textWidth(f, info.name, true) <= max_w then lines, font = { info.name }, f break end
+            end
+            if not lines then
+                local a, b = info.name:match("^(.-)%s+(%S+)$")
+                if a and textWidth(self.f_room_small, a, true) <= max_w
+                        and textWidth(self.f_room_small, b, true) <= max_w then
+                    lines, font = { a, b }, self.f_room_small
+                end
+            end
+            if not lines then
+                font = self.f_room_small
+                lines = { fitText(font, info.name, max_w, true) }
+            end
+            local h = font.ftsize:getHeightAndAscender()
+            for n, text in ipairs(lines) do
+                if text ~= "" then
+                    local w = textWidth(font, text, true)
+                    local y = ly + (n - 1) * h
+                    bb:paintRect(lx - 2, y, w + 4, h, C.COLOR_WHITE)
+                    drawLeft(bb, font, text, lx, y, C.COLOR_BLACK, true)
+                end
             end
         end
     end
