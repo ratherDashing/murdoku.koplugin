@@ -51,10 +51,18 @@ local function flatten(data)
 end
 
 --- Returns object info for a cell object id (never nil for a non-zero id).
+-- The name follows the language of the last parsed puzzle (object names are
+-- shown on the board card, and clues reference them).
 function Puzzle.objectInfo(id)
     if not id or id == 0 then return nil end
     local o = OBJECTS[id]
-    if o then return o end
+    if o then
+        local lang = Puzzle.current_lang
+        if lang and lang ~= "en" and o["name_" .. lang] then
+            return { name = o["name_" .. lang], occupiable = o.occupiable }
+        end
+        return o
+    end
     return { name = "Object", occupiable = true }
 end
 
@@ -101,12 +109,39 @@ function Puzzle.expandFootprints(objs, H, W)
 end
 
 --- Parse decoded JSON into a puzzle.
+-- lang: content language ("en", "es", "fr", ...). Text fields carry the language
+-- as a key suffix: title_es_, char_quote_es_4, player_hint_2_es. When a
+-- translated field is missing or empty the English one is used, so a partial
+-- translation patch still works. Room names and general clues have no suffix
+-- (a translation patch merges them over the base under the same keys).
 -- @treturn table|nil puzzle
 -- @treturn string|nil error message
-function Puzzle.parse(data, id)
+function Puzzle.parse(data, id, lang)
     if type(data) ~= "table" then return nil, "invalid puzzle data" end
+    lang = (type(lang) == "string" and lang ~= "" and lang) or "en"
+    Puzzle.current_lang = lang
     local P = data.PROPERTIES or {}
     local flat = flatten(data)
+
+    -- read a language-suffixed field, falling back to English.
+    -- Three key shapes exist: title is title_en_ / title_es_, quotes are
+    -- char_quote_en_0 / char_quote_es_0 (language BEFORE the index), hints are
+    -- player_hint_1_en / player_hint_1_es (language AFTER the index).
+    local function titleField()
+        local v = flat["title_" .. lang .. "_"]
+        if lang ~= "en" and (v == nil or trim(v) == "") then v = flat["title_en_"] end
+        return v
+    end
+    local function quoteField(kind, i)
+        local v = flat[kind .. "_" .. lang .. "_" .. i]
+        if lang ~= "en" and (v == nil or trim(v) == "") then v = flat[kind .. "_en_" .. i] end
+        return v
+    end
+    local function hintField(n)
+        local v = flat["player_hint_" .. n .. "_" .. lang]
+        if lang ~= "en" and (v == nil or trim(v) == "") then v = flat["player_hint_" .. n .. "_en"] end
+        return v
+    end
     local W, H = int(P.grid_w or flat.grid_w), int(P.grid_h or flat.grid_h)
     if not W or not H or W < 3 or H < 3 or W > 24 or H > 24 then
         return nil, "unsupported grid size"
@@ -125,7 +160,7 @@ function Puzzle.parse(data, id)
         w = W,
         h = H,
         version = v2 and 2 or 1,
-        title = trim(flat.title_en_) ~= "" and trim(flat.title_en_) or (id or "Untitled"),
+        title = trim(titleField() or "") ~= "" and trim(titleField()) or (id or "Untitled"),
         creator = trim(flat.creator_ or flat.creator),
         difficulty = int(P.difficulty),
         cells = {},     -- cells[r][c] = { area=, room=, obj=, carpet=bool }, 1-based
@@ -238,8 +273,8 @@ function Puzzle.parse(data, id)
     if count < 3 then return nil, "not enough suspects" end
 
     for i = 0, count - 1 do
-        local quote = trim(flat["char_quote_en_" .. i])
-        local sub = trim(flat["char_subquote_en_" .. i])
+        local quote = trim(quoteField("char_quote", i) or "")
+        local sub = trim(quoteField("char_subquote", i) or "")
         -- v1 splits a clue across quote/subquote ("He was at the " .. "Judge's Bench.")
         local clue = trim((quote .. " " .. sub):gsub("%s+", " "))
         clue = clue:gsub("<[^>]+>", "")
@@ -287,10 +322,11 @@ function Puzzle.parse(data, id)
     local m = int(P.murderer or flat.murderer)
     p.murderer = m and (m + 1) or nil
 
-    -- Hints: v2 uses player_hint_N_en, v1 uses solution_text_EN_N (and sometimes player_hint_N_en).
+    -- Hints: v2 uses player_hint_N_en (patches add player_hint_N_{lang}),
+    -- v1 uses solution_text_EN_N (English only).
     local hints = {}
     for n = 1, 30 do
-        local h = trim(flat["player_hint_" .. n .. "_en"])
+        local h = trim(hintField(n) or "")
         if h ~= "" then table.insert(hints, h) end
     end
     if #hints == 0 then

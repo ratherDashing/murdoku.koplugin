@@ -161,7 +161,7 @@ end
 function Murdoku:allEntries()
     local list = {}
     for __, e in ipairs(self.catalog or {}) do table.insert(list, e) end
-    for __, e in ipairs(Store.originals()) do table.insert(list, e) end
+    for __, e in ipairs(Store.originals(Store.getLanguage())) do table.insert(list, e) end
     for __, e in ipairs(Store.randomCases()) do table.insert(list, e) end
     return list
 end
@@ -258,7 +258,7 @@ end
 
 function Murdoku:openCaseList()
     local show_retired = Store.getOption("show_retired", false)
-    self.catalog = Store.cachedCatalog(show_retired)
+    self.catalog = Store.cachedCatalog(show_retired, Store.getLanguage())
     self.menu = Menu:new{
         title = _("Murdoku cases"),
         subtitle = self:subtitle(),
@@ -302,7 +302,7 @@ function Murdoku:openCaseList()
         self:refreshCatalog()
     elseif NetworkMgr:isOnline() then
         local fresh = withMessage(_("Checking for new cases…"), function()
-            return Store.fetchCatalog(show_retired)
+            return Store.fetchCatalog(show_retired, Store.getLanguage())
         end)
         if fresh then
             self.catalog = fresh
@@ -320,7 +320,7 @@ end
 function Murdoku:refreshCatalog()
     NetworkMgr:runWhenOnline(function()
         local list, err = withMessage(_("Downloading case list…"), function()
-            return Store.fetchCatalog(Store.getOption("show_retired", false))
+            return Store.fetchCatalog(Store.getOption("show_retired", false), Store.getLanguage())
         end)
         if list then
             self.catalog = list
@@ -366,6 +366,25 @@ function Murdoku:showListMenu()
     for i, so in ipairs(SORTS) do
         table.insert(sort_rows[i <= 3 and 1 or 2], choice(so.label, f.sort == so.id, "sort", so.id))
     end
+    -- Puzzle content language; changing it re-titles the list straight away and
+    -- the cases pick up their translation when opened.
+    local lang_rows = {}
+    local per_row = math.ceil(#Store.LANGS / 3)
+    for i, lang in ipairs(Store.LANGS) do
+        local cur = Store.getLanguage()
+        local row = math.ceil(i / per_row)
+        lang_rows[row] = lang_rows[row] or {}
+        table.insert(lang_rows[row], {
+            text = (lang.id == cur and "● " or "") .. lang.label,
+            callback = function()
+                UIManager:close(dialog)
+                Store.setOption("language", lang.id)
+                self.catalog = Store.cachedCatalog(show_retired, lang.id) or self.catalog
+                self:updateMenu()
+                self:showListMenu()
+            end,
+        })
+    end
     local buttons = {
         { { text = _("New random case…"), callback = function()
             UIManager:close(dialog)
@@ -379,6 +398,8 @@ function Murdoku:showListMenu()
         status_row,
         { { text = _("Sort by"), enabled = false } },
         sort_rows[1], sort_rows[2],
+        { { text = _("Language"), enabled = false } },
+        lang_rows[1], lang_rows[2], lang_rows[3],
     }
     for __, row in ipairs({
             { { text = _("Refresh case list"), callback = function()
@@ -415,7 +436,8 @@ function Murdoku:downloadAll()
     NetworkMgr:runWhenOnline(function()
         Trapper:wrap(function()
             if not Trapper:info(_("Updating case list…")) then return end
-            local list = Store.fetchCatalog(Store.getOption("show_retired", false)) or self.catalog or {}
+            local list = Store.fetchCatalog(Store.getOption("show_retired", false), Store.getLanguage())
+                or self.catalog or {}
             self.catalog = list
             local todo = {}
             for __, e in ipairs(list) do
@@ -432,7 +454,7 @@ function Murdoku:downloadAll()
                 local go_on = Trapper:info(string.format(_("Downloading case %d of %d…\n%s\n\n(tap to stop)"),
                     i, #todo, e.title))
                 if not go_on then break end
-                local ok = Store.fetchPuzzle(e.id)
+                local ok = Store.fetchPuzzle(e.id, Store.getLanguage())
                 if ok then done = done + 1 else failed = failed + 1 end
             end
             Trapper:clear()
@@ -601,9 +623,20 @@ function Murdoku:confirmDeleteRandom(entry)
 end
 
 function Murdoku:openCase(entry)
-    local data = Store.loadCachedPuzzle(entry.id)
+    local lang = Store.getLanguage()
+    local data = Store.loadCachedPuzzle(entry.id, lang)
     if data then
-        return self:startGame(entry, data)
+        if Store.isTranslated(entry.id, lang) then
+            return self:startGame(entry, data, lang)
+        end
+        -- Cached but in another language (e.g. the language was switched after
+        -- downloading): fetch the base again so its patch for the selected
+        -- language is stored too. When the fetch fails (offline), fall back to
+        -- the cached content so the case still opens.
+        local fetched = withMessage(_("Downloading case…"), function()
+            return Store.fetchPuzzle(entry.id, lang)
+        end)
+        return self:startGame(entry, fetched or data, lang)
     end
     if Store.sourceOf(entry.id) ~= Store.SOURCE_SITE then
         UIManager:show(InfoMessage:new{ text = _("This case file is missing.") })
@@ -611,7 +644,7 @@ function Murdoku:openCase(entry)
     end
     NetworkMgr:runWhenOnline(function()
         local fetched, err = withMessage(_("Downloading case…"), function()
-            return Store.fetchPuzzle(entry.id)
+            return Store.fetchPuzzle(entry.id, lang)
         end)
         if not fetched then
             UIManager:show(InfoMessage:new{
@@ -619,12 +652,12 @@ function Murdoku:openCase(entry)
             })
             return
         end
-        self:startGame(entry, fetched)
+        self:startGame(entry, fetched, lang)
     end)
 end
 
-function Murdoku:startGame(entry, data)
-    local puzzle, err = Puzzle.parse(data, entry.id)
+function Murdoku:startGame(entry, data, lang)
+    local puzzle, err = Puzzle.parse(data, entry.id, lang)
     if not puzzle then
         UIManager:show(InfoMessage:new{ text = _("This case can't be played here: ") .. tostring(err) })
         return
