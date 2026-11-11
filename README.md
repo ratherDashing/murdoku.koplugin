@@ -28,9 +28,12 @@ touch so **no stylus or pen is needed**. Built and tested for the Kindle Paperwh
 ## Features
 
 - Every free case on murdoku.com, including each new release (the newest is starred ★).
+- **23 languages**: play murdoku.com cases with the site's own official translations
+  (Spanish, French, German, Catalan, Japanese, Korean…). Pick the language in the case
+  list's ☰ menu; downloaded cases pick it up too.
 - **Originals** (◆): a pack of 30 cases made for this plugin (6 very easy, 9 easy, 9 medium,
   6 hard; 5×5 to 9×9; lighthouses, manors, museums, ski lodges…). They ship with the plugin,
-  so they work offline with no download.
+  so they work offline with no download — and the whole pack is also available in Spanish.
 - **New random case** (⚄, in the case list's ☰ menu): pick a difficulty (very easy, easy,
   medium, or hard up to 6×6) and a size (5×5 to 9×9) and the plugin makes a fresh case on your device. Every
   case has exactly one solution, reachable by logic alone, with step-by-step hints. Random
@@ -86,6 +89,15 @@ also tells you when there's an update.
 Tip: Use the ☰ menu on the case list to **Download all cases for offline play**.
 You can also assign "Murdoku" to a gesture under *Settings → Taps and gestures*.
 
+## What's new in 1.4.0
+
+- Puzzle translations: murdoku.com cases can be played in any of the 24 languages the
+  site serves (its official per-case translation patches are downloaded together with
+  each case, with per-field fallback to English). Switching languages re-downloads the
+  patch for already-downloaded cases when they're opened.
+- The Originals pack is fully available in Spanish (bundled patches, offline).
+- Object names on the board and clue cards follow the selected language.
+
 ## What's new in 1.3.0
 
 - A new look: suspect cards with faces, object icons, dark squares for obstacles, R1/C1
@@ -124,8 +136,10 @@ murdoku.koplugin/
   murdoku_steps.lua    step solver naming each technique; "designed aha" accept filter/score
   murdoku_themes.lua   themed rooms/names/titles, generated from tools/generator/mgen/themes.py
   cases/               the bundled Originals (site v2 JSON) and index.json
+  translations/        bundled Originals translation patches ({id}-{lang}.json, site patch format)
 tests/test_puzzles.lua    parser check (built-in checks + any folders of puzzle JSON files)
 tests/test_generator.lua  on-device generator check: fixed seeds, uniqueness, timings
+tests/test_i18n.lua       translation support: patch merge, language fallback, Originals ES vs EN identity
 tools/generator/          offline generator (Python): --pack, --check, --bench
 ```
 
