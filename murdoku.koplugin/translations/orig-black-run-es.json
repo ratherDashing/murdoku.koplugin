@@ -1,0 +1,35 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Pista negra",
+    "room_name_1": "Jacuzzi",
+    "room_name_2": "Aparcamiento",
+    "room_name_3": "Sala de esquí",
+    "room_name_4": "Comedor",
+    "room_name_5": "Lago helado",
+    "room_name_6": "Salón de chimenea",
+    "char_quote_es_0": "Estaba junto a la caja.",
+    "char_quote_es_1": "Estaba en la sala de esquí, pero no junto a un casillero.",
+    "char_quote_es_2": "Estaba en el jacuzzi o en el lago helado. Estaba exactamente tres filas al norte de Dahlia.",
+    "char_quote_es_3": "Otra persona de su zona estaba sobre una balsa. Estaba en el lago helado, pero no junto al agua.",
+    "char_quote_es_4": "No estaba en un coche.",
+    "char_quote_es_5": "Otra persona de su zona estaba en un coche. Estaba al norte de Violet.",
+    "char_quote_es_6": "Estaba junto a un casillero.",
+    "char_quote_es_7": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Fíjate en Bruno: todas las casillas que aún puede usar comparten fila o columna con la fila 6, columna 1. Así que nadie más puede estar en la fila 6, columna 1, o Bruno se quedaría sin sitio.",
+    "player_hint_2_es": "La pista de Dahlia («Otra persona de su zona estaba sobre una balsa») requiere que la persona sobre una balsa de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Dahlia.",
+    "player_hint_3_es": "Fíjate en Dahlia: todas las casillas que aún puede usar comparten fila o columna con la fila 4, columna 6. Así que nadie más puede estar en la fila 4, columna 6, o Dahlia se quedaría sin sitio.",
+    "player_hint_4_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Así que Grant (G) debe estar en la fila 7, columna 5. Tacha su fila y su columna.",
+    "player_hint_5_es": "Bruno es ahora la única persona que puede seguir en la columna 2. Así que Bruno (B) debe estar en la fila 6, columna 2. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de Grant y Bruno tachadas, solo queda una casilla para Angus que cumpla su pista («Estaba junto a la caja»). Así que Angus (A) debe estar en la fila 8, columna 3. Tacha su fila y su columna.",
+    "player_hint_7_es": "La pista de Dahlia («Otra persona de su zona estaba sobre una balsa») requiere que la persona sobre una balsa de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Dahlia. Así que Dahlia (D) debe estar en la fila 5, columna 6. Tacha su fila y su columna.",
+    "player_hint_8_es": "La propia pista de Clara («Estaba en el jacuzzi o en el lago helado. Estaba exactamente tres filas al norte de Dahlia») descarta más casillas. Así que Clara (C) debe estar en la fila 2, columna 1. Tacha su fila y su columna.",
+    "player_hint_9_es": "La pista de Fergus («Otra persona de su zona estaba en un coche») requiere que la persona en un coche de su zona esté en una casilla que no comparta fila ni columna con él; eso descarta casillas para Fergus.",
+    "player_hint_10_es": "El asesino debe estar en la zona de Violet sin compartir su fila ni su columna; eso descarta casillas para Violet.",
+    "player_hint_11_es": "¿Dónde puede estar la persona sobre una balsa en la zona de Dahlia? Solo en la fila 4, columna 8, así que quien sea estará ahí: nadie más puede usar la fila 4 ni la columna 8. Así que Fergus (F) debe estar en la fila 1, columna 4. Tacha su fila y su columna.",
+    "player_hint_12_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Edith que cumpla su pista («No estaba en un coche»). Así que Edith (E) debe estar en la fila 4, columna 8. Tacha su fila y su columna.",
+    "player_hint_13_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Violet. Así que Violet (la víctima) debe estar en la fila 3, columna 7. Tacha su fila y su columna. Fergus es la única persona en el aparcamiento con Violet, ¡así que Fergus es el asesino!"
+  }
+}

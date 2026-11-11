@@ -1,0 +1,28 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Un problema de espinas",
+    "room_name_1": "Camino de entrada",
+    "room_name_2": "Estanque",
+    "room_name_3": "Huerto",
+    "room_name_4": "Invernadero",
+    "room_name_5": "Caseta de jardinería",
+    "char_quote_es_0": "Era la única persona junto a una caja.",
+    "char_quote_es_1": "No estaba en una hamaca.",
+    "char_quote_es_2": "Estaba en un coche.",
+    "char_quote_es_3": "Estaba junto al agua. Estaba en la última columna.",
+    "char_quote_es_4": "Era la única persona junto a un bonsái.",
+    "char_quote_es_5": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Dora («Estaba junto al agua. Estaba en la última columna»). Así que Dora (D) debe estar en la fila 2, columna 6. Tacha su fila y su columna.",
+    "player_hint_2_es": "Con las filas y columnas de Dora tachadas, solo queda una casilla para Alma que cumpla su pista («Era la única persona junto a una caja»). Así que Alma (A) debe estar en la fila 5, columna 5. Tacha su fila y su columna.",
+    "player_hint_3_es": "Fíjate en Bella: todas las casillas que aún puede usar comparten fila o columna con la fila 3, columna 2. Así que nadie más puede estar en la fila 3, columna 2, o Bella se quedaría sin sitio.",
+    "player_hint_4_es": "El asesino debe estar en la zona de Vanessa sin compartir su fila ni su columna; eso descarta casillas para Vanessa.",
+    "player_hint_5_es": "Fíjate en Vanessa: todas las casillas que aún puede usar comparten fila o columna con la fila 3, columna 1. Así que nadie más puede estar en la fila 3, columna 1, o Vanessa se quedaría sin sitio.",
+    "player_hint_6_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Ernest es ahora la única persona que puede seguir en la columna 4. Así que Ernest (E) debe estar en la fila 6, columna 4. Tacha su fila y su columna.",
+    "player_hint_7_es": "Cyril es ahora la única persona que puede seguir en la columna 3. Así que Cyril (C) debe estar en la fila 1, columna 3. Tacha su fila y su columna.",
+    "player_hint_8_es": "El asesino debe estar en la zona de Vanessa sin compartir su fila ni su columna; eso descarta casillas para Vanessa. Así que Vanessa (la víctima) debe estar en la fila 3, columna 1. Tacha su fila y su columna.",
+    "player_hint_9_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Bella que cumpla su pista («No estaba en una hamaca»). Así que Bella (B) debe estar en la fila 4, columna 2. Tacha su fila y su columna. Cyril es la única persona en el camino de entrada con Vanessa, ¡así que Cyril es el asesino!"
+  }
+}

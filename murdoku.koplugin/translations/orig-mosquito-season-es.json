@@ -1,0 +1,24 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Temporada de mosquitos",
+    "room_name_1": "Estación de guardabosques",
+    "room_name_2": "Zona de aparcamiento",
+    "room_name_3": "Pradera",
+    "room_name_4": "Sendero",
+    "char_quote_es_0": "Estaba en la misma zona que otra persona de pie sobre un charco.",
+    "char_quote_es_1": "Estaba en la fila de arriba.",
+    "char_quote_es_2": "Estaba en la estación de guardabosques o en la zona de aparcamiento.",
+    "char_quote_es_3": "Estaba sola con una mujer.",
+    "char_quote_es_4": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Nadie estaba junto a un estante."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo queda una casilla libre para cualquiera en la fila 2 (fila 2, columna 1). Alguien tiene que estar ahí, así que nadie más puede usar la columna 1.",
+    "player_hint_2_es": "La pista de Ada («Estaba en la misma zona que otra persona de pie sobre un charco») requiere que la persona sobre un charco de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Ada. Todas las casillas de Bruno están en la fila 1, así que nadie más puede usarla. La propia pista de Ada descarta más casillas. Así que Ada (A) debe estar en la fila 5, columna 5. Tacha su fila y su columna.",
+    "player_hint_3_es": "La pista de Dinah («Estaba sola con una mujer») requiere un compañero que no comparta su fila ni su columna; eso descarta casillas para Dinah. Así que Dinah (D) debe estar en la fila 4, columna 4. Tacha su fila y su columna.",
+    "player_hint_4_es": "Con las filas y columnas de Ada y Dinah tachadas, solo queda una casilla para Bruno que cumpla su pista («Estaba en la fila de arriba»). Así que Bruno (B) debe estar en la fila 1, columna 2. Tacha su fila y su columna.",
+    "player_hint_5_es": "El asesino debe estar en la zona de Vivian sin compartir su fila ni su columna; eso descarta casillas para Vivian. Así que Vivian (la víctima) debe estar en la fila 2, columna 1. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Clement que cumpla su pista («Estaba en la estación de guardabosques o en la zona de aparcamiento»). Así que Clement (C) debe estar en la fila 3, columna 3. Tacha su fila y su columna. Bruno es la única persona en la estación de guardabosques con Vivian, ¡así que Bruno es el asesino!"
+  }
+}

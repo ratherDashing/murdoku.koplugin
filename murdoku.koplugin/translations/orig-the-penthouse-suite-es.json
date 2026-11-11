@@ -1,0 +1,28 @@
+{
+  "CHARACTERS": {
+    "title_es_": "El ático",
+    "room_name_1": "Piscina",
+    "room_name_2": "Bar",
+    "room_name_3": "Suite",
+    "room_name_4": "Vestíbulo",
+    "char_quote_es_0": "Estaba sentado en una silla en la piscina.",
+    "char_quote_es_1": "Estaba exactamente una columna al este de Vanessa.",
+    "char_quote_es_2": "No estaba en la Suite.",
+    "char_quote_es_3": "Estaba en la misma zona que otra persona sobre una alfombra. Estaba junto a una planta.",
+    "char_quote_es_4": "Estaba en el Bar.",
+    "char_quote_es_5": "Estaba en la piscina, pero no junto al agua.",
+    "char_quote_es_6": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Arlo («Estaba sentado en una silla en la piscina»). Así que Arlo (A) debe estar en la fila 1, columna 2. Tacha su fila y su columna.",
+    "player_hint_2_es": "Con las filas y columnas de Arlo tachadas, solo queda una casilla para Freya que cumpla su pista («Estaba en la piscina, pero no junto al agua»). Así que Freya (F) debe estar en la fila 3, columna 1. Tacha su fila y su columna.",
+    "player_hint_3_es": "Fíjate en Daisy: todas las casillas que aún puede usar comparten fila o columna con la fila 7, columna 4. Así que nadie más puede estar en la fila 7, columna 4, o Daisy se quedaría sin sitio.",
+    "player_hint_4_es": "La pista de Daisy («Estaba en la misma zona que otra persona sobre una alfombra») requiere que la persona sobre una alfombra de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Daisy. Así que Daisy (D) debe estar en la fila 6, columna 4. Tacha su fila y su columna.",
+    "player_hint_5_es": "Fíjate en Esme: todas las casillas que aún puede usar comparten fila o columna con la fila 2, columna 3. Así que nadie más puede estar en la fila 2, columna 3, o Esme se quedaría sin sitio.",
+    "player_hint_6_es": "¿Quién puede ser la persona sobre una alfombra en la zona de Daisy? Solo Cyril, porque nadie más puede llegar a una casilla que cumpla la pista de Daisy («Estaba en la misma zona que otra persona sobre una alfombra»). Eso descarta las demás casillas de Cyril. Así que Cyril (C) debe estar en la fila 7, columna 3. Tacha su fila y su columna.",
+    "player_hint_7_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Esme que cumpla su pista («Estaba en el Bar»). Así que Esme (E) debe estar en la fila 2, columna 5. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vanessa. Así que Vanessa (la víctima) debe estar en la fila 4, columna 6. Tacha su fila y su columna.",
+    "player_hint_9_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Bert que cumpla su pista («Estaba exactamente una columna al este de Vanessa»). Así que Bert (B) debe estar en la fila 5, columna 7. Tacha su fila y su columna. Bert es la única persona en la Suite con Vanessa, ¡así que Bert es el asesino!"
+  }
+}

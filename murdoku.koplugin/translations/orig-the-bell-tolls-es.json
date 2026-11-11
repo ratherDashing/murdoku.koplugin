@@ -1,0 +1,36 @@
+{
+  "CHARACTERS": {
+    "title_es_": "La campana dobla",
+    "room_name_1": "Cementerio",
+    "room_name_2": "Arboleda de tejos",
+    "room_name_3": "Capilla",
+    "room_name_4": "Rectoría",
+    "room_name_5": "Pórtico del camposanto",
+    "room_name_6": "Cripta",
+    "room_name_7": "Sacristía",
+    "char_quote_es_0": "Estaba exactamente dos columnas al este de Ezra.",
+    "char_quote_es_1": "Estaba en la sacristía, pero no junto a una estantería.",
+    "char_quote_es_2": "Estaba en el cementerio, pero no junto a un árbol. Estaba exactamente una fila al sur de Harvey.",
+    "char_quote_es_3": "Estaba en la rectoría o en el pórtico del camposanto.",
+    "char_quote_es_4": "Estaba en una esquina de su zona.",
+    "char_quote_es_5": "Estaba con una mujer.",
+    "char_quote_es_6": "Estaba de pie sobre un charco.",
+    "char_quote_es_7": "Estaba junto a una lápida.",
+    "char_quote_es_8": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Había exactamente una persona junto a una mesa."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Basil («Estaba en la sacristía, pero no junto a una estantería»). Así que Basil (B) debe estar en la fila 8, columna 6. Tacha su fila y su columna.",
+    "player_hint_2_es": "Todas las casillas de Harvey están en la columna 2, así que nadie más puede usarla. La propia pista de Celeste («Estaba en el cementerio, pero no junto a un árbol. Estaba exactamente una fila al sur de Harvey») descarta más casillas. Así que Celeste (C) debe estar en la fila 2, columna 3. Tacha su fila y su columna.",
+    "player_hint_3_es": "Con las filas y columnas de Basil y Celeste tachadas, solo queda una casilla para Harvey que cumpla su pista («Estaba junto a una lápida»). Así que Harvey (H) debe estar en la fila 1, columna 2. Tacha su fila y su columna.",
+    "player_hint_4_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Ezra que cumpla su pista («Estaba en una esquina de su zona»). Así que Ezra (E) debe estar en la fila 7, columna 7. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Grace que cumpla su pista («Estaba de pie sobre un charco»). Así que Grace (G) debe estar en la fila 6, columna 5. Tacha su fila y su columna.",
+    "player_hint_6_es": "La pista de Freya («Estaba con una mujer») requiere que la mujer de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Freya.",
+    "player_hint_7_es": "El asesino debe estar en la zona de Valerie sin compartir su fila ni su columna; eso descarta casillas para Valerie. Con la pista general («Había exactamente una persona junto a una mesa») se descartan algunas casillas para Dante. Dante es ahora la única persona que puede seguir en la columna 1. Así que Dante (D) debe estar en la fila 4, columna 1. Tacha su fila y su columna.",
+    "player_hint_8_es": "Solo queda una casilla libre de la columna 4 para cualquiera (fila 5, columna 4). Alguien tiene que estar ahí, así que nadie más puede usar la fila 5.",
+    "player_hint_9_es": "La pista de Freya («Estaba con una mujer») requiere que la mujer de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Freya. Así que Freya (F) debe estar en la fila 5, columna 4. Tacha su fila y su columna.",
+    "player_hint_10_es": "El asesino debe estar en la zona de Valerie sin compartir su fila ni su columna; eso descarta casillas para Valerie. Así que Valerie (la víctima) debe estar en la fila 9, columna 8. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Alma que cumpla su pista («Estaba exactamente dos columnas al este de Ezra»). Así que Alma (A) debe estar en la fila 3, columna 9. Tacha su fila y su columna. Basil es la única persona en la sacristía con Valerie, ¡así que Basil es el asesino!"
+  }
+}

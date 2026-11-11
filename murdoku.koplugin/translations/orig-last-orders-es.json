@@ -1,0 +1,25 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Últimas copas",
+    "room_name_1": "Trastero",
+    "room_name_2": "Cocina",
+    "room_name_3": "Mostrador",
+    "room_name_4": "Aparcamiento",
+    "room_name_5": "Rincón del jukebox",
+    "char_quote_es_0": "Estaba exactamente una fila al sur de Edgar.",
+    "char_quote_es_1": "Estaba en una esquina de su zona.",
+    "char_quote_es_2": "Estaba en la misma zona que otra persona sobre una alfombra.",
+    "char_quote_es_3": "Estaba en la cocina, pero no junto a una estantería.",
+    "char_quote_es_4": "Estaba sentado en una silla. Estaba en una esquina de su zona.",
+    "char_quote_es_5": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple la pista de Edgar («Estaba sentado en una silla. Estaba en una esquina de su zona»). Así que Edgar (E) debe estar en la fila 3, columna 5. Tacha su fila y su columna.",
+    "player_hint_2_es": "La pista de Cecily («Estaba en la misma zona que otra persona sobre una alfombra») requiere que la persona sobre una alfombra de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Cecily. Todas las casillas de Daisy están en la fila 1, así que nadie más puede usarla. Todas las casillas de Arlo están en la fila 4, así que nadie más puede usarla. La propia pista de Cecily («Estaba en la misma zona que otra persona sobre una alfombra») descarta más casillas. Así que Cecily (C) debe estar en la fila 5, columna 1. Tacha su fila y su columna.",
+    "player_hint_3_es": "El asesino debe estar en la zona de Vince sin compartir su fila ni su columna; eso descarta casillas para Vince. Arlo es ahora la única persona que puede seguir en la columna 2. Así que Arlo (A) debe estar en la fila 4, columna 2. Tacha su fila y su columna.",
+    "player_hint_4_es": "¿Quién puede ser la persona sobre una alfombra en la zona de Cecily? Solo Bella, porque nadie más puede llegar a una casilla que cumpla la pista de Cecily («Estaba en la misma zona que otra persona sobre una alfombra»). Eso descarta las demás casillas de Bella. Así que Bella (B) debe estar en la fila 6, columna 3. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Daisy que cumpla su pista («Estaba en la cocina, pero no junto a una estantería»). Así que Daisy (D) debe estar en la fila 1, columna 4. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vince. Así que Vince (la víctima) debe estar en la fila 2, columna 6. Tacha su fila y su columna. Edgar es la única persona en el mostrador con Vince, ¡así que Edgar es el asesino!"
+  }
+}

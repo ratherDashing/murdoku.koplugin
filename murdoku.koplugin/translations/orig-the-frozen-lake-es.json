@@ -1,0 +1,25 @@
+{
+  "CHARACTERS": {
+    "title_es_": "El lago helado",
+    "room_name_1": "Sala de esquí",
+    "room_name_2": "Lago helado",
+    "room_name_3": "Jacuzzi",
+    "room_name_4": "Dormitorio de literas",
+    "room_name_5": "Comedor",
+    "char_quote_es_0": "Estaba junto a un casillero. Estaba en una esquina de su zona.",
+    "char_quote_es_1": "Estaba sola con una mujer. Estaba junto a un casillero en la sala de esquí.",
+    "char_quote_es_2": "Estaba en el comedor o en el dormitorio de literas. Estaba exactamente dos filas al sur de Duncan.",
+    "char_quote_es_3": "Estaba en una esquina de su zona.",
+    "char_quote_es_4": "Estaba en una esquina de su zona.",
+    "char_quote_es_5": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Con la pista de Brenda («Estaba sola con una mujer») se descartan algunas casillas para Albert. Así que Albert (A) debe estar en la fila 3, columna 6. Tacha su fila y su columna.",
+    "player_hint_2_es": "Con la pista de Cecily («Estaba exactamente dos filas al sur de Duncan») se descartan algunas casillas para Duncan. Así que Duncan (D) debe estar en la fila 4, columna 1. Tacha su fila y su columna.",
+    "player_hint_3_es": "La pista de Brenda («Estaba sola con una mujer») requiere un compañero que no comparta su fila ni su columna; eso descarta casillas para Brenda. Así que Brenda (B) debe estar en la fila 1, columna 2. Tacha su fila y su columna.",
+    "player_hint_4_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Cecily que cumpla su pista («Estaba en el comedor o en el dormitorio de literas. Estaba exactamente dos filas al sur de Duncan»). Así que Cecily (C) debe estar en la fila 6, columna 5. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Elsa que cumpla su pista («Estaba en una esquina de su zona»). Así que Elsa (E) debe estar en la fila 2, columna 3. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vince. Así que Vince (la víctima) debe estar en la fila 5, columna 4. Tacha su fila y su columna. Duncan es la única persona en el jacuzzi con Vince, ¡así que Duncan es el asesino!"
+  }
+}

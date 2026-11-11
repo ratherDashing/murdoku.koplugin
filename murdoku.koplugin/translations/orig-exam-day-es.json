@@ -1,0 +1,22 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Día de exámenes",
+    "room_name_1": "Gimnasio",
+    "room_name_2": "Pasillo de casilleros",
+    "room_name_3": "Cafetería",
+    "room_name_4": "Biblioteca",
+    "char_quote_es_0": "Estaba en el gimnasio.",
+    "char_quote_es_1": "Estaba exactamente dos columnas al este de Angus.",
+    "char_quote_es_2": "Había otro hombre en su zona.",
+    "char_quote_es_3": "No estaba sentada en una silla. Estaba en la biblioteca.",
+    "char_quote_es_4": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo queda una casilla libre para cualquiera en la fila 3 (fila 3, columna 3). Alguien tiene que estar ahí, así que nadie más puede usar la columna 3. La propia pista de Bella («Estaba exactamente dos columnas al este de Angus») descarta más casillas. Todas las casillas de Dora están en la columna 4, así que nadie más puede usarla. Así que Bella (B) debe estar en la fila 3, columna 3. Tacha su fila y su columna.",
+    "player_hint_2_es": "La pista de Cedric («Había otro hombre en su zona») requiere un compañero que no comparta su fila ni su columna; eso descarta casillas para Cedric. Todas las casillas de Angus están en la columna 1, así que nadie más puede usarla. Así que Cedric (C) debe estar en la fila 2, columna 2. Tacha su fila y su columna.",
+    "player_hint_3_es": "Con las filas y columnas de Bella y Cedric tachadas, solo queda una casilla para Angus que cumpla su pista («Estaba en el gimnasio»). Así que Angus (A) debe estar en la fila 1, columna 1. Tacha su fila y su columna.",
+    "player_hint_4_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vernon. Así que Vernon (la víctima) debe estar en la fila 5, columna 5. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Dora que cumpla su pista («No estaba sentada en una silla. Estaba en la biblioteca»). Así que Dora (D) debe estar en la fila 4, columna 4. Tacha su fila y su columna. Dora es la única persona en la biblioteca con Vernon, ¡así que Dora es la asesina!"
+  }
+}

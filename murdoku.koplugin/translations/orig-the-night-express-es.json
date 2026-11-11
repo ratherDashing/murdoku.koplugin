@@ -1,0 +1,32 @@
+{
+  "CHARACTERS": {
+    "title_es_": "El expreso nocturno",
+    "room_name_1": "Andén",
+    "room_name_2": "Parada de taxis",
+    "room_name_3": "Sala de espera",
+    "room_name_4": "Taquilla",
+    "room_name_5": "Pasarela",
+    "char_quote_es_0": "Estaba en la taquilla o en la parada de taxis.",
+    "char_quote_es_1": "Estaba junto a la estantería de la taquilla.",
+    "char_quote_es_2": "Estaba junto a la farola.",
+    "char_quote_es_3": "Otra persona de su zona estaba junto a un cartel. Estaba sentado en una silla.",
+    "char_quote_es_4": "Estaba exactamente una columna al este de Vivian.",
+    "char_quote_es_5": "Estaba en la sala de espera, pero no junto al cubo de basura.",
+    "char_quote_es_6": "Estaba en la sala de espera.",
+    "char_quote_es_7": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Fíjate en Brenda: todas las casillas que aún puede usar comparten fila o columna con la fila 5, columna 8. Así que nadie más puede estar en la fila 5, columna 8, o Brenda se quedaría sin sitio.",
+    "player_hint_2_es": "Fíjate en Celeste: todas las casillas que aún puede usar comparten fila o columna con la fila 7, columna 7. Así que nadie más puede estar en la fila 7, columna 7, o Celeste se quedaría sin sitio.",
+    "player_hint_3_es": "Brenda y Celeste solo pueden usar las columnas 7 y 8 entre las dos, así que nadie más puede estar en esas columnas.",
+    "player_hint_4_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Gilbert es ahora la única persona que puede seguir en la fila 3. Así que Gilbert (G) debe estar en la fila 3, columna 5. Tacha su fila y su columna.",
+    "player_hint_5_es": "Celeste y Ezra solo pueden usar las filas 7 y 8 entre los dos, así que nadie más puede estar en esas filas. Duncan es ahora la única persona que puede seguir en la columna 1. Así que Duncan (D) debe estar en la fila 5, columna 1. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de Gilbert y Duncan tachadas, solo queda una casilla para Brenda que cumpla su pista («Estaba junto a la estantería de la taquilla»). Así que Brenda (B) debe estar en la fila 6, columna 8. Tacha su fila y su columna.",
+    "player_hint_7_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Celeste que cumpla su pista («Estaba junto a la farola»). Así que Celeste (C) debe estar en la fila 8, columna 7. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Ezra que cumpla su pista («Estaba exactamente una columna al este de Vivian»). Así que Ezra (E) debe estar en la fila 7, columna 3. Tacha su fila y su columna.",
+    "player_hint_9_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Faye que cumpla su pista («Estaba en la sala de espera, pero no junto al cubo de basura»). Así que Faye (F) debe estar en la fila 4, columna 6. Tacha su fila y su columna.",
+    "player_hint_10_es": "¿Quién puede ser la persona junto a un cartel en la zona de Duncan? Solo Vivian, porque nadie más puede llegar a una casilla que cumpla la pista de Duncan («Otra persona de su zona estaba junto a un cartel»). Eso descarta las demás casillas de Vivian. Así que Vivian (la víctima) debe estar en la fila 2, columna 2. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Ada que cumpla su pista («Estaba en la taquilla o en la parada de taxis»). Así que Ada (A) debe estar en la fila 1, columna 4. Tacha su fila y su columna. Duncan es la única persona en el andén con Vivian, ¡así que Duncan es el asesino!"
+  }
+}

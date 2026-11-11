@@ -1,0 +1,26 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Tierra de osos",
+    "room_name_1": "Sendero",
+    "room_name_2": "Fogata",
+    "room_name_3": "Pradera",
+    "room_name_4": "Zona de aparcamiento",
+    "room_name_5": "Bosque",
+    "char_quote_es_0": "Era la única persona de pie sobre un charco.",
+    "char_quote_es_1": "Estaba junto a unas flores.",
+    "char_quote_es_2": "Estaba exactamente dos columnas al este de Angus.",
+    "char_quote_es_3": "Estaba en la zona de aparcamiento o en la pradera.",
+    "char_quote_es_4": "Otra persona de su zona estaba junto a un árbol. Estaba en el bosque, pero no junto a un arbusto.",
+    "char_quote_es_5": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Todas las casillas de Beatrix están en la fila 4, así que nadie más puede usarla. Todas las casillas de Douglas están en la fila 3, así que nadie más puede usarla. Así que Angus (A) debe estar en la fila 2, columna 3. Tacha su fila y su columna.",
+    "player_hint_2_es": "Con las filas y columnas de Angus tachadas, solo queda una casilla para Beatrix que cumpla su pista («Estaba junto a unas flores»). Así que Beatrix (B) debe estar en la fila 4, columna 2. Tacha su fila y su columna.",
+    "player_hint_3_es": "Fíjate en Eleanor: todas las casillas que aún puede usar comparten fila o columna con la fila 5, columna 1. Así que nadie más puede estar en la fila 5, columna 1, o Eleanor se quedaría sin sitio.",
+    "player_hint_4_es": "La pista de Eleanor («Otra persona de su zona estaba junto a un árbol») requiere que la persona junto a un árbol de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Eleanor. Todas las casillas de Carmen están en la columna 5, así que nadie más puede usarla. Así que Eleanor (E) debe estar en la fila 5, columna 4. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Douglas que cumpla su pista («Estaba en la zona de aparcamiento o en la pradera»). Así que Douglas (D) debe estar en la fila 3, columna 6. Tacha su fila y su columna.",
+    "player_hint_6_es": "¿Quién puede ser la persona junto a un árbol en la zona de Eleanor? Solo Valentine, porque nadie más puede llegar a una casilla que cumpla la pista de Eleanor («Otra persona de su zona estaba junto a un árbol»). Eso descarta las demás casillas de Valentine. Así que Valentine (la víctima) debe estar en la fila 6, columna 1. Tacha su fila y su columna.",
+    "player_hint_7_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Carmen que cumpla su pista («Estaba exactamente dos columnas al este de Angus»). Así que Carmen (C) debe estar en la fila 1, columna 5. Tacha su fila y su columna. Eleanor es la única persona en el bosque con Valentine, ¡así que Eleanor es la asesina!"
+  }
+}

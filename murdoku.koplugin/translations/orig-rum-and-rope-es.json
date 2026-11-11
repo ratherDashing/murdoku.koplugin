@@ -1,0 +1,25 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Ron y cuerda",
+    "room_name_1": "Oficina del puerto",
+    "room_name_2": "Almacén",
+    "room_name_3": "Astillero",
+    "room_name_4": "Playa",
+    "char_quote_es_0": "Estaba en una esquina de su zona.",
+    "char_quote_es_1": "Estaba con Cora.",
+    "char_quote_es_2": "Estaba en el almacén, pero no junto al barril. Estaba en una esquina de su zona.",
+    "char_quote_es_3": "Estaba junto al saco.",
+    "char_quote_es_4": "Estaba exactamente una columna al oeste de Vivian.",
+    "char_quote_es_5": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Había exactamente una persona sentada en una silla."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Cora («Estaba en el almacén, pero no junto al barril. Estaba en una esquina de su zona»). Así que Cora (C) debe estar en la fila 1, columna 6. Tacha su fila y su columna.",
+    "player_hint_2_es": "El asesino debe estar en la zona de Vivian sin compartir su fila ni su columna; eso descarta casillas para Vivian. Con la pista general («Había exactamente una persona sentada en una silla») se descartan algunas casillas para Arlo. Así que Arlo (A) debe estar en la fila 2, columna 4. Tacha su fila y su columna.",
+    "player_hint_3_es": "Con las filas y columnas de Cora y Arlo tachadas, solo queda una casilla para Douglas que cumpla su pista («Estaba junto al saco»). Así que Douglas (D) debe estar en la fila 4, columna 5. Tacha su fila y su columna.",
+    "player_hint_4_es": "Esme es ahora la única persona que puede seguir en la fila 6. Así que Esme (E) debe estar en la fila 6, columna 1. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Brenda que cumpla su pista («Estaba con Cora»). Así que Brenda (B) debe estar en la fila 3, columna 3. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vivian. Así que Vivian (la víctima) debe estar en la fila 5, columna 2. Tacha su fila y su columna. Esme es la única persona en el astillero con Vivian, ¡así que Esme es la asesina!"
+  }
+}

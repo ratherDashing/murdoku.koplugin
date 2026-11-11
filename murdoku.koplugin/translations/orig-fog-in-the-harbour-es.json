@@ -1,0 +1,31 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Niebla en el puerto",
+    "room_name_1": "Cueva",
+    "room_name_2": "Taberna",
+    "room_name_3": "Almacén",
+    "room_name_4": "Mercado de pescado",
+    "room_name_5": "Muelle",
+    "room_name_6": "Astillero",
+    "char_quote_es_0": "Estaba en el astillero, pero no junto a la caja.",
+    "char_quote_es_1": "Estaba en el almacén o en el mercado de pescado.",
+    "char_quote_es_2": "Otra persona de su zona estaba junto a una cesta.",
+    "char_quote_es_3": "Estaba en el almacén o en el muelle.",
+    "char_quote_es_4": "Estaba sentada en una silla. Estaba en una esquina de su zona.",
+    "char_quote_es_5": "Estaba al este de Vera.",
+    "char_quote_es_6": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Había exactamente dos personas sentadas en una silla."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Erin («Estaba sentada en una silla. Estaba en una esquina de su zona»). Así que Erin (E) debe estar en la fila 2, columna 3. Tacha su fila y su columna.",
+    "player_hint_2_es": "La pista de Clement («Otra persona de su zona estaba junto a una cesta») requiere que la persona junto a una cesta de su zona esté en una casilla que no comparta fila ni columna con él; eso descarta casillas para Clement. Todas las casillas de Alma están en la columna 5, así que nadie más puede usarla. La propia pista de Clement («Otra persona de su zona estaba junto a una cesta») descarta más casillas. Con la pista general («Había exactamente dos personas sentadas en una silla») se descartan algunas casillas para Clement. Así que Clement (C) debe estar en la fila 6, columna 7. Tacha su fila y su columna.",
+    "player_hint_3_es": "Fíjate en Daisy: todas las casillas que aún puede usar comparten fila o columna con la fila 5, columna 1. Así que nadie más puede estar en la fila 5, columna 1, o Daisy se quedaría sin sitio.",
+    "player_hint_4_es": "El asesino debe estar en la zona de Vera sin compartir su fila ni su columna; eso descarta casillas para Vera.",
+    "player_hint_5_es": "Solo queda una casilla libre para cualquiera en la columna 2 (fila 5, columna 2). Alguien tiene que estar ahí, así que nadie más puede usar la fila 5. Así que Alma (A) debe estar en la fila 7, columna 5. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Daisy que cumpla su pista («Estaba en el almacén o en el muelle»). Así que Daisy (D) debe estar en la fila 5, columna 2. Tacha su fila y su columna.",
+    "player_hint_7_es": "¿Quién puede ser la persona junto a una cesta en la zona de Clement? Solo Bruno, porque nadie más puede llegar a una casilla que cumpla la pista de Clement («Otra persona de su zona estaba junto a una cesta»). Eso descarta las demás casillas de Bruno. Así que Bruno (B) debe estar en la fila 4, columna 6. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vera. Así que Vera (la víctima) debe estar en la fila 1, columna 1. Tacha su fila y su columna.",
+    "player_hint_9_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Flora que cumpla su pista («Estaba al este de Vera»). Así que Flora (F) debe estar en la fila 3, columna 4. Tacha su fila y su columna. Flora es la única persona en la cueva con Vera, ¡así que Flora es la asesina!"
+  }
+}

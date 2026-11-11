@@ -1,0 +1,35 @@
+{
+  "CHARACTERS": {
+    "title_es_": "El expreso de medianoche",
+    "room_name_1": "Rincón del jukebox",
+    "room_name_2": "Mostrador",
+    "room_name_3": "Cocina",
+    "room_name_4": "Callejón trasero",
+    "room_name_5": "Gasolinera",
+    "room_name_6": "Aparcamiento",
+    "char_quote_es_0": "Estaba exactamente una fila al norte de Dinah.",
+    "char_quote_es_1": "Era la única persona junto a un cajón.",
+    "char_quote_es_2": "Estaba en la misma zona que otra persona sobre una alfombra.",
+    "char_quote_es_3": "Estaba junto a un altavoz.",
+    "char_quote_es_4": "Estaba sentada en una silla en el mostrador.",
+    "char_quote_es_5": "Estaba exactamente dos columnas al este de Elsa.",
+    "char_quote_es_6": "Otra persona de su zona estaba junto a un cartel.",
+    "char_quote_es_7": "Era la única persona junto a un surtidor.",
+    "char_quote_es_8": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Fíjate en Basil: todas las casillas que aún puede usar comparten fila o columna con la fila 6, columna 1. Así que nadie más puede estar en la fila 6, columna 1, o Basil se quedaría sin sitio.",
+    "player_hint_2_es": "Fíjate en Elsa: todas las casillas que aún puede usar comparten fila o columna con la fila 4, columna 6. Así que nadie más puede estar en la fila 4, columna 6, o Elsa se quedaría sin sitio.",
+    "player_hint_3_es": "Alma y Dinah no pueden compartir fila ni columna, así que la pista de Alma («Estaba exactamente una fila al norte de Dinah») descarta más casillas para Alma.",
+    "player_hint_4_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Así que Dinah (D) debe estar en la fila 4, columna 2. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de Dinah tachadas, solo queda una casilla para Basil que cumpla su pista («Era la única persona junto a un cajón»). Así que Basil (B) debe estar en la fila 5, columna 1. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de Dinah y Basil tachadas, solo queda una casilla para Elsa que cumpla su pista («Estaba sentada en una silla en el mostrador»). Así que Elsa (E) debe estar en la fila 2, columna 6. Tacha su fila y su columna.",
+    "player_hint_7_es": "Todas las casillas de Alma están en la fila 3, así que nadie más puede usarla. Así que Cedric (C) debe estar en la fila 1, columna 3. Tacha su fila y su columna.",
+    "player_hint_8_es": "La pista de Gus («Otra persona de su zona estaba junto a un cartel») requiere que la persona junto a un cartel de su zona esté en una casilla que no comparta fila ni columna con él; eso descarta casillas para Gus. Así que Gus (G) debe estar en la fila 9, columna 5. Tacha su fila y su columna.",
+    "player_hint_9_es": "¿Quién puede ser la persona junto a un cartel en la zona de Gus? Solo Howard, porque nadie más puede llegar a una casilla que cumpla la pista de Gus («Otra persona de su zona estaba junto a un cartel»). Eso descarta las demás casillas de Howard. Así que Howard (H) debe estar en la fila 6, columna 4. Tacha su fila y su columna.",
+    "player_hint_10_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Fergus que cumpla su pista («Estaba exactamente dos columnas al este de Elsa»). Así que Fergus (F) debe estar en la fila 7, columna 8. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Valerie. Así que Valerie (la víctima) debe estar en la fila 8, columna 9. Tacha su fila y su columna.",
+    "player_hint_12_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Alma que cumpla su pista («Estaba exactamente una fila al norte de Dinah»). Así que Alma (A) debe estar en la fila 3, columna 7. Tacha su fila y su columna. Fergus es la única persona en el aparcamiento con Valerie, ¡así que Fergus es el asesino!"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "CHARACTERS": {
+    "title_es_": "La noche de la momia",
+    "room_name_1": "Vestíbulo",
+    "room_name_2": "Oficina de seguridad",
+    "room_name_3": "Cafetería",
+    "room_name_4": "Bóveda",
+    "room_name_5": "Taller",
+    "char_quote_es_0": "Estaba exactamente tres filas al norte de Eleanor. Estaba en la sexta columna.",
+    "char_quote_es_1": "Estaba junto al cartel del vestíbulo.",
+    "char_quote_es_2": "Estaba en el taller, pero no junto al cajón.",
+    "char_quote_es_3": "Estaba exactamente una fila al sur de alguien sobre una alfombra. No estaba sentada en una silla.",
+    "char_quote_es_4": "Otra persona de su zona estaba sobre una alfombra.",
+    "char_quote_es_5": "Estaba junto al arcón. Estaba junto a la caja fuerte de la bóveda.",
+    "char_quote_es_6": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple la pista de Frederick («Estaba junto al arcón. Estaba junto a la caja fuerte de la bóveda»). Así que Frederick (F) debe estar en la fila 6, columna 1. Tacha su fila y su columna.",
+    "player_hint_2_es": "La propia pista de Ada («Estaba exactamente tres filas al norte de Eleanor. Estaba en la sexta columna») descarta más casillas. Así que Ada (A) debe estar en la fila 1, columna 6. Tacha su fila y su columna.",
+    "player_hint_3_es": "La propia pista de Eleanor («Otra persona de su zona estaba sobre una alfombra») descarta más casillas. Así que Eleanor (E) debe estar en la fila 4, columna 2. Tacha su fila y su columna.",
+    "player_hint_4_es": "La pista de Delia («Estaba exactamente una fila al sur de alguien sobre una alfombra») requiere que la persona sobre una alfombra esté en una casilla que no comparta su fila ni su columna; eso descarta casillas para Delia.",
+    "player_hint_5_es": "El asesino debe estar en la zona de Victor sin compartir su fila ni su columna; eso descarta casillas para Victor. Delia es ahora la única persona que puede seguir en la columna 4. Así que Delia (D) debe estar en la fila 3, columna 4. Tacha su fila y su columna.",
+    "player_hint_6_es": "¿Quién puede ser la persona sobre una alfombra una fila al norte de Delia? Solo Boris, porque nadie más puede llegar a una casilla que cumpla la pista de Delia («Estaba exactamente una fila al sur de alguien sobre una alfombra»). Eso descarta las demás casillas de Boris. Así que Boris (B) debe estar en la fila 2, columna 5. Tacha su fila y su columna.",
+    "player_hint_7_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Victor. Así que Victor (la víctima) debe estar en la fila 5, columna 3. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Clement que cumpla su pista («Estaba en el taller, pero no junto al cajón»). Así que Clement (C) debe estar en la fila 7, columna 7. Tacha su fila y su columna. Delia es la única persona en la oficina de seguridad con Victor, ¡así que Delia es la asesina!"
+  }
+}

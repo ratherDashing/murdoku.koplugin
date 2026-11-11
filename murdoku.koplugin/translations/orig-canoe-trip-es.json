@@ -1,0 +1,35 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Excursión en canoa",
+    "room_name_1": "Lago",
+    "room_name_2": "Zona de aparcamiento",
+    "room_name_3": "Bosque",
+    "room_name_4": "Arboleda de hamacas",
+    "room_name_5": "Fogata",
+    "room_name_6": "Sendero",
+    "room_name_7": "Estación de guardabosques",
+    "char_quote_es_0": "Estaba en el bosque, pero no junto a un arbusto.",
+    "char_quote_es_1": "Otra persona de su zona estaba junto a un tronco.",
+    "char_quote_es_2": "Estaba en el lago o en la fogata.",
+    "char_quote_es_3": "Estaba exactamente una columna al oeste de Gordon. No estaba sentada en una silla.",
+    "char_quote_es_4": "Otra persona de su zona estaba junto al agua.",
+    "char_quote_es_5": "Estaba con Daisy. Estaba al este de Brenda.",
+    "char_quote_es_6": "Estaba en la zona de aparcamiento, pero no junto a un cartel.",
+    "char_quote_es_7": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Angus («Estaba en el bosque, pero no junto a un arbusto»). Así que Angus (A) debe estar en la fila 4, columna 8. Tacha su fila y su columna.",
+    "player_hint_2_es": "Supongamos que Daisy estuviera en la fila 5, columna 2: entonces nadie podría estar en la columna 6. Así que Daisy no puede estar ahí.",
+    "player_hint_3_es": "Supongamos que Daisy estuviera en la fila 6, columna 2: entonces la pista de Frederick («Estaba con Daisy») no podría cumplirse. Así que Daisy no puede estar ahí.",
+    "player_hint_4_es": "Supongamos que Virgil estuviera en la fila 6, columna 6: entonces Brenda se quedaría sin sitio. Así que Virgil no puede estar ahí.",
+    "player_hint_5_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Emil es ahora la única persona que puede seguir en la fila 3. Así que Emil (E) debe estar en la fila 3, columna 1. Tacha su fila y su columna.",
+    "player_hint_6_es": "Daisy y Frederick solo pueden usar las filas 5 y 6 entre los dos, así que nadie más puede estar en esas filas. Así que Carmen (C) debe estar en la fila 1, columna 2. Tacha su fila y su columna.",
+    "player_hint_7_es": "Gordon es ahora la única persona que puede seguir en la columna 7. Así que Gordon (G) debe estar en la fila 2, columna 7. Tacha su fila y su columna.",
+    "player_hint_8_es": "La propia pista de Daisy («Estaba exactamente una columna al oeste de Gordon. No estaba sentada en una silla») descarta más casillas. Así que Daisy (D) debe estar en la fila 5, columna 6. Tacha su fila y su columna.",
+    "player_hint_9_es": "Fíjate en Brenda: todas las casillas que aún puede usar comparten fila o columna con la fila 7, columna 4. Así que nadie más puede estar en la fila 7, columna 4, o Brenda se quedaría sin sitio.",
+    "player_hint_10_es": "La pista de Brenda («Otra persona de su zona estaba junto a un tronco») requiere que la persona junto a un tronco de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Brenda. Con la pista de Frederick («Estaba al este de Brenda») se descartan algunas casillas para Brenda. Así que Brenda (B) debe estar en la fila 8, columna 4. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Frederick que cumpla su pista («Estaba con Daisy. Estaba al este de Brenda»). Así que Frederick (F) debe estar en la fila 6, columna 5. Tacha su fila y su columna.",
+    "player_hint_12_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Virgil. Así que Virgil (la víctima) debe estar en la fila 7, columna 3. Tacha su fila y su columna. Brenda es la única persona en el sendero con Virgil, ¡así que Brenda es la asesina!"
+  }
+}
