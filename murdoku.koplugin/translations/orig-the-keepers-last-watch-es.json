@@ -1,0 +1,31 @@
+{
+  "CHARACTERS": {
+    "title_es_": "La última guardia del farero",
+    "room_name_1": "Casa de botes",
+    "room_name_2": "Cuarto de lámparas",
+    "room_name_3": "Playa",
+    "room_name_4": "Caseta de señales",
+    "room_name_5": "Jardín",
+    "room_name_6": "Sendero del acantilado",
+    "char_quote_es_0": "Era la única persona junto a una caja.",
+    "char_quote_es_1": "Estaba en la casa de botes o en el sendero del acantilado.",
+    "char_quote_es_2": "Era la única persona junto a un barril.",
+    "char_quote_es_3": "Otra persona de su zona estaba sentada en una silla. Estaba exactamente dos columnas al oeste de Ernest.",
+    "char_quote_es_4": "Era la única persona junto a un arbusto.",
+    "char_quote_es_5": "Estaba en el cuarto de lámparas o en la caseta de señales.",
+    "char_quote_es_6": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo queda una casilla libre de la columna 6 para cualquiera (fila 5, columna 6). Alguien tiene que estar ahí, así que nadie más puede usar la fila 5. Con la pista de Duncan («Estaba exactamente dos columnas al oeste de Ernest») se descartan algunas casillas para Ernest. Así que Ernest (E) debe estar en la fila 6, columna 7. Tacha su fila y su columna.",
+    "player_hint_2_es": "Fíjate en Cedric: todas las casillas que aún puede usar comparten fila o columna con la fila 3, columna 4. Así que nadie más puede estar en la fila 3, columna 4, o Cedric se quedaría sin sitio.",
+    "player_hint_3_es": "Fíjate en Ada: todas las casillas que aún puede usar comparten fila o columna con la fila 1, columna 3. Así que nadie más puede estar en la fila 1, columna 3, o Ada se quedaría sin sitio.",
+    "player_hint_4_es": "La pista de Duncan («Otra persona de su zona estaba sentada en una silla») requiere que la persona sentada en una silla de su zona esté en una casilla que no comparta fila ni columna con él; eso descarta casillas para Duncan.",
+    "player_hint_5_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Así que Cedric (C) debe estar en la fila 3, columna 3. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de Ernest y Cedric tachadas, solo queda una casilla para Ada que cumpla su pista («Era la única persona junto a una caja»). Así que Ada (A) debe estar en la fila 1, columna 4. Tacha su fila y su columna.",
+    "player_hint_7_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Duncan que cumpla su pista («Otra persona de su zona estaba sentada en una silla. Estaba exactamente dos columnas al oeste de Ernest»). Así que Duncan (D) debe estar en la fila 4, columna 5. Tacha su fila y su columna.",
+    "player_hint_8_es": "Florence es ahora la única persona que puede seguir en la columna 1. Así que Florence (F) debe estar en la fila 7, columna 1. Tacha su fila y su columna.",
+    "player_hint_9_es": "El asesino debe estar en la zona de Victor sin compartir su fila ni su columna; eso descarta casillas para Victor. Así que Victor (la víctima) debe estar en la fila 5, columna 6. Tacha su fila y su columna.",
+    "player_hint_10_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Bruno que cumpla su pista («Estaba en la casa de botes o en el sendero del acantilado»). Así que Bruno (B) debe estar en la fila 2, columna 2. Tacha su fila y su columna. Ernest es la única persona en el sendero del acantilado con Victor, ¡así que Ernest es el asesino!"
+  }
+}

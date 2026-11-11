@@ -1,0 +1,29 @@
+{
+  "CHARACTERS": {
+    "title_es_": "El acto final",
+    "room_name_1": "Sala verde",
+    "room_name_2": "Vestíbulo",
+    "room_name_3": "Bar",
+    "room_name_4": "Escenario",
+    "room_name_5": "Foso de la orquesta",
+    "char_quote_es_0": "Estaba junto a un barril y una mesa.",
+    "char_quote_es_1": "Estaba exactamente tres filas al norte de Agnes.",
+    "char_quote_es_2": "Estaba en la sala verde, pero no junto al televisor.",
+    "char_quote_es_3": "No estaba sentado en una silla.",
+    "char_quote_es_4": "Estaba en la fila de arriba.",
+    "char_quote_es_5": "Estaba sobre una alfombra. Estaba en una esquina de su zona.",
+    "char_quote_es_6": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Nadie estaba junto a un altavoz."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple la pista de Agnes («Estaba junto a un barril y una mesa»). Así que Agnes (A) debe estar en la fila 6, columna 6. Tacha su fila y su columna.",
+    "player_hint_2_es": "Todas las casillas de Eleanor están en la fila 1, así que nadie más puede usarla. Así que Freya (F) debe estar en la fila 4, columna 4. Tacha su fila y su columna.",
+    "player_hint_3_es": "Fíjate en Cedric: todas las casillas que aún puede usar comparten fila o columna con la fila 5, columna 2. Así que nadie más puede estar en la fila 5, columna 2, o Cedric se quedaría sin sitio.",
+    "player_hint_4_es": "El asesino debe estar en la zona de Violet sin compartir su fila ni su columna; eso descarta casillas para Violet. Todas las casillas de Basil están en la fila 3, así que nadie más puede usarla. Dexter es ahora la única persona que puede seguir en la fila 7. Así que Dexter (D) debe estar en la fila 7, columna 2. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Cedric que cumpla su pista («Estaba en la sala verde, pero no junto al televisor»). Así que Cedric (C) debe estar en la fila 5, columna 1. Tacha su fila y su columna.",
+    "player_hint_6_es": "Supongamos que Basil estuviera en la fila 3, columna 3: entonces Violet se quedaría sin sitio. Así que Basil no puede estar ahí. Así que Basil (B) debe estar en la fila 3, columna 7. Tacha su fila y su columna.",
+    "player_hint_7_es": "La víctima debe compartir zona con exactamente una persona. Así que Violet (la víctima) debe estar en la fila 2, columna 3. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Eleanor que cumpla su pista («Estaba en la fila de arriba»). Así que Eleanor (E) debe estar en la fila 1, columna 5. Tacha su fila y su columna. Freya es la única persona en el vestíbulo con Violet, ¡así que Freya es la asesina!"
+  }
+}

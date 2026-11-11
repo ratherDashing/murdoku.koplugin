@@ -1,0 +1,38 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Mensaje en una botella",
+    "room_name_1": "Playa",
+    "room_name_2": "Oficina del puerto",
+    "room_name_3": "Cueva",
+    "room_name_4": "Astillero",
+    "room_name_5": "Muelle",
+    "room_name_6": "Atalaya",
+    "room_name_7": "Almacén",
+    "room_name_8": "Mercado de pescado",
+    "room_name_9": "Taberna",
+    "char_quote_es_0": "Estaba en el muelle o en la oficina del puerto.",
+    "char_quote_es_1": "Estaba junto a la caja fuerte de la oficina del puerto.",
+    "char_quote_es_2": "Estaba exactamente una fila al sur de alguien sentado en una silla.",
+    "char_quote_es_3": "No estaba en el almacén.",
+    "char_quote_es_4": "Estaba junto a una mesa. Estaba junto a la caja fuerte.",
+    "char_quote_es_5": "Estaba en la playa o en el mercado de pescado. Estaba al sur de Helena.",
+    "char_quote_es_6": "Estaba en la atalaya o en la playa.",
+    "char_quote_es_7": "Estaba en la playa o en la oficina del puerto. Estaba exactamente una columna al este de Clement.",
+    "char_quote_es_8": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "La pista de Clement («Estaba exactamente una fila al sur de alguien sentado en una silla») requiere que la persona sentada en una silla esté en una casilla que no comparta su fila ni su columna; eso descarta casillas para Clement.",
+    "player_hint_2_es": "El asesino debe estar en la zona de Valentine sin compartir su fila ni su columna; eso descarta casillas para Valentine.",
+    "player_hint_3_es": "Basil y Emil solo pueden usar las columnas 4 y 5 entre los dos, así que nadie más puede estar en esas columnas.",
+    "player_hint_4_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. La propia pista de Flora («Estaba en la playa o en el mercado de pescado. Estaba al sur de Helena») descarta más casillas. Todas las casillas de Alma están en la columna 3, así que nadie más puede usarla. Así que Flora (F) debe estar en la fila 4, columna 1. Tacha su fila y su columna.",
+    "player_hint_5_es": "Basil es ahora la única persona que puede seguir en la fila 1. Así que Basil (B) debe estar en la fila 1, columna 5. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de Flora y Basil tachadas, solo queda una casilla para Emil que cumpla su pista («Estaba junto a una mesa. Estaba junto a la caja fuerte»). Así que Emil (E) debe estar en la fila 2, columna 4. Tacha su fila y su columna.",
+    "player_hint_7_es": "Solo queda una casilla libre de la columna 2 para cualquiera (fila 6, columna 2). Alguien tiene que estar ahí, así que nadie más puede usar la fila 6. Así que Alma (A) debe estar en la fila 5, columna 3. Tacha su fila y su columna.",
+    "player_hint_8_es": "El asesino debe estar en la zona de Valentine sin compartir su fila ni su columna; eso descarta casillas para Valentine. Todas las casillas de Grace están en la fila 7, así que nadie más puede usarla. Dexter es ahora la única persona que puede seguir en la fila 6. Así que Dexter (D) debe estar en la fila 6, columna 2. Tacha su fila y su columna.",
+    "player_hint_9_es": "¿Quién puede ser la persona sentada en una silla una fila al norte de Clement? Solo Grace, porque nadie más puede llegar a una casilla que cumpla la pista de Clement («Estaba exactamente una fila al sur de alguien sentado en una silla»). Eso descarta las demás casillas de Grace. Así que Grace (G) debe estar en la fila 7, columna 9. Tacha su fila y su columna.",
+    "player_hint_10_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Helena que cumpla su pista («Estaba en la playa o en la oficina del puerto. Estaba exactamente una columna al este de Clement»). Así que Helena (H) debe estar en la fila 3, columna 8. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Clement que cumpla su pista («Estaba exactamente una fila al sur de alguien sentado en una silla»). Así que Clement (C) debe estar en la fila 8, columna 7. Tacha su fila y su columna.",
+    "player_hint_12_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Valentine. Así que Valentine (la víctima) debe estar en la fila 9, columna 6. Tacha su fila y su columna. Clement es la única persona en la taberna con Valentine, ¡así que Clement es el asesino!"
+  }
+}

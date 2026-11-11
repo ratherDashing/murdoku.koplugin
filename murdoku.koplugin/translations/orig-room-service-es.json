@@ -1,0 +1,21 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Servicio de habitaciones",
+    "room_name_1": "Suite",
+    "room_name_2": "Bar",
+    "room_name_3": "Recepción",
+    "char_quote_es_0": "Estaba en la misma zona que otra persona sentada en una silla.",
+    "char_quote_es_1": "Estaba en el bar, pero no junto a una caja registradora. Estaba en la fila de abajo.",
+    "char_quote_es_2": "Estaba junto a una caja registradora en el bar.",
+    "char_quote_es_3": "Estaba sentada en una silla en el bar.",
+    "char_quote_es_4": "La víctima. Estaba solo con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Bonnie («Estaba en el bar, pero no junto a una caja registradora. Estaba en la fila de abajo»). Así que Bonnie (B) debe estar en la fila 5, columna 3. Tacha su fila y su columna.",
+    "player_hint_2_es": "Con la fila y la columna de Bonnie tachadas, solo queda una casilla para Dinah que cumpla su pista («Estaba sentada en una silla en el bar»). Así que Dinah (D) debe estar en la fila 1, columna 5. Tacha su fila y su columna.",
+    "player_hint_3_es": "Con las filas y columnas de Bonnie y Dinah tachadas, solo queda una casilla para Clement que cumpla su pista («Estaba junto a una caja registradora en el bar»). Así que Clement (C) debe estar en la fila 2, columna 4. Tacha su fila y su columna.",
+    "player_hint_4_es": "La pista de Angus («Estaba en la misma zona que otra persona sentada en una silla») requiere que la persona sentada en una silla de su zona esté en una casilla que no comparta fila ni columna con él; eso descarta casillas para Angus. Así que Angus (A) debe estar en la fila 4, columna 2. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Valentine. Así que Valentine (la víctima) debe estar en la fila 3, columna 1. Tacha su fila y su columna. Angus es la única persona en la recepción con Valentine, ¡así que Angus es el asesino!"
+  }
+}

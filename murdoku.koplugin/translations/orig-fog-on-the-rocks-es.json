@@ -1,0 +1,31 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Niebla sobre las rocas",
+    "room_name_1": "Casa del farero",
+    "room_name_2": "Playa",
+    "room_name_3": "Cuarto de lámparas",
+    "room_name_4": "Trastero",
+    "room_name_5": "Sendero del acantilado",
+    "room_name_6": "Casa de botes",
+    "char_quote_es_0": "Estaba junto a un cajón. Estaba en una esquina de su zona.",
+    "char_quote_es_1": "Estaba en la sexta columna.",
+    "char_quote_es_2": "Estaba exactamente dos filas al norte de Daisy.",
+    "char_quote_es_3": "Estaba junto a un arbusto. Estaba en una esquina de su zona.",
+    "char_quote_es_4": "Otra persona de su zona estaba junto a un barril. Estaba en la playa o en el trastero.",
+    "char_quote_es_5": "No estaba en el cuarto de lámparas.",
+    "char_quote_es_6": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Angus («Estaba junto a un cajón. Estaba en una esquina de su zona»). Así que Angus (A) debe estar en la fila 7, columna 4. Tacha su fila y su columna.",
+    "player_hint_2_es": "Con las filas y columnas de Angus tachadas, solo queda una casilla para Daisy que cumpla su pista («Estaba junto a un arbusto. Estaba en una esquina de su zona»). Así que Daisy (D) debe estar en la fila 5, columna 1. Tacha su fila y su columna.",
+    "player_hint_3_es": "Fíjate en Edith: todas las casillas que aún puede usar comparten fila o columna con la fila 6, columna 5. Así que nadie más puede estar en la fila 6, columna 5, o Edith se quedaría sin sitio.",
+    "player_hint_4_es": "La pista de Edith («Otra persona de su zona estaba junto a un barril») requiere que la persona junto a un barril de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Edith. Todas las casillas de Barnaby están en la columna 6, así que nadie más puede usarla. Todas las casillas de Cora están en la fila 3, así que nadie más puede usarla. La propia pista de Edith («Otra persona de su zona estaba junto a un barril. Estaba en la playa o en el trastero») descarta más casillas. Así que Edith (E) debe estar en la fila 6, columna 7. Tacha su fila y su columna.",
+    "player_hint_5_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Barnaby que cumpla su pista («Estaba en la sexta columna»). Así que Barnaby (B) debe estar en la fila 2, columna 6. Tacha su fila y su columna.",
+    "player_hint_6_es": "Cora es ahora la única persona que puede seguir en la columna 2. Así que Cora (C) debe estar en la fila 3, columna 2. Tacha su fila y su columna.",
+    "player_hint_7_es": "Fíjate en Floyd: todas las casillas que aún puede usar comparten fila o columna con la fila 1, columna 5. Así que nadie más puede estar en la fila 1, columna 5, o Floyd se quedaría sin sitio.",
+    "player_hint_8_es": "El asesino debe estar en la zona de Vera sin compartir su fila ni su columna; eso descarta casillas para Vera.",
+    "player_hint_9_es": "¿Quién puede ser la persona junto a un barril en la zona de Edith? Solo Vera, porque nadie más puede llegar a una casilla que cumpla la pista de Edith («Otra persona de su zona estaba junto a un barril»). Eso descarta las demás casillas de Vera. Así que Vera (la víctima) debe estar en la fila 4, columna 5. Tacha su fila y su columna.",
+    "player_hint_10_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Floyd que cumpla su pista («No estaba en el cuarto de lámparas»). Así que Floyd (F) debe estar en la fila 1, columna 3. Tacha su fila y su columna. Edith es la única persona en el trastero con Vera, ¡así que Edith es la asesina!"
+  }
+}

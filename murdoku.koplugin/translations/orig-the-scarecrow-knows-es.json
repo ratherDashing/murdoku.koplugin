@@ -1,0 +1,30 @@
+{
+  "CHARACTERS": {
+    "title_es_": "El espantapájaros lo sabe",
+    "room_name_1": "Huerto",
+    "room_name_2": "Estanque de patos",
+    "room_name_3": "Establo",
+    "room_name_4": "Corral de cerdos",
+    "room_name_5": "Patio",
+    "char_quote_es_0": "Estaba solo en el huerto.",
+    "char_quote_es_1": "Era la única persona sobre un caballo.",
+    "char_quote_es_2": "No estaba de pie sobre un charco.",
+    "char_quote_es_3": "Estaba exactamente tres filas al sur de Albert.",
+    "char_quote_es_4": "Estaba exactamente una columna al oeste de Dora. Estaba en una esquina de su zona.",
+    "char_quote_es_5": "Era la única persona junto al agua. Estaba en una esquina de su zona.",
+    "char_quote_es_6": "La víctima. Estaba sola con el asesino."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Flora («Era la única persona junto al agua. Estaba en una esquina de su zona»). Así que Flora (F) debe estar en la fila 4, columna 4. Tacha su fila y su columna.",
+    "player_hint_2_es": "Supongamos que Dora estuviera en la fila 5, columna 2: entonces la pista de Edith («Estaba exactamente una columna al oeste de Dora») no podría cumplirse. Así que Dora no puede estar ahí.",
+    "player_hint_3_es": "Fíjate en Dora: todas las casillas que aún puede usar comparten fila o columna con la fila 6, columna 7. Así que nadie más puede estar en la fila 6, columna 7, o Dora se quedaría sin sitio.",
+    "player_hint_4_es": "Supongamos que Albert estuviera en la fila 2, columna 2: entonces la pista de Dora («Estaba exactamente tres filas al sur de Albert») no podría cumplirse. Así que Albert no puede estar ahí. Todas las casillas de Bruno están en la columna 5, así que nadie más puede usarla. Con la pista de Albert («Estaba solo en el huerto») se descartan algunas casillas para Edith. La propia pista de Edith («Estaba exactamente una columna al oeste de Dora. Estaba en una esquina de su zona») descarta más casillas. Así que Edith (E) debe estar en la fila 7, columna 6. Tacha su fila y su columna.",
+    "player_hint_5_es": "El asesino debe estar en la zona de Vivian sin compartir su fila ni su columna; eso descarta casillas para Vivian.",
+    "player_hint_6_es": "Solo queda una casilla libre de la columna 2 para cualquiera (fila 6, columna 2). Alguien tiene que estar ahí, así que nadie más puede usar la fila 6. Con la pista de Edith («Estaba exactamente una columna al oeste de Dora») se descartan algunas casillas para Dora. Así que Dora (D) debe estar en la fila 5, columna 7. Tacha su fila y su columna.",
+    "player_hint_7_es": "Con la pista de Dora («Estaba exactamente tres filas al sur de Albert») se descartan algunas casillas para Albert. Así que Albert (A) debe estar en la fila 2, columna 1. Tacha su fila y su columna.",
+    "player_hint_8_es": "Bruno es ahora la única persona que puede seguir en la fila 3. Así que Bruno (B) debe estar en la fila 3, columna 5. Tacha su fila y su columna.",
+    "player_hint_9_es": "El asesino debe estar en la zona de Vivian sin compartir su fila ni su columna; eso descarta casillas para Vivian. Así que Vivian (la víctima) debe estar en la fila 1, columna 3. Tacha su fila y su columna.",
+    "player_hint_10_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Cedric que cumpla su pista («No estaba de pie sobre un charco»). Así que Cedric (C) debe estar en la fila 6, columna 2. Tacha su fila y su columna. Flora es la única persona en el estanque de patos con Vivian, ¡así que Flora es la asesina!"
+  }
+}

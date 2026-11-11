@@ -1,0 +1,39 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Noche de estreno",
+    "room_name_1": "Vestíbulo",
+    "room_name_2": "Camerino",
+    "room_name_3": "Taquilla",
+    "room_name_4": "Escenario",
+    "room_name_5": "Foso de la orquesta",
+    "room_name_6": "Cuarto de atrezo",
+    "char_quote_es_0": "Estaba junto al casillero del camerino.",
+    "char_quote_es_1": "Estaba en el foso de la orquesta, pero no junto a un piano.",
+    "char_quote_es_2": "Estaba exactamente una fila al norte de Bella.",
+    "char_quote_es_3": "Otra persona de su zona estaba junto a un piano.",
+    "char_quote_es_4": "Otra persona de su zona estaba junto a un altavoz.",
+    "char_quote_es_5": "Era la única persona junto a un arcón.",
+    "char_quote_es_6": "Estaba exactamente tres filas al norte de Ezra.",
+    "char_quote_es_7": "Estaba junto a una caja registradora y un cartel.",
+    "char_quote_es_8": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Había exactamente una persona junto a un piano."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Fíjate en Felix: todas las casillas que aún puede usar comparten fila o columna con la fila 6, columna 2. Así que nadie más puede estar en la fila 6, columna 2, o Felix se quedaría sin sitio.",
+    "player_hint_2_es": "Conrad y Bella no pueden compartir fila ni columna, así que la pista de Conrad («Estaba exactamente una fila al norte de Bella») descarta más casillas para Conrad.",
+    "player_hint_3_es": "Supongamos que Conrad estuviera en la fila 6, columna 9: entonces Felix y Harriet tendrían que compartir una fila o una columna. Así que Conrad no puede estar ahí.",
+    "player_hint_4_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Así que Alma (A) debe estar en la fila 2, columna 6. Tacha su fila y su columna.",
+    "player_hint_5_es": "Supongamos que Vera estuviera en la fila 3, columna 5: entonces la pista general («Había exactamente una persona junto a un piano») no podría cumplirse. Así que Vera no puede estar ahí.",
+    "player_hint_6_es": "Supongamos que Vera estuviera en la fila 3, columna 7: entonces la pista general («Había exactamente una persona junto a un piano») no podría cumplirse. Así que Vera no puede estar ahí.",
+    "player_hint_7_es": "Supongamos que Grant estuviera en la fila 1, columna 9: entonces Bella y Vera tendrían que compartir una fila o una columna. Así que Grant no puede estar ahí.",
+    "player_hint_8_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Dahlia es ahora la única persona que puede seguir en la fila 3. Así que Dahlia (D) debe estar en la fila 3, columna 4. Tacha su fila y su columna.",
+    "player_hint_9_es": "Con las filas y columnas de Alma y Dahlia tachadas, solo queda una casilla para Ezra que cumpla su pista («Otra persona de su zona estaba junto a un altavoz»). Así que Ezra (E) debe estar en la fila 4, columna 1. Tacha su fila y su columna.",
+    "player_hint_10_es": "¿Quién puede ser la persona junto a un piano en la zona de Dahlia? Solo Conrad, porque nadie más puede llegar a una casilla que cumpla la pista de Dahlia («Otra persona de su zona estaba junto a un piano»). Eso descarta las demás casillas de Conrad. Así que Conrad (C) debe estar en la fila 5, columna 3. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Felix que cumpla su pista («Era la única persona junto a un arcón»). Así que Felix (F) debe estar en la fila 7, columna 2. Tacha su fila y su columna.",
+    "player_hint_12_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Bella que cumpla su pista («Estaba en el foso de la orquesta, pero no junto a un piano»). Así que Bella (B) debe estar en la fila 6, columna 7. Tacha su fila y su columna.",
+    "player_hint_13_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Grant que cumpla su pista («Estaba exactamente tres filas al norte de Ezra»). Así que Grant (G) debe estar en la fila 1, columna 5. Tacha su fila y su columna.",
+    "player_hint_14_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Harriet que cumpla su pista («Estaba junto a una caja registradora y un cartel»). Así que Harriet (H) debe estar en la fila 8, columna 9. Tacha su fila y su columna.",
+    "player_hint_15_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Vera. Así que Vera (la víctima) debe estar en la fila 9, columna 8. Tacha su fila y su columna. Harriet es la única persona en la taquilla con Vera, ¡así que Harriet es la asesina!"
+  }
+}

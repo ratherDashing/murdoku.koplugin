@@ -1,0 +1,33 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Noche de reencuentro",
+    "room_name_1": "Sala de arte",
+    "room_name_2": "Aula",
+    "room_name_3": "Cafetería",
+    "room_name_4": "Pasillo de casilleros",
+    "room_name_5": "Sala de música",
+    "char_quote_es_0": "Estaba exactamente una fila al norte de Gideon.",
+    "char_quote_es_1": "Estaba al norte de Freya.",
+    "char_quote_es_2": "Otra persona de su zona estaba sentada en una silla.",
+    "char_quote_es_3": "Estaba en la cafetería, pero no junto al cubo de basura.",
+    "char_quote_es_4": "Otra persona de su zona estaba junto a una estantería.",
+    "char_quote_es_5": "Otra persona de su zona estaba junto a un altavoz.",
+    "char_quote_es_6": "Estaba junto a una mesa en la sala de arte.",
+    "char_quote_es_7": "La víctima. Estaba sola con el asesino.",
+    "general_clue_0": "Había exactamente una persona junto a una batería."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Solo una casilla cumple las dos partes de la pista de Gideon («Estaba junto a una mesa en la sala de arte»). Así que Gideon (G) debe estar en la fila 4, columna 3. Tacha su fila y su columna.",
+    "player_hint_2_es": "Fíjate en Dexter: todas las casillas que aún puede usar comparten fila o columna con la fila 1, columna 7. Así que nadie más puede estar en la fila 1, columna 7, o Dexter se quedaría sin sitio.",
+    "player_hint_3_es": "La pista de Celeste («Otra persona de su zona estaba sentada en una silla») requiere que la persona sentada en una silla de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Celeste.",
+    "player_hint_4_es": "La pista de Elsa («Otra persona de su zona estaba junto a una estantería») requiere que la persona junto a una estantería de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Elsa.",
+    "player_hint_5_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Todas las casillas de Angus están en la fila 3, así que nadie más puede usarla. Así que Dexter (D) debe estar en la fila 1, columna 8. Tacha su fila y su columna.",
+    "player_hint_6_es": "Con las filas y columnas de Gideon y Dexter tachadas, solo queda una casilla para Elsa que cumpla su pista («Otra persona de su zona estaba junto a una estantería»). Así que Elsa (E) debe estar en la fila 2, columna 6. Tacha su fila y su columna.",
+    "player_hint_7_es": "La pista de Celeste («Otra persona de su zona estaba sentada en una silla») requiere que la persona sentada en una silla de su zona esté en una casilla que no comparta fila ni columna con ella; eso descarta casillas para Celeste. Todas las casillas de Celeste están en la columna 4, así que nadie más puede usarla. Todas las casillas de Freya están en la columna 7, así que nadie más puede usarla. Así que Angus (A) debe estar en la fila 3, columna 2. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con la pista general («Había exactamente una persona junto a una batería») se descartan algunas casillas para Freya. Así que Freya (F) debe estar en la fila 7, columna 7. Tacha su fila y su columna.",
+    "player_hint_9_es": "Celeste es ahora la única persona que puede seguir en la fila 8. Así que Celeste (C) debe estar en la fila 8, columna 4. Tacha su fila y su columna.",
+    "player_hint_10_es": "El asesino debe estar en la zona de Valerie sin compartir su fila ni su columna; eso descarta casillas para Valerie. Así que Valerie (la víctima) debe estar en la fila 5, columna 5. Tacha su fila y su columna.",
+    "player_hint_11_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Beatrix que cumpla su pista («Estaba al norte de Freya»). Así que Beatrix (B) debe estar en la fila 6, columna 1. Tacha su fila y su columna. Elsa es la única persona en el aula con Valerie, ¡así que Elsa es la asesina!"
+  }
+}

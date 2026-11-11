@@ -1,0 +1,30 @@
+{
+  "CHARACTERS": {
+    "title_es_": "Salida retrasada",
+    "room_name_1": "Pasarela",
+    "room_name_2": "Parada de taxis",
+    "room_name_3": "Caja de señales",
+    "room_name_4": "Sala de espera",
+    "room_name_5": "Sala de equipajes",
+    "char_quote_es_0": "No estaba sentada en una silla.",
+    "char_quote_es_1": "No estaba de pie sobre un charco. Estaba en la pasarela.",
+    "char_quote_es_2": "Estaba en la caja de señales. Estaba en una esquina de su zona.",
+    "char_quote_es_3": "Había otra mujer en su zona.",
+    "char_quote_es_4": "Era la única persona junto a una planta. Estaba exactamente una columna al este de Victor.",
+    "char_quote_es_5": "La víctima. Estaba solo con el asesino.",
+    "general_clue_0": "Había exactamente una persona junto a una planta."
+  },
+  "PROPERTIES": {
+    "puzzle_version": "2",
+    "player_hint_1_es": "Fíjate en Elliot: todas las casillas que aún puede usar comparten fila o columna con la fila 4, columna 3. Así que nadie más puede estar en la fila 4, columna 3, o Elliot se quedaría sin sitio.",
+    "player_hint_2_es": "La pista de Delia («Había otra mujer en su zona») requiere un compañero que no comparta su fila ni su columna; eso descarta casillas para Delia.",
+    "player_hint_3_es": "Elliot y Victor no pueden compartir fila ni columna, así que la pista de Elliot («Estaba exactamente una columna al este de Victor») descarta más casillas para Victor.",
+    "player_hint_4_es": "El mismo tipo de razonamiento descarta unas cuantas casillas más. Todas las casillas de Cedric están en la columna 6, así que nadie más puede usarla. Por la pista de Elliot («Era la única persona junto a una planta»), nadie más puede estar en esas casillas. Delia es ahora la única persona que puede seguir en la fila 5. Así que Delia (D) debe estar en la fila 5, columna 4. Tacha su fila y su columna.",
+    "player_hint_5_es": "Cedric es ahora la única persona que puede seguir en la fila 6. Así que Cedric (C) debe estar en la fila 6, columna 6. Tacha su fila y su columna.",
+    "player_hint_6_es": "Bonnie y Victor solo pueden usar las filas 1 y 2 entre los dos, así que nadie más puede estar en esas filas.",
+    "player_hint_7_es": "¿Quién puede ser la mujer en la zona de Delia? Solo Amber, porque nadie más puede llegar a una casilla que cumpla la pista de Delia («Había otra mujer en su zona»). Eso descarta las demás casillas de Amber. Así que Amber (A) debe estar en la fila 4, columna 5. Tacha su fila y su columna.",
+    "player_hint_8_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Elliot que cumpla su pista («Era la única persona junto a una planta. Estaba exactamente una columna al este de Victor»). Así que Elliot (E) debe estar en la fila 3, columna 3. Tacha su fila y su columna.",
+    "player_hint_9_es": "Bonnie es ahora la única persona que puede seguir en la columna 1. Así que Bonnie (B) debe estar en la fila 1, columna 1. Tacha su fila y su columna.",
+    "player_hint_10_es": "Con las filas y columnas de todos los colocados tachadas, solo queda una casilla para Victor. Así que Victor (la víctima) debe estar en la fila 2, columna 2. Tacha su fila y su columna. Bonnie es la única persona en la pasarela con Victor, ¡así que Bonnie es la asesina!"
+  }
+}
